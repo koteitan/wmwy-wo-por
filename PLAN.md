@@ -1,3 +1,3 @@
 # PLAN — wmwy-wo-por
 
-- （残作業なし。公式の ω-Y は [koteitan/wy-wo-por](https://github.com/koteitan/wy-wo-por) で扱う）
+- 🤖 study/：数学の解説を書く（[1y-wo-por/study](https://github.com/koteitan/1y-wo-por/tree/main/study) と同じ構造、日本語と英語）
