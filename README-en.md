@@ -84,6 +84,10 @@ The proof uses choice and the regularity of $`\omega_1`$. It gives no ordinal bo
 
 The detailed design is in [notes/01-design.md](notes/01-design.md) (Japanese).
 
+## Mathematical background
+
+[study/](study/en/README.md) has background notes for reading this repository (in English and Japanese). There are nine: ordinals and $`\omega_1`$, well-founded recursion and the order of keys, $`\Sigma_1`$-elementary substructures and partial top predicates, Carlson's patterns of resemblance, the mountain and expansion of an ω-Y sequence, Phyrion's combinatorial layer for ω-Y, the relation $`R`$, closure below $`\omega_1`$ and the sequence of closed points, and the proofs of the three theorems. Every note names the Lean declarations.
+
 ## Files
 
 | Path | Content |
@@ -94,6 +98,7 @@ The detailed design is in [notes/01-design.md](notes/01-design.md) (Japanese).
 | [ZeroY/](ZeroY/) | Phyrion's 0-Y layer, taken through 1y-wo-por, 20 modules |
 | [OmegaY/](OmegaY/) | Phyrion's combinatorial layer for ω-Y, 549 modules |
 | [notes/](notes/) | Survey and design notes (Japanese) |
+| [study/](study/en/README.md) | Notes on the mathematical background (in English and Japanese) |
 | [LICENSE](LICENSE), [NOTICE](NOTICE) | Apache-2.0 and provenance |
 
 ## Building

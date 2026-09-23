@@ -84,6 +84,10 @@ $`\mathfrak A^{c}_{\theta}`$ は高さ $`c`$ の構造である。
 
 詳しい設計は [notes/01-design.md](notes/01-design.md) にある（日本語）。
 
+## 数学の解説
+
+[study/](study/README.md) に、このリポジトリを読むための背景ノートがある（日本語と英語）。順序数と $`\omega_1`$、整礎再帰と鍵の順序、$`\Sigma_1`$ 初等部分構造と部分的な上端の述語、Carlson の patterns of resemblance、ω-Y 数列の山と展開、Phyrion 氏の ω-Y の組合せの層、関係 $`R`$、$`\omega_1`$ より下の閉包と閉じた点の列、3 つの定理の証明の 9 本である。どのノートも Lean の名前を挙げる。
+
 ## ファイル
 
 | 場所 | 中身 |
@@ -94,6 +98,7 @@ $`\mathfrak A^{c}_{\theta}`$ は高さ $`c`$ の構造である。
 | [ZeroY/](ZeroY/) | Phyrion 氏の 0-Y の層。1y-wo-por を通して移した。20 モジュール |
 | [OmegaY/](OmegaY/) | Phyrion 氏の ω-Y の組合せの層を移したもの。549 モジュール |
 | [notes/](notes/) | 調査と設計のノート（日本語） |
+| [study/](study/README.md) | 数学の解説のノート（日本語と英語） |
 | [LICENSE](LICENSE)、[NOTICE](NOTICE) | Apache-2.0 と出どころの記録 |
 
 ## ビルド
