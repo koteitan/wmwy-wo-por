@@ -1,8 +1,8 @@
 [← PLAN](../PLAN.md)
 
-# 設計：patterns of resemblance による weak ω-Y の整礎性
+# 設計：patterns of resemblance による weak-magma ω-Y の整礎性
 
-対象は Phyrion 氏の [omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean)（リビジョン [`33c16a8`](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean/tree/33c16a8ce8f7e01bb3794881f3ff9109474beaed)、Apache-2.0）の weak ω-Y（weak magma、no extraction）である。展開の定義は変えない。
+対象は Phyrion 氏の [omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean)（リビジョン [`33c16a8`](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean/tree/33c16a8ce8f7e01bb3794881f3ff9109474beaed)、Apache-2.0）の weak-magma ω-Y（weak magma、no extraction）である。展開の定義は変えない。
 
 ## 0. 要約
 

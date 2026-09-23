@@ -1,8 +1,8 @@
 [English](README-en.md) | [Japanese](README.md)
 
-# wy-wo-por：patterns of resemblance による weak ω-Y の整礎性
+# wmwy-wo-por：patterns of resemblance による weak-magma ω-Y の整礎性
 
-weak ω-Y 数列システムの展開が整礎であることを、Lean 4 で証明したリポジトリである。
+weak-magma ω-Y 数列システムの展開が整礎であることを、Lean 4 で証明したリポジトリである。
 
 証明は Phyrion 氏の証明（[Phyrion1343/omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean)）に基づく。その証明の組合せの部分はそのまま使う。意味の部分だけを、patterns of resemblance の形の関係（$`\Sigma_1`$ 初等部分構造）に取り替えた。構成的宇宙 $`L`$ も許容順序数も使わない。姉妹プロジェクト [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por) が 1-Y でしたことの ω-Y 版である。
 
@@ -10,11 +10,11 @@ weak ω-Y 数列システムの展開が整礎であることを、Lean 4 で証
 - `sorry` は無い。新しい公理も無い。公理は `propext`、`Classical.choice`、`Quot.sound` だけである。
 - ライセンスの無い YesMetaZFC に依存しない。
 
-## 対象
+## 対象：weak-magma ω-Y
 
-対象は Phyrion 氏の形式化と同じ展開である。「weak magma、no extraction」の ω-Y と呼ばれる。展開の規則は [OmegaY/Expansion/Build.lean](OmegaY/Expansion/Build.lean) にある。
+対象は Phyrion 氏の形式化と同じ展開である。「weak magma、no extraction」の ω-Y と呼ばれる。展開の規則は [OmegaY/Expansion/Build.lean](OmegaY/Expansion/Build.lean) にある。このリポジトリでは、これを **weak-magma ω-Y** と呼び、公式の ω-Y とは別の数列システムとして扱う。
 
-これは公式の ω-Y（Naruyoko 氏のプログラム）と一致しない。標準形 3001 個で比べると、9003 回の展開のうち 480 回で結果が違う。最小の例は $`(1,3,3)[2]`$ である。詳しくは [notes/00-survey.md](notes/00-survey.md) にある。公式の ω-Y の停止性は、このリポジトリの定理ではない。
+weak-magma ω-Y は公式の ω-Y（Naruyoko 氏のプログラム）と一致しない。標準形 3001 個で比べると、9003 回の展開のうち 480 回で結果が違う。最小の例は $`(1,3,3)[2]`$ である。詳しくは [notes/00-survey.md](notes/00-survey.md) にある。公式の ω-Y の停止性は、このリポジトリの定理ではない。公式の ω-Y は別のリポジトリ [koteitan/wy-wo-por](https://github.com/koteitan/wy-wo-por) で扱う。違いの原因は [notes/02-feasibility.md](notes/02-feasibility.md) にある（写した区画のすき間を埋める規則、magma だけが違う）。
 
 ## 何を証明したか
 
@@ -128,7 +128,7 @@ Audited 6614 research theorems: only propext, Classical.choice and Quot.sound oc
 
 ## 参考文献
 
-- Phyrion, [omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean). weak ω-Y の整礎性の Lean の形式化。
+- Phyrion, [omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean). weak-magma ω-Y の整礎性の Lean の形式化。
 - Phyrion, [1Y-Well-Ordering-Lean](https://github.com/Phyrion1343/1Y-Well-Ordering-Lean). 1-Y の整礎性の Lean の形式化。
 - T. J. Carlson, Elementary patterns of resemblance, Annals of Pure and Applied Logic 108 (2001), 19–77.
 - koteitan, [1y-wo-por](https://github.com/koteitan/1y-wo-por). patterns of resemblance による 1-Y の整礎性。

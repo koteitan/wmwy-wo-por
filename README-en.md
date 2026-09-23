@@ -1,8 +1,8 @@
 [English](README-en.md) | [Japanese](README.md)
 
-# wy-wo-por: well-foundedness of weak ω-Y by patterns of resemblance
+# wmwy-wo-por: well-foundedness of weak-magma ω-Y by patterns of resemblance
 
-This repository proves in Lean 4 that expansion in the weak ω-Y sequence system is well-founded.
+This repository proves in Lean 4 that expansion in the weak-magma ω-Y sequence system is well-founded.
 
 The proof is based on Phyrion's proof ([Phyrion1343/omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean)). Its combinatorial part is used unchanged. Only the semantic part is replaced, by a relation in the style of patterns of resemblance ($`\Sigma_1`$-elementary substructures). Neither the constructible universe $`L`$ nor admissible ordinals are used. It is the ω-Y counterpart of what the sister project [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por) did for 1-Y.
 
@@ -10,11 +10,11 @@ The proof is based on Phyrion's proof ([Phyrion1343/omega-Y-Well-Ordering-Lean](
 - No `sorry`, no new axiom. The only axioms are `propext`, `Classical.choice` and `Quot.sound`.
 - No dependency on the unlicensed YesMetaZFC.
 
-## Target
+## Target: weak-magma ω-Y
 
-The target is the same expansion as in Phyrion's formalization, called the "weak magma, no extraction" ω-Y. The rules are in [OmegaY/Expansion/Build.lean](OmegaY/Expansion/Build.lean).
+The target is the same expansion as in Phyrion's formalization, called the "weak magma, no extraction" ω-Y. The rules are in [OmegaY/Expansion/Build.lean](OmegaY/Expansion/Build.lean). This repository calls it **weak-magma ω-Y** and treats it as a sequence system distinct from the official ω-Y.
 
-It does not agree with the official ω-Y (Naruyoko's program). On 3001 standard forms, 480 of 9003 expansions differ. The smallest example is $`(1,3,3)[2]`$. See [notes/00-survey.md](notes/00-survey.md) (Japanese). Termination of the official ω-Y is not a theorem of this repository.
+Weak-magma ω-Y does not agree with the official ω-Y (Naruyoko's program). On 3001 standard forms, 480 of 9003 expansions differ. The smallest example is $`(1,3,3)[2]`$. See [notes/00-survey.md](notes/00-survey.md) (Japanese). Termination of the official ω-Y is not a theorem of this repository; the official ω-Y is treated in a separate repository, [koteitan/wy-wo-por](https://github.com/koteitan/wy-wo-por). The cause of the difference is in [notes/02-feasibility.md](notes/02-feasibility.md) (Japanese): only the rule that fills the gap in a copied block, the magma, differs.
 
 ## What is proved
 
@@ -128,7 +128,7 @@ This repository is licensed under the Apache License 2.0 ([LICENSE](LICENSE)). P
 
 ## References
 
-- Phyrion, [omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean). Lean formalization of the well-foundedness of weak ω-Y.
+- Phyrion, [omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean). Lean formalization of the well-foundedness of weak-magma ω-Y.
 - Phyrion, [1Y-Well-Ordering-Lean](https://github.com/Phyrion1343/1Y-Well-Ordering-Lean). Lean formalization of the well-foundedness of 1-Y.
 - T. J. Carlson, Elementary patterns of resemblance, Annals of Pure and Applied Logic 108 (2001), 19–77.
 - koteitan, [1y-wo-por](https://github.com/koteitan/1y-wo-por). Well-foundedness of 1-Y by patterns of resemblance.
