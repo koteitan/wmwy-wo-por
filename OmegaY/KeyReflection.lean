@@ -1,10 +1,10 @@
 /-
 Adapted from Phyrion, omega-Y-Well-Ordering-Lean, OmegaY/KeyReflection.lean,
 revision 33c16a8ce8f7e01bb3794881f3ff9109474beaed (Apache-2.0).
-Changes: none besides this header.
+Changes: imports `OmegaY.Reflection` instead of `OmegaY.Reflection.Stability`, which is not included.
 -/
 import OmegaY.Keys
-import OmegaY.Reflection.Stability
+import OmegaY.Reflection
 
 /-! The actual finite-vector vectorSyntax instantiates the recursively constructed
 reflection relation. This is an explicit connection between the key proofs

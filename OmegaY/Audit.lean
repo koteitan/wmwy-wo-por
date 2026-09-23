@@ -1,7 +1,8 @@
 /-
 Adapted from Phyrion, omega-Y-Well-Ordering-Lean, OmegaY/Audit.lean,
 revision 33c16a8ce8f7e01bb3794881f3ff9109474beaed (Apache-2.0).
-Changes: none besides this header.
+Changes: the axiom audit also covers the theorems of `Por` (the model of this
+repository), and the final theorems print their axioms.
 -/
 import OmegaY.All
 import Lean.Util.CollectAxioms
@@ -28,7 +29,8 @@ open Lean in
   let allowed : Array Name := #[``propext, ``Classical.choice, ``Quot.sound]
   let mut count : Nat := 0
   for (name, info) in env.constants.toList do
-    if name.toString.startsWith "OmegaY." || name.toString.startsWith "_private.OmegaY." then
+    if name.toString.startsWith "OmegaY." || name.toString.startsWith "_private.OmegaY." ||
+        name.toString.startsWith "Por." || name.toString.startsWith "_private.Por." then
       match info with
       | .axiomInfo _ => throwError "New research axiom declaration: {name}"
       | .thmInfo _ =>
@@ -39,3 +41,8 @@ open Lean in
         count := count + 1
       | _ => pure ()
   logInfo m!"Audited {count} research theorems: only propext, Classical.choice and Quot.sound occur. No new axiom declaration."
+
+#print axioms OmegaY.Expansion.omegaY_step_wellFounded
+#print axioms OmegaY.Expansion.omegaY_generated_isWellOrder
+#print axioms OmegaY.Expansion.omegaY_descendants_isWellOrder
+#print axioms OmegaY.Expansion.omegaY_trajectory_terminates

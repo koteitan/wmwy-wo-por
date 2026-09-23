@@ -13,9 +13,24 @@ projects, which are licensed under the Apache License, Version 2.0 (see LICENSE)
 
 OmegaY/ and OmegaY.lean are adapted from the first project.  Each file starts
 with a header naming its original path and revision and stating what was
-changed.  The only change in the code is that the lemma
-`YesMetaZFC.BMS.transGen_head` is replaced by `Por.BMS.transGen_head` of this
-repository (same statement), in three files.
+changed.  The changes in the code are:
+  * the lemma `YesMetaZFC.BMS.transGen_head` is replaced by
+    `Por.BMS.transGen_head` of this repository (same statement), in three files;
+  * the semantic layer is replaced.  OmegaY/Reflection/Interface.lean keeps the
+    interface definitions of OmegaY/Reflection.lean unchanged.
+    OmegaY/Reflection.lean and OmegaY/Reflection/OrdinalSupply.lean keep the
+    statements the core calls (`R`, `key_weaken`, `finite_reflection`, `Label`,
+    `top`, `initial_finite_graph`) and prove them from the model in Por/;
+    OmegaY/Reflection/Skolem.lean and OmegaY/Reflection/Stability.lean are not
+    included;
+  * OmegaY/KeyReflection.lean imports OmegaY.Reflection instead of
+    OmegaY.Reflection.Stability, and OmegaY/Audit.lean also audits `Por`.
+
+Por/Formula.lean, Por/Relation.lean and Por/Supply.lean (the
+patterns-of-resemblance model) are written for this repository.  Por/Supply.lean
+adapts `Label`, `top`, `countable_iio_ordinal` and `countable_iio` from
+OmegaY/Reflection/OrdinalSupply.lean of the first project, and says so in its
+header.
 
 ZeroY/ (20 modules) is taken from koteitan/1y-wo-por
 (https://github.com/koteitan/1y-wo-por, Apache-2.0), which adapted it from

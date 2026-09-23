@@ -25,7 +25,7 @@
 
 鍵は $`\mathrm{Key}_m = \mathrm{Lex}(\mathrm{Fin}\ m → \mathrm{Label} ∪ \{⊤\})`$、鍵の型板 $`t`$ は各座標に列の番号か $`⊤`$ を置いたもので、$`\mathrm{eval}\ t\ v`$ は単調である。
 
-有限反映（Phyrion 氏の文をそのまま使う）：$`f`$ が狭義単調、$`f < b`$、内部の辺 $`G`$ が $`f`$ で成り立ち、上端への要求 $`N`$ の鍵が $`θ`$ 未満、$`N`$ が $`b`$ へ成り立ち、$`R(θ, f(\mathrm{cut}), b)`$ とする。このとき次を満たす $`g`$ がある。$`g`$ は狭義単調、$`g < f(\mathrm{cut})`$、$`i \lt \mathrm{cut}`$ で $`g(i) = f(i)`$、$`g ≤ f`$、$`G`$ が $`g`$ で成り立ち、$`N`$ が $`f(\mathrm{cut})`$ へ成り立つ。
+有限反映（Phyrion 氏の文をそのまま使う）：$`f`$ が狭義単調、$`f \lt b`$、内部の辺 $`G`$ が $`f`$ で成り立ち、上端への要求 $`N`$ の鍵が $`θ`$ 未満、$`N`$ が $`b`$ へ成り立ち、$`R(θ, f(\mathrm{cut}), b)`$ とする。このとき次を満たす $`g`$ がある。$`g`$ は狭義単調、$`g \lt f(\mathrm{cut})`$、$`i \lt \mathrm{cut}`$ で $`g(i) = f(i)`$、$`g ≤ f`$、$`G`$ が $`g`$ で成り立ち、$`N`$ が $`f(\mathrm{cut})`$ へ成り立つ。
 
 ## 2. 定義
 
@@ -76,6 +76,12 @@ $`\mathrm{Good}(α)`$：上端の述語をすべて定義した高さ $`ω_1`$ �
 
 ## 4. 実装
 
-- `OmegaY/Reflection/Interface.lean`：Phyrion 氏のインターフェースの定義（変えない）。
-- `Por/Formula.lean`、`Por/Relation.lean`、`Por/Reflection.lean`、`Por/Supply.lean`：2 章と 3 章。
-- `OmegaY/Reflection.lean`、`OmegaY/Reflection/OrdinalSupply.lean`：コアが呼ぶ名前を、このモデルの定理で与える薄いファイル。Phyrion 氏の `Skolem.lean`、`Stability.lean` は含めない。
+状態（2026-09-23）：全部緑。`sorry` は無く、公理は `propext`、`Classical.choice`、`Quot.sound` だけである。
+
+| ファイル | 中身 |
+|---|---|
+| `OmegaY/Reflection/Interface.lean` | Phyrion 氏のインターフェースの定義（変えない） |
+| `Por/Formula.lean` | リテラル `Lit`、論理式 `Form`、真偽 `Lit.Holds`、`Sat`、初等性 `ElemL`、合同の補題、各点で下げても鍵の条件が残る `Lit.holds_of_le` |
+| `Por/Relation.lean` | 段 `StageLT`、再帰 `stepF`、関係 `R`、`R_iff`、`R_lt`、`key_weaken`（3.1）、`finite_reflection`（3.2） |
+| `Por/Supply.lean` | `Good`、閉包 `next`・`tower`・`lam`、`good_cofinal`、`top_abs`、`good_R`、閉じた点の列 `points`、`initial_finite_graph`（3.3） |
+| `OmegaY/Reflection.lean`、`OmegaY/Reflection/OrdinalSupply.lean` | コアが呼ぶ名前を、上の定理で与える薄いファイル。Phyrion 氏の `Skolem.lean`、`Stability.lean` は含めない |
