@@ -1,0 +1,29 @@
+wy-wo-por
+
+This repository contains original work and code adapted from the following
+projects, which are licensed under the Apache License, Version 2.0 (see LICENSE):
+
+  Phyrion, omega-Y-Well-Ordering-Lean
+  https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean
+  revision 33c16a8ce8f7e01bb3794881f3ff9109474beaed
+
+  Phyrion, 1Y-Well-Ordering-Lean
+  https://github.com/Phyrion1343/1Y-Well-Ordering-Lean
+  revision 6533b2975f3cafb3582dc8f8127e9ea7144d7e69
+
+OmegaY/ and OmegaY.lean are adapted from the first project.  Each file starts
+with a header naming its original path and revision and stating what was
+changed.  The only change in the code is that the lemma
+`YesMetaZFC.BMS.transGen_head` is replaced by `Por.BMS.transGen_head` of this
+repository (same statement), in three files.
+
+ZeroY/ (20 modules) is taken from koteitan/1y-wo-por
+(https://github.com/koteitan/1y-wo-por, Apache-2.0), which adapted it from
+`formalization/ZeroY` of the second project; each file keeps its header.  The
+imports and namespaces of the BMS layer are renamed to `Por.BMS`, and
+`ZeroY/BMS/AnyArray.lean` is not included.
+
+Por/BMS/ is taken from koteitan/1y-wo-por, where it was written for that
+repository by the same author.  No code from the snapshot of YesMetaZFC /
+BMS-Well-Ordering-Lean that the first project depends on, which carries no
+license, is copied or adapted here.

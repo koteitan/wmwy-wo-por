@@ -2,7 +2,7 @@
 
 wy-wo-por の最初のノートである。ω-Y 数列の定義と規範のプログラム（§1）、停止性の証明と強さ（§2）、1-Y の証明の構造を ω-Y に移すときに変わるところ（§3）、計画（§4）を書く。調べた日は 2026-09-23 である。
 
-1-Y の側の前提は、姉妹プロジェクト 1y-wo-por（未公開）の設計である。Phyrion 氏の 1-Y の組合せの層（[Phyrion1343/1Y-Well-Ordering-Lean](https://github.com/Phyrion1343/1Y-Well-Ordering-Lean) の `formalization/OneY`、`formalization/ZeroY`、Apache-2.0）は、インターフェース `FiniteReflection lt D R` だけを仮定する。1y-wo-por は、その $`R(k,η,a,b)`$（$`(k,η) ∈ ω × ω_1`$）を、順序数の上の Σ₁ 初等性の関係で与えた。
+1-Y の側の前提は、姉妹プロジェクト [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por)の設計である。Phyrion 氏の 1-Y の組合せの層（[Phyrion1343/1Y-Well-Ordering-Lean](https://github.com/Phyrion1343/1Y-Well-Ordering-Lean) の `formalization/OneY`、`formalization/ZeroY`、Apache-2.0）は、インターフェース `FiniteReflection lt D R` だけを仮定する。1y-wo-por は、その $`R(k,η,a,b)`$（$`(k,η) ∈ ω × ω_1`$）を、順序数の上の Σ₁ 初等性の関係で与えた。
 
 ## 0. 要約
 
