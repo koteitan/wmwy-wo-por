@@ -15,14 +15,14 @@
 
 ## 1. 記号
 
-- $`\mathrm{Label}`$：ラベルの型。整列した線形順序であればよい（Lean の仮定は `LinearOrder` と `WellFoundedLT`）。最終定理で使う具体的な場合を **モデル** と呼ぶ。モデルでは $`\mathrm{Label} = \{o \le \omega_1\}`$ である（[01](01-ordinals.md) §6）。
-- $`\mathrm{Key}`$：鍵の型。同じく整列した線形順序であればよい。モデルでは $`\mathrm{Key}_m`$ である（[02](02-well-founded.md) §3。$`m`$ は鍵の長さ）。
+- $`\mathrm{Label}`$：ラベルの型。整列した線形順序であればよい（Lean の仮定は `LinearOrder` と `WellFoundedLT`）。最終定理では $`\mathrm{Label} = \{o \le \omega_1\}`$ である（[01](01-ordinals.md) §6）。
+- $`\mathrm{Key}`$：鍵の型。同じく整列した線形順序であればよい。最終定理では $`\mathrm{Key}_m`$ である（[02](02-well-founded.md) §3。$`m`$ は鍵の長さ）。
 - $`S`$：鍵の構文 `KeySyntax Label Key`（[06](06-combinatorial-layer.md) §1）。
 - $`R(\theta, a, b)`$：鍵 $`\theta`$、下の点 $`a`$（ラベル）、上の点 $`b`$（ラベル）。$`b`$ は上端である（[02](02-well-founded.md) §3）。Lean では `Por.R S θ a b`。
 
 ## 2. 言語
 
-[03](03-sigma1-elementary.md) §7 の言語の記号に、ここで意味を与える。記号は 3 種類である。$`n`$ 変数の型板 $`t`$ と位置 $`i, j \lt n`$ ごとに、次の記号がある。$`\mathrm{Rel}_{t,i,j}`$ と $`\mathrm{Top}_{t,i}`$ は、[03](03-sigma1-elementary.md) §7 の $`\mathrm{Rel}_t(v_i, v_j)`$ と $`\mathrm{Top}_t(v_i)`$ のことである。
+[03](03-sigma1-elementary.md) §7 の言語の記号に、ここで意味を与える。記号は 3 種類である。$`n`$ 変数の型板 $`t`$ と位置 $`i, j \lt n`$ ごとに、次の記号がある。
 
 | 記号 | 引数の数 | 意味（高さ $`c`$ の構造で） |
 |---|---|---|
@@ -161,7 +161,7 @@ R(\mathrm{eval}\ t\ \vec v,\ v_i,\ a) \iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ b)
 
 | 場所 | 使い方 |
 |---|---|
-| [README](../README.md)「関係 R」 | 定義の式と、再帰の段 |
+| [README](../README.md)「関係 R」 | 定義の式と、段 |
 | [README](../README.md)「3 つの定理の証明」 | 鍵の弱化の証明の要約 |
 | [notes/01-design.md](../notes/01-design.md) §2、§3.1 | 定義、再帰、鍵の弱化 |
 | [Por/Relation.lean](../Por/Relation.lean) | このノートのすべて |

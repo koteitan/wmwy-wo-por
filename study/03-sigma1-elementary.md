@@ -6,7 +6,7 @@
 
 | ノート | ここで使う言葉 |
 |---|---|
-| [01 順序数と ω₁](01-ordinals.md) | 順序数、極限順序数、$`\{x \mid x \lt \gamma\}`$、ラベルの型、$`\mathrm{Fin}\ n`$ |
+| [01 順序数と ω₁](01-ordinals.md) | 順序数、極限順序数、$`\{x \mid x \lt \gamma\}`$、ラベルの型、$`\mathrm{Fin}\ n`$、位置 |
 | [02 整礎関係と整礎再帰](02-well-founded.md) | 鍵 $`\mathrm{Key}_m`$ とその順序、上端、ガード |
 
 このノートは、関係 $`R`$ の定義に使うモデル論の言葉を説明する。一階の構造、$`\Sigma_1`$ 論理式、$`\Sigma_1`$ 初等部分構造、Tarski–Vaught の判定法である。後半（§7、§8）は、Lean がそれらをどう表すかを説明する。
@@ -132,7 +132,7 @@ $`\Sigma_1`$ 初等性を示すには、下向きだけを確かめればよい�
 
 一般の Tarski–Vaught 判定法は、すべての論理式について同じことを言う。このリポジトリは $`\Sigma_1`$ だけを使う。
 
-**使い方.** 2 の条件は「$`A`$ が証人で閉じている」ことである。[08 閉包と閉じた点](08-closure-chain.md) の `lam_good` はこの形で示す。$`\gamma`$ から始めて、真の主張の証人を足していき、上限を取る。
+**使い方.** 2 の条件は「$`A`$ が証人で閉じている」ことである。[08 閉包と Good な点](08-closure-chain.md) の `lam_good` はこの形で示す。$`\gamma`$ から始めて、真の主張の証人を足していき、上限を取る。
 
 ## 7. Lean での Σ₁ 論理式
 
@@ -141,27 +141,27 @@ Lean の論理式は [Por/Formula.lean](../Por/Formula.lean) にある。次の 
 - $`\mathrm{Label}`$：ラベルの型。線形順序である。[01](01-ordinals.md) §6 のラベルの型はその例である。
 - $`\mathrm{Key}`$：鍵の型。線形順序である。[02](02-well-founded.md) §3 の $`\mathrm{Key}_m`$ はその例である。
 - `S : KeySyntax Label Key`：**鍵の構文**。次の 3 つの組である。
-  - `S.Template n`：$`n`$ 変数の **鍵の型板** の型。
+  - `S.Template n`：$`n`$ 変数の **型板** の型。
   - `S.eval t v`：型板 $`t`$ を変数の値 $`v : \mathrm{Fin}\ n \to \mathrm{Label}`$ で評価した鍵。
   - `S.monotone_eval`：`S.eval` は各点で単調である。つまり、すべての $`i`$ で $`w_i \le v_i`$ なら $`\mathrm{eval}\ t\ w \le \mathrm{eval}\ t\ v`$ である。
 
 ω-Y での型板は [06](06-combinatorial-layer.md) §1 で説明する。そこでは、型板は鍵の各座標に $`\mathrm{some}\ i`$（変数 $`v_i`$ の値を置く）か $`\mathrm{none}`$（$`\top`$ を置く）を書いた列である。
 
-**言語.** 変数を $`v_0, \ldots, v_{n-1}`$ とし、番号 $`i`$ を変数の **位置** と呼ぶ。記号は 3 種類である。
+**言語.** 変数を $`v_0, \ldots, v_{n-1}`$ とし、$`\vec v = (v_0, \ldots, v_{n-1})`$ と書く。番号 $`i`$ は変数の位置（[01](01-ordinals.md) §7）である。記号は 3 種類である。
 
 - 順序 $`\lt`$。
-- 型板 $`t`$ と位置 $`i, j`$ ごとの **内部の関係** $`\mathrm{Rel}_t(v_i, v_j)`$。2 つの点の間の関係である。
-- 型板 $`t`$ と位置 $`i`$ ごとの **上端の述語** $`\mathrm{Top}_t(v_i)`$。点 $`v_i`$ から構造の高さ $`c`$（上端、[02](02-well-founded.md) §3）への関係である。$`c`$ 自身は領域に無い。
+- 型板 $`t`$ と位置 $`i, j`$ ごとの **内部の関係** $`\mathrm{Rel}_{t,i,j}(\vec v)`$。2 つの点 $`v_i, v_j`$ の間の関係である。
+- 型板 $`t`$ と位置 $`i`$ ごとの **上端の述語** $`\mathrm{Top}_{t,i}(\vec v)`$。点 $`v_i`$ から構造の高さ $`c`$（上端、[02](02-well-founded.md) §3）への関係である。$`c`$ 自身は領域に無い。
 
-$`\mathrm{Rel}_t`$ と $`\mathrm{Top}_t`$ の **鍵** は $`\mathrm{eval}\ t\ v`$ である。つまり鍵は変数の値で決まる。2 つの記号の意味は [07](07-relation-r.md) §2 で与える。このノートでは、それらの解釈を引数として受け取る（`Lit.Holds`）。
+$`\mathrm{Rel}_{t,i,j}`$ と $`\mathrm{Top}_{t,i}`$ の鍵は $`\mathrm{eval}\ t\ v`$ である。つまり鍵は変数の値で決まる。2 つの記号の意味は [07](07-relation-r.md) §2 で与える。このノートでは、それらの解釈を引数として受け取る（`Lit.Holds`）。
 
 **定義（`Lit n`）.** $`n`$ 変数のリテラルは次の 3 種類である。$`i, j`$ は位置、$`t`$ は型板である。`pos = true` が肯定、`pos = false` が否定である。
 
 | Lean | 読み方 | 鍵 |
 |---|---|---|
 | `Lit.lt i j pos` | $`v_i \lt v_j`$ | なし |
-| `Lit.rel t i j pos` | $`\mathrm{Rel}_t(v_i, v_j)`$、鍵は $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
-| `Lit.top t i pos` | $`\mathrm{Top}_t(v_i)`$、鍵は $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
+| `Lit.rel t i j pos` | $`\mathrm{Rel}_{t,i,j}(\vec v)`$、鍵は $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
+| `Lit.top t i pos` | $`\mathrm{Top}_{t,i}(\vec v)`$、鍵は $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
 
 **定義（`Form`）.** 論理式は 3 つ組 $`(n, \mathit{fixed}, \mathit{lits})`$ である。
 
@@ -230,7 +230,7 @@ Lean では `ElemL rel topA topB θ a b` である。内部の関係の解釈 `r
 |---|---|
 | [README](../README.md)「関係 R」 | $`\preccurlyeq_{\Sigma_1}`$ と、部分的な上端の述語 |
 | [notes/01-design.md](../notes/01-design.md) §2.1、§2.2 | 構造と論理式 |
-| [notes/01-design.md](../notes/01-design.md) §3.3 | Tarski–Vaught の形での閉じた点 |
+| [notes/01-design.md](../notes/01-design.md) §3.3 | Tarski–Vaught の形での Good な点 |
 | [Por/Formula.lean](../Por/Formula.lean) | §7、§8 のすべて |
 | [Por/Supply.lean](../Por/Supply.lean) | §6（`lam_good`） |
 

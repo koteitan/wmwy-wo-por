@@ -113,13 +113,13 @@ The right side is a countable union of countable sets. Terms with $`\alpha_i = 0
 
 In Lean this is `Ordinal.iSup_lt_omega_one`. The index type must have a `Countable` instance. This repository uses it in three places (all in [Por/Supply.lean](../../Por/Supply.lean)).
 
-The terms of the next table are defined in later notes. The witness height is in [08](08-closure-chain.md) §3, `Input S γ` in §7, and the closure tower in [08](08-closure-chain.md) §5. $`\mathrm{Fin}\ n`$ is the set $`\{0, 1, \ldots, n-1\}`$, and `φ.n` is the number of variables of a formula $`\varphi`$ ([03](03-sigma1-elementary.md) §7).
+$`\mathrm{Fin}\ n`$ is the set $`\{0, 1, \ldots, n-1\}`$. The other terms of the table are defined in later notes. `φ.n` is the number of variables of a formula $`\varphi`$ ([03](03-sigma1-elementary.md) §7).
 
 | Place | Index type | What the supremum is taken of |
 |---|---|---|
-| `wh_lt` | `Fin φ.n` | the heights of one tuple of witnesses |
+| `wh_lt` | `Fin φ.n` | the heights of one tuple of witnesses ([08](08-closure-chain.md) §3) |
 | `nextO_lt` | `Input S γ` (§7) | heights of witnesses |
-| `lam_lt` | `ℕ` | the closure tower |
+| `lam_lt` | `ℕ` | the iterates of `next` ([08](08-closure-chain.md) §5) |
 
 ## 6. The label type
 
@@ -139,7 +139,7 @@ In Lean these are `Por.Supply.Label := {o : Ordinal.{0} // o ≤ ω₁}` and `Po
 | `Por.Supply.countable_iio` | for a label $`a \lt \omega_1`$, the set of labels below $`a`$ is countable |
 | `OrdinalSupply.bot_lt_top` | the least label $`\bot = 0`$ satisfies $`\bot \lt \omega_1`$ |
 
-**Why ω₁ itself is a label.** The termination proof puts a label on each column of the ω-Y mountain ([05](05-omegay-mountain.md) §3). This sequence of labels is called a **representation** (defined in [06](06-combinatorial-layer.md) §4). Every label of a representation lies below $`\omega_1`$ (`KeyRepresentation.bounded`). On the other hand, the relation $`R(\kappa, x, b)`$ defined in [07](07-relation-r.md) ($`\kappa`$ a key, $`x`$ and $`b`$ labels) is also used with third argument $`b`$ (the **top**) equal to $`\omega_1`$, as $`R(\kappa, x, \omega_1)`$ (Good in [08](08-closure-chain.md), `top_abs` in [09](09-obligations.md)). For this, $`\omega_1`$ is an element of the same type.
+**Why ω₁ itself is a label.** The termination proof puts a label below $`\omega_1`$ on each column of the ω-Y mountain ([05](05-omegay-mountain.md) §3; `KeyRepresentation.bounded` in [06](06-combinatorial-layer.md) §4). On the other hand, the relation $`R(\kappa, x, b)`$ defined in [07](07-relation-r.md) ($`\kappa`$ a key ([02](02-well-founded.md) §3), $`x`$ and $`b`$ labels) is also used with $`b = \omega_1`$ (Good in [08](08-closure-chain.md), `top_abs` in [09](09-obligations.md)). For this, $`\omega_1`$ is an element of the same type.
 
 ## 7. Counting parameters
 
@@ -173,7 +173,7 @@ The **1-Y version** is study/ of the sister project [koteitan/1y-wo-por](https:/
 | Place | Use |
 |---|---|
 | [README](../../README-en.md) "The relation R", "Proofs of the three theorems" | labels are ordinals at most $`\omega_1`$; Good points are cofinal in $`\omega_1`$ |
-| [notes/01-design.md](../../notes/01-design.md) §3.3 | closed points, countably many formulas, $`\omega`$ iterations |
+| [notes/01-design.md](../../notes/01-design.md) §3.3 | Good points, countably many formulas, $`\omega`$ iterations |
 | [Por/Supply.lean](../../Por/Supply.lean) | all of §4–§7 |
 | [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean) | `Label`, `top`, `OrderBot`, `bot_lt_top` |
 

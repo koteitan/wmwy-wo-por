@@ -1,6 +1,6 @@
 [← Back](README.md) | [English](en/08-closure-chain.md) | [Japanese](08-closure-chain.md)
 
-# ω₁ より下の閉包と閉じた点の列
+# ω₁ より下の閉包と Good な点の列
 
 前提
 
@@ -10,7 +10,7 @@
 | [03 構造と Σ₁ 初等部分構造](03-sigma1-elementary.md) | 証人、パラメータ、Tarski–Vaught 判定法、鍵の構文 $`S`$、型板、`Form`、`Sat` |
 | [07 関係 R](07-relation-r.md) | $`R`$、$`\mathrm{Rel}_{t,i,j}`$、$`\mathrm{Top}_{t,i}`$、`relR`、`topR`、$`\vec p \lt a`$ |
 
-このノートは、$`\omega_1`$ より下に「$`\Sigma_1`$ の証人で閉じた点」を作る方法を説明する。これは Löwenheim–Skolem の定理と同じ考え方で、証人を足して上限を取る。できた点を並べた列が、[09](09-obligations.md) で最初のラベルになる。Lean のファイルは [Por/Supply.lean](../Por/Supply.lean) である。このノートでは、鍵の構文 $`S`$ の型板の型（[03](03-sigma1-elementary.md) §7）が可算であることを仮定する（`[∀ n, Countable (S.Template n)]`）。ω-Y の型板の型は有限である（`Keys.template_countable`）。
+このノートは、$`\omega_1`$ より下に、$`\Sigma_1`$ の証人で閉じた点（§1 の Good な点）を作る方法を説明する。これは Löwenheim–Skolem の定理と同じ考え方で、証人を足して上限を取る。できた点を並べた列が、[09](09-obligations.md) で最初のラベルになる。Lean のファイルは [Por/Supply.lean](../Por/Supply.lean) である。このノートでは、鍵の構文 $`S`$ の型板の型（[03](03-sigma1-elementary.md) §7）が可算であることを仮定する（`[∀ n, Countable (S.Template n)]`）。ω-Y の型板の型は有限である（`Keys.template_countable`）。
 
 ## 1. 周りの構造と Good
 
@@ -28,7 +28,7 @@ Lean では、$`\mathfrak B`$ での真偽は `Sat (relR S) (topR S top) (fun _ 
 \mathrm{Good}(\alpha) :\iff \forall \varphi\ \forall \vec p \lt \alpha\ \bigl(\mathfrak B \models \varphi(\vec p) \implies \mathfrak B{\restriction}\alpha \models \varphi(\vec p)\bigr)
 ```
 
-Lean の `Good α` はこの形である。$`\mathfrak B{\restriction}\alpha`$ は $`\mathfrak B`$ の本当の部分構造である（解釈が同じで、領域だけが違う）。逆向きの含意はいつも成り立つ（証人 $`\lt \alpha`$ は $`\lt \omega_1`$）。したがって [03](03-sigma1-elementary.md) §6 の Tarski–Vaught 判定法から、$`\mathrm{Good}(\alpha)`$ は $`\mathfrak B{\restriction}\alpha \preccurlyeq_{\Sigma_1} \mathfrak B`$ と同じである。Good な点は、$`\mathfrak B`$ で真の $`\Sigma_1`$ の主張の証人を自分より下に持つ。そこで Good な点を **閉じた点** とも呼ぶ。
+Lean の `Good α` はこの形である。$`\mathfrak B{\restriction}\alpha`$ は $`\mathfrak B`$ の本当の部分構造である（解釈が同じで、領域だけが違う）。逆向きの含意はいつも成り立つ（証人 $`\lt \alpha`$ は $`\lt \omega_1`$）。したがって [03](03-sigma1-elementary.md) §6 の Tarski–Vaught 判定法から、$`\mathrm{Good}(\alpha)`$ は $`\mathfrak B{\restriction}\alpha \preccurlyeq_{\Sigma_1} \mathfrak B`$ と同じである。Good な点は、$`\mathfrak B`$ で真の $`\Sigma_1`$ の主張の証人を自分より下に持つ。
 
 ## 2. 論理式は可算個
 
@@ -78,7 +78,7 @@ Lean の `Good α` はこの形である。$`\mathfrak B{\restriction}\alpha`$ �
 
 ## 5. 塔と λ
 
-**定義（`tower`、`lam`）.** $`\gamma`$ をラベル、$`k`$ を自然数とする。Lean の `tower S γ k` を $`\mathrm{next}^k(\gamma)`$ と書き、**閉包の塔** と呼ぶ。
+**定義（`tower`、`lam`）.** $`\gamma`$ をラベル、$`k`$ を自然数とする。Lean の `tower S γ k` を $`\mathrm{next}^k(\gamma)`$ と書く。
 
 ```math
 \mathrm{next}^0(\gamma) := \gamma, \quad \mathrm{next}^{k+1}(\gamma) := \mathrm{next}\bigl(\mathrm{next}^k(\gamma)\bigr), \qquad \lambda(\gamma) := \sup_{k \in \mathbb N} \mathrm{next}^k(\gamma)
@@ -106,9 +106,9 @@ Lean の `Good α` はこの形である。$`\mathfrak B{\restriction}\alpha`$ �
 
 **例（形だけ）.** $`\lambda(0)`$ は、「$`\mathfrak B`$ で真の $`\Sigma_1`$ の主張で、パラメータが $`\lambda(0)`$ より下のもの」の証人をすべて含む。$`\lambda(0)`$ の具体的な値は分からない。証明は値を使わず、$`\lambda(0) \lt \omega_1`$ と $`\mathrm{Good}(\lambda(0))`$ だけを使う。
 
-**Good な点の集合について.** Good な点の集合が $`\omega_1`$ の中で閉じていること（Good な点の増加列の上限がまた Good であること）は示していないし、使わない。この「閉じている」は、「閉じた点」（証人で閉じている点、§1）の「閉じた」とは意味が違う。そのため club（閉非有界集合）とは呼ばない。
+**Good な点の集合について.** Good な点の集合が $`\omega_1`$ の中で閉じていること（Good な点の増加列の上限がまた Good であること）は示していないし、使わない。そのため club（閉非有界集合）とは呼ばない。
 
-## 7. 閉じた点の列
+## 7. Good な点の列
 
 **定義（`points`）.**
 
@@ -131,7 +131,7 @@ c_0 := \lambda(0), \qquad c_{k+1} := \lambda(c_k)
 | 場所 | 使い方 |
 |---|---|
 | [README](../README.md)「3 つの定理の証明」 | 「論理式は可算個なので、Good な点は $`\omega_1`$ の中で共終である」 |
-| [notes/01-design.md](../notes/01-design.md) §3.3 | 閉じた点、$`\omega`$ 回のくり返し、閉じた点の列 |
+| [notes/01-design.md](../notes/01-design.md) §3.3 | Good な点、$`\omega`$ 回のくり返し、Good な点の列 |
 | [Por/Supply.lean](../Por/Supply.lean) | このノートのすべて |
 
 ## 9. Lean での対応
@@ -145,4 +145,4 @@ c_0 := \lambda(0), \qquad c_{k+1} := \lambda(c_k)
 | 閉包の 1 段 | `nextO`、`next`、`next_val`、`nextO_lt`、`next_lt`、`lt_next`、`wh_le_nextO`、`wit_below` | 同上 |
 | 塔と λ | `tower`、`tower_lt`、`tower_succ_lt`、`tower_mono`、`lamO`、`lam`、`tower_le_lam`、`lam_lt`、`lt_lam`、`exists_tower` | 同上 |
 | λ は Good | `lam_good`、`good_cofinal` | 同上 |
-| 閉じた点の列 | `points`、`points_lt`、`points_good`、`points_strictMono` | 同上 |
+| Good な点の列 | `points`、`points_lt`、`points_good`、`points_strictMono` | 同上 |

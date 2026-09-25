@@ -6,7 +6,7 @@ Prerequisites
 
 | Note | Terms used here |
 |---|---|
-| [01 Ordinals and ω₁](01-ordinals.md) | ordinal, limit ordinal, $`\{x \mid x \lt \gamma\}`$, the label type, $`\mathrm{Fin}\ n`$ |
+| [01 Ordinals and ω₁](01-ordinals.md) | ordinal, limit ordinal, $`\{x \mid x \lt \gamma\}`$, the label type, $`\mathrm{Fin}\ n`$, position |
 | [02 Well-founded relations and recursion](02-well-founded.md) | keys $`\mathrm{Key}_m`$ and their order, top, guard |
 
 This note explains the model-theoretic terms used in the definition of the relation $`R`$: first-order structures, $`\Sigma_1`$ formulas, $`\Sigma_1`$-elementary substructures and the Tarski–Vaught test. The second half (§7, §8) explains how Lean represents them.
@@ -132,7 +132,7 @@ To show $`\Sigma_1`$-elementarity it is enough to check the downward direction.
 
 The general Tarski–Vaught test says the same for all formulas. This repository uses only $`\Sigma_1`$.
 
-**How it is used.** Condition 2 says "$`A`$ is closed under witnesses". `lam_good` in [08 Closure and closed points](08-closure-chain.md) is proved in this form: start from $`\gamma`$, add witnesses of true claims, and take the supremum.
+**How it is used.** Condition 2 says "$`A`$ is closed under witnesses". `lam_good` in [08 Closure and Good points](08-closure-chain.md) is proved in this form: start from $`\gamma`$, add witnesses of true claims, and take the supremum.
 
 ## 7. Σ₁ formulas in Lean
 
@@ -141,27 +141,27 @@ The formulas in Lean are in [Por/Formula.lean](../../Por/Formula.lean). Fix the 
 - $`\mathrm{Label}`$: the type of labels, a linear order. The label type of [01](01-ordinals.md) §6 is an example.
 - $`\mathrm{Key}`$: the type of keys, a linear order. $`\mathrm{Key}_m`$ of [02](02-well-founded.md) §3 is an example.
 - `S : KeySyntax Label Key`: a **key syntax**. It consists of three parts.
-  - `S.Template n`: the type of **key templates** over $`n`$ variables.
+  - `S.Template n`: the type of **templates** over $`n`$ variables.
   - `S.eval t v`: the key obtained by evaluating the template $`t`$ at the values $`v : \mathrm{Fin}\ n \to \mathrm{Label}`$ of the variables.
   - `S.monotone_eval`: `S.eval` is pointwise monotone. That is, if $`w_i \le v_i`$ for all $`i`$, then $`\mathrm{eval}\ t\ w \le \mathrm{eval}\ t\ v`$.
 
 The templates of ω-Y are explained in [06](06-combinatorial-layer.md) §1. There a template is a sequence that puts, at each coordinate of the key, $`\mathrm{some}\ i`$ (put the value of the variable $`v_i`$) or $`\mathrm{none}`$ (put $`\top`$).
 
-**Language.** The variables are $`v_0, \ldots, v_{n-1}`$, and the number $`i`$ is called the **position** of the variable. There are three kinds of symbols.
+**Language.** The variables are $`v_0, \ldots, v_{n-1}`$, and we write $`\vec v = (v_0, \ldots, v_{n-1})`$. The number $`i`$ is the position of the variable ([01](01-ordinals.md) §7). There are three kinds of symbols.
 
 - The order $`\lt`$.
-- For each template $`t`$ and positions $`i, j`$, an **internal relation** $`\mathrm{Rel}_t(v_i, v_j)`$. It is a relation between two points.
-- For each template $`t`$ and position $`i`$, a **top predicate** $`\mathrm{Top}_t(v_i)`$. It is a relation from the point $`v_i`$ to the height $`c`$ of the structure (the top, [02](02-well-founded.md) §3). $`c`$ itself is not in the domain.
+- For each template $`t`$ and positions $`i, j`$, an **internal relation** $`\mathrm{Rel}_{t,i,j}(\vec v)`$. It is a relation between the two points $`v_i, v_j`$.
+- For each template $`t`$ and position $`i`$, a **top predicate** $`\mathrm{Top}_{t,i}(\vec v)`$. It is a relation from the point $`v_i`$ to the height $`c`$ of the structure (the top, [02](02-well-founded.md) §3). $`c`$ itself is not in the domain.
 
-The **key** of $`\mathrm{Rel}_t`$ and $`\mathrm{Top}_t`$ is $`\mathrm{eval}\ t\ v`$, so the key depends on the values of the variables. The meaning of the two symbols is given in [07](07-relation-r.md) §2. In this note their interpretations are taken as arguments (`Lit.Holds`).
+The key of $`\mathrm{Rel}_{t,i,j}`$ and $`\mathrm{Top}_{t,i}`$ is $`\mathrm{eval}\ t\ v`$, so the key depends on the values of the variables. The meaning of the two symbols is given in [07](07-relation-r.md) §2. In this note their interpretations are taken as arguments (`Lit.Holds`).
 
 **Definition (`Lit n`).** A literal over $`n`$ variables is one of three kinds. $`i, j`$ are positions and $`t`$ is a template. `pos = true` is the positive literal, `pos = false` the negated one.
 
 | Lean | Reading | Key |
 |---|---|---|
 | `Lit.lt i j pos` | $`v_i \lt v_j`$ | none |
-| `Lit.rel t i j pos` | $`\mathrm{Rel}_t(v_i, v_j)`$ with key $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
-| `Lit.top t i pos` | $`\mathrm{Top}_t(v_i)`$ with key $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
+| `Lit.rel t i j pos` | $`\mathrm{Rel}_{t,i,j}(\vec v)`$ with key $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
+| `Lit.top t i pos` | $`\mathrm{Top}_{t,i}(\vec v)`$ with key $`\mathrm{eval}\ t\ v`$ | $`\mathrm{eval}\ t\ v`$ |
 
 **Definition (`Form`).** A formula is a triple $`(n, \mathit{fixed}, \mathit{lits})`$.
 
@@ -230,7 +230,7 @@ The second lemma says "lowering the witnesses pointwise keeps the key condition 
 |---|---|
 | [README](../../README-en.md) "The relation R" | $`\preccurlyeq_{\Sigma_1}`$ and the partial top predicates |
 | [notes/01-design.md](../../notes/01-design.md) §2.1, §2.2 | structures and formulas |
-| [notes/01-design.md](../../notes/01-design.md) §3.3 | closed points in Tarski–Vaught form |
+| [notes/01-design.md](../../notes/01-design.md) §3.3 | Good points in Tarski–Vaught form |
 | [Por/Formula.lean](../../Por/Formula.lean) | all of §7 and §8 |
 | [Por/Supply.lean](../../Por/Supply.lean) | §6 (`lam_good`) |
 

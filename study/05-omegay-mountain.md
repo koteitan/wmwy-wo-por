@@ -15,11 +15,11 @@
 
 ## 1. 式
 
-**定義（式）.** **式** は正の整数の有限列 $`s = (s_0, \ldots, s_x)`$ で、空か、$`s_0 = 1`$ のものである（`Canonical.Legal`、`Dynamics.Expr`）。この条件を満たすことを **合法** と言い、式を合法な式とも呼ぶ。
+**定義（式）.** **式** は正の整数の有限列 $`s = (s_0, \ldots, s_x)`$ で、空か、$`s_0 = 1`$ のものである（`Canonical.Legal`、`Dynamics.Expr`）。
 
 - 列の番号は 0 から数える。$`i`$ 番目の項を「列 $`i`$」と呼ぶ。最後の列の番号を $`x`$ と書く。
 - 展開（§4）を始める式を **種** と呼ぶ。標準の種は $`(1, m)`$（$`m`$ は 2 以上の整数）である。Lean では `Dynamics.seed n` $`= (1, n+2)`$ である。
-- 式の順序は辞書式順序である（`Dynamics.Lex`）。最初に違う項の大小で比べ、真の接頭辞は小さい。[02](02-well-founded.md) §1 のとおり、この順序は式全体の上では整礎でない。
+- 式の順序は [02](02-well-founded.md) §1 の辞書式順序である（`Dynamics.Lex`）。この順序は式全体の上では整礎でない。
 
 ## 2. 行
 
@@ -79,7 +79,7 @@ $`a = b`$ なら行は 1 つ上がる。これは 1-Y 数列（[01](01-ordinals.
 - $`\nu`$ の左の脚 $`L`$ をたどる。$`L`$ の列の中で、$`L`$ から上へ、次の節点の行が $`\mathrm{row}(\nu)`$ 以下である限り登る（`climb`）。着いた節点を新しい候補 $`\nu`$ にする。
 - 新しい候補の値が $`0 \lt \mathrm{value}(\nu) \lt v`$ なら、$`\nu`$ が父である。そうでなければ、この $`\nu`$ から Q の手順をくり返す。
 
-最下の節点の行（行 1）を **最下の行** と呼ぶ。最下の行では、候補は列 $`c-1, c-2, \ldots`$ の最下の節点を順にたどる。したがって最下の節点の父は、値が $`s_c`$ より小さい最も右の列の最下の節点である。これは 1-Y 数列の山の行 0 での親と同じである（1-Y の山は最下の行を 0 と数える）。
+最下の節点は行 1 にある。行 1 では、候補は列 $`c-1, c-2, \ldots`$ の最下の節点を順にたどる。したがって最下の節点の父は、値が $`s_c`$ より小さい最も右の列の最下の節点である。これは 1-Y 数列の山の行 0 での親と同じである（1-Y の山は最下の行を 0 と数える）。
 
 **定義（辺）.** 節点 $`u`$（phantom でない）の真上に節点 $`u^+`$ があるとき、$`u`$ から $`u^+`$ への **辺** がある。$`u^+`$ の左の脚を辺の **父** $`\pi`$ と呼ぶ。父はいつも左の列にある。
 
@@ -123,7 +123,7 @@ $`a = b`$ なら行は 1 つ上がる。これは 1-Y 数列（[01](01-ordinals.
 
 $`s[N]`$ の長さは $`x + N w`$ である。
 
-**列の写し方（`copyColumn`）.** ブロック $`b`$ で列 $`y`$ を写すとき、$`M(s')`$ の列 $`y`$ を **源の列**、その辺を **源の辺** と呼ぶ。節点 $`p`$ のある列の番号を $`\mathrm{col}(p)`$ と書く。$`y`$ の marker $`\mu`$ ごとに、次の 3 種類の節点を置く。
+**列の写し方（`copyColumn`）.** ブロック $`b`$ で列 $`y`$ を写すとき、$`M(s')`$ の列 $`y`$ の辺を **源の辺** と呼ぶ。節点 $`p`$ のある列の番号を $`\mathrm{col}(p)`$ と書く。$`y`$ の marker $`\mu`$ ごとに、次の 3 種類の節点を置く。
 
 - **平行移動**（`copyEdge`）：行 $`\mathrm{row}(\mu)`$ に節点を置く。$`\mu`$ の左の脚を $`\ell`$ とする。新しい節点の左の脚は、$`\ell`$ が根の列より左にあれば $`\ell`$ と同じ節点である。そうでなければ、列 $`\mathrm{col}(\ell) + b w`$ の節点で、行が $`\mathrm{row}(\mu)`$ より小さい最も高いものである。phantom の marker は phantom に写す。
 - **輪郭**（`contour`）：参照の行 $`g`$ を決める。今の最後の列（ブロック $`b-1`$ での列 $`x`$ の写し、$`b = 1`$ では $`M(s')`$ の列 $`x`$）で、各境界の行より真に下の最も高い節点を取る（`below`）。そのうち行が $`\mathrm{row}(\mu)`$ 以上の最後のものの行が $`g`$ である（`referenceAt`）。次に、$`\mu`$ から上へ源の辺を順に写す。辺の上の節点が別の marker なら、その辺の手前で止める。列の頂上に着いたら止める。次数 $`d`$ の源の辺は、今の行 $`h`$ から行 $`h + \omega^d`$ への辺になる。最初の $`h`$ は $`g`$ である。左の脚は、平行移動と同じ規則で、源の辺の父を写したものである。
@@ -162,12 +162,12 @@ $`s[N]`$ の長さは $`x + N w`$ である。
 
 ## 5. weak magma と公式の ω-Y
 
-公式の ω-Y は、Naruyoko 氏のプログラムの `expand` で定義される（[notes/00-survey.md](../notes/00-survey.md) §1.2）。§4 の充填の規則を **weak magma** の規則と呼ぶ。weak-magma ω-Y は、§4 の展開による ω-Y である。これは公式の ω-Y と一致しない。種から、展開と接頭辞を取ることをくり返して届く式を **標準形** と呼ぶ。公式の展開で $`(1, 3)`$、$`(1, 4)`$、$`(1, 5)`$ から届く標準形 3001 個について、$`N = 1, 2, 3`$ の 9003 回の展開のうち、480 回で結果が違う（notes/00-survey.md §1.6）。
+公式の ω-Y は、Naruyoko 氏のプログラムの `expand` で定義される（[notes/00-survey.md](../notes/00-survey.md) §1.2）。§4 の充填の規則を **weak magma** の規則と呼ぶ。weak-magma ω-Y は、§4 の展開による ω-Y である。これは公式の ω-Y と一致しない。公式の展開で $`(1, 3)`$、$`(1, 4)`$、$`(1, 5)`$ から、展開と接頭辞を取ることをくり返して届く式 3001 個について、$`N = 1, 2, 3`$ の 9003 回の展開のうち、480 回で結果が違う（notes/00-survey.md §1.6）。
 
 [notes/02-feasibility.md](../notes/02-feasibility.md) §2 によると、違うのは充填の規則だけである。
 
 - weak：すき間の節点の左の脚は、みな 1 本の列 $`\mathrm{col}(p) + b w`$ にある。$`p`$ は $`\mu`$ から上への源の辺の父である。
-- 公式：すき間の行ごとに、根の列の節点を 1 つ選ぶ。これを **副根** と呼ぶ（選び方は notes/02-feasibility.md §2.2）。$`M(s')`$ の列 $`y`$ で副根と同じ行にある節点を $`z`$ とする。$`z`$ の左の脚の列を $`y'`$ とする（$`z`$ が最下の行にあれば $`y' = y - 1`$）。すき間の節点の左の脚は、列 $`y'`$ を写した列（$`y' \ge c_r`$ なら $`y' + b w`$、$`y' \lt c_r`$ なら $`y'`$）にある。
+- 公式：すき間の行ごとに、根の列の節点を 1 つ選ぶ（選び方は notes/02-feasibility.md §2.2）。$`M(s')`$ の列 $`y`$ で、選んだ節点と同じ行にある節点を $`z`$ とする。$`z`$ の左の脚の列を $`y'`$ とする（$`z`$ が最下の行にあれば $`y' = y - 1`$）。すき間の節点の左の脚は、列 $`y'`$ を写した列（$`y' \ge c_r`$ なら $`y' + b w`$、$`y' \lt c_r`$ なら $`y'`$）にある。
 
 **例.** $`(1, 3, 3)[2]`$ の列 4 の行 2 の節点（すき間）の左の脚は、weak では $`(2, 1)`$（値 2）、公式では $`(3, 1)`$（値 5）である。列 4 の最下の値は、weak では $`2 + 2 = 4`$、公式では $`2 + 5 = 7`$ である。全体は weak $`(1, 3, 2, 5, 4, 9)`$、公式 $`(1, 3, 2, 5, 7, 12)`$ である（公式の値は notes/02-feasibility.md §2.3 のもので、Lean では計算していない）。
 
@@ -203,14 +203,14 @@ notes/02-feasibility.md は最下の行を 0 と数える。Lean の行 $`1 + \d
 
 **定義（1 段の展開）.** $`t \prec s`$（`Dynamics.Step t s`）は、$`s \ne ()`$ かつ、ある $`N`$ で $`t = s[N]`$ であることである。
 
-- `Dynamics.next s N` は、展開のプログラムが成功した結果である。どの合法な式でも成功する（`expand_total`）。
+- `Dynamics.next s N` は、展開のプログラムが成功した結果である。どの式でも成功する（`expand_total`）。
 - 1 段の展開は辞書式順序を真に下げる（`Dynamics.next_lex`）。
-- 山のすべての行で、指数 $`D`$ より上の係数が 0 のとき、$`D`$ を山の **次元** と呼ぶ（[06](06-combinatorial-layer.md) §3）。山の次元が $`D`$ なら、展開したあとの山の次元も $`D`$ である（`expandDiagram_key_dimension`、`Dynamics.next_key_dimension`）。式 $`s`$ から 1 段の展開をくり返して届く式を $`s`$ の **子孫** と呼ぶ。したがって $`D`$ は始めの式ごとに 1 つ選べば、その子孫すべてで使える（`Dynamics.fixed_dimension_for_descendants`）。$`D`$ は [06](06-combinatorial-layer.md) の鍵の長さ $`D + 1`$ を決める。
+- 山のすべての行で、指数 $`D`$ より上の係数が 0 のとき、$`D`$ を山の **次元** と呼ぶ。山の次元が $`D`$ なら、展開したあとの山の次元も $`D`$ である（`expandDiagram_key_dimension`、`Dynamics.next_key_dimension`）。したがって $`D`$ は始めの式ごとに 1 つ選べば、そこから 1 段の展開をくり返して届く式すべてで使える（`Dynamics.fixed_dimension_for_descendants`）。$`D`$ は [06](06-combinatorial-layer.md) の鍵の長さ $`D + 1`$ を決める。
 
 最終定理（[OmegaY/Expansion/WellFounded.lean](../OmegaY/Expansion/WellFounded.lean)、名前空間 `OmegaY.Expansion`）は次のとおりである。
 
 1. `omegaY_step_wellFounded`：$`\prec`$ は整礎である。
-2. `omegaY_generated_isWellOrder`：種から生成される式（種の子孫）の集合は、辞書式順序で整列する。
+2. `omegaY_generated_isWellOrder`：種から生成される式の集合は、辞書式順序で整列する。
 3. `omegaY_descendants_isWellOrder`：どの式でも、そこから届く式の集合は、辞書式順序で整列する。
 4. `omegaY_trajectory_terminates`：コピーの回数の列をどう選んでも、展開を続けると空の式に着く。
 
@@ -230,7 +230,7 @@ notes/02-feasibility.md は最下の行を 0 と数える。Lean の行 $`1 + \d
 
 | 概念 | Lean | ファイル |
 |---|---|---|
-| 合法な式、式 | `Canonical.Legal`、`Dynamics.Expr` | [OmegaY/Canonical/Totality.lean](../OmegaY/Canonical/Totality.lean)、[OmegaY/Expansion/LegalDynamics.lean](../OmegaY/Expansion/LegalDynamics.lean) |
+| 式 | `Canonical.Legal`、`Dynamics.Expr` | [OmegaY/Canonical/Totality.lean](../OmegaY/Canonical/Totality.lean)、[OmegaY/Expansion/LegalDynamics.lean](../OmegaY/Expansion/LegalDynamics.lean) |
 | 種、辞書式順序 | `Dynamics.seed`、`Dynamics.Lex` | [OmegaY/Expansion/LegalDynamics.lean](../OmegaY/Expansion/LegalDynamics.lean) |
 | 行、跳び、冪を足す、次の行 | `Row`、`Row.jump`、`Row.bump`、`Row.B` | [OmegaY/Rows.lean](../OmegaY/Rows.lean) |
 | 節点、山 | `Canonical.Cell`、`Canonical.Ref`、`Canonical.Mountain`、`Canonical.phantom` | [OmegaY/Canonical/Build.lean](../OmegaY/Canonical/Build.lean) |

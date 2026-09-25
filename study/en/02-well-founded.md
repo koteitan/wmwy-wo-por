@@ -29,9 +29,9 @@ A relation is well-founded if and only if there is no infinite descending sequen
 | $`\lt`$ on ordinals, on labels | yes | `wellFounded_lt` |
 | $`\lt`$ on keys (§3) | yes | `OmegaY.Keys.key_wellFounded` |
 | $`\lt`$ on $`\mathbb Z`$ | no | |
-| lexicographic order on all legal expressions | no | `OmegaY.Expansion.Dynamics.not_wellFounded_lex_all_legal` |
+| lexicographic order on all expressions | no | `OmegaY.Expansion.Dynamics.not_wellFounded_lex_all_legal` |
 
-Example for the last row. An **expression** is a finite sequence of positive integers, and an expression is **legal** if it is empty or its first entry is 1 (defined in [05](05-omegay-mountain.md) §1). In the **lexicographic order** on expressions, the first differing entry decides. If one is a proper prefix of the other, the shorter one is smaller. This gives the infinite descending sequence below (the sequence `onesThenTwo` inside the Lean proof).
+Example for the last row. An expression ([05](05-omegay-mountain.md) §1) is a finite sequence of positive integers that is empty or has first entry 1. In the **lexicographic order** on expressions, the first differing entry decides. If one is a proper prefix of the other, the shorter one is smaller. This gives the infinite descending sequence below (the sequence `onesThenTwo` inside the Lean proof).
 
 ```math
 (1,2) \gt (1,1,2) \gt (1,1,1,2) \gt (1,1,1,1,2) \gt \cdots
@@ -152,7 +152,7 @@ Then $`\to`$ is well-founded: there is no infinite sequence $`s_0 \to s_1 \to s_
 
 The point is that a state need not have a unique label. We only use "there is some labelling" and "after one step there is a labelling with a smaller bound".
 
-The ω-Y proof applies it as follows ([06](06-combinatorial-layer.md) §8). The terms of the table are defined in later notes. The expansion $`s[N]`$ of an expression $`s`$ ($`N`$ the number of copies) is in [05](05-omegay-mountain.md) §4, $`()`$ is the empty expression, the mountain is in [05](05-omegay-mountain.md) §3, and the dimension $`D`$ of a mountain is in [05](05-omegay-mountain.md) §7. A **representation** of a mountain is a strictly increasing sequence of labels below $`\omega_1`$, one per column of the mountain, that satisfies a condition for each edge of the mountain ([06](06-combinatorial-layer.md) §4).
+The ω-Y proof applies it as follows ([06](06-combinatorial-layer.md) §8). The terms of the table are defined in later notes. The expansion $`s[N]`$ of an expression $`s`$ ($`N`$ the number of copies) is in [05](05-omegay-mountain.md) §4, the mountain in [05](05-omegay-mountain.md) §3, the dimension $`D`$ of a mountain in [05](05-omegay-mountain.md) §7, and a representation of a mountain in [06](06-combinatorial-layer.md) §4. $`()`$ is the empty expression.
 
 | General form | ω-Y |
 |---|---|

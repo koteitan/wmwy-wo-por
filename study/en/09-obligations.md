@@ -6,21 +6,21 @@ Prerequisites
 
 | Note | Terms used here |
 |---|---|
-| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | combinatorial layer, core, thin files, vertex, graph, internal atoms, top atoms, demand, cut, `finite_reflection`, `initial_finite_graph`, control relation, control atom |
+| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | combinatorial layer, vertex, graph, internal atoms, top atoms, demand, cut, `finite_reflection`, `initial_finite_graph`, control relation, `control` |
 | [07 The relation R](07-relation-r.md) | $`R`$, $`\mathfrak A^c_\theta`$, `R_iff`, `key_weaken`, partial top predicates |
-| [08 Closure below ω₁ and the sequence of closed points](08-closure-chain.md) | $`\mathfrak B`$, Good, closed point, `points` |
+| [08 Closure below ω₁ and the sequence of Good points](08-closure-chain.md) | $`\mathfrak B`$, Good, `points` |
 
 This note explains how the relation $`R`$ satisfies the three theorems of the combinatorial layer. The core is finite reflection (§2) and the first representation (§3).
 
 ## 1. Overview
 
-| Theorem | Proof | Names the core calls |
+| Theorem | Proof | Names the combinatorial layer calls |
 |---|---|---|
 | key weakening | `Por.key_weaken` ([07](07-relation-r.md) §7) | `Reflection.key_weaken`, `KeyReflection.weaken`, `Model.key_weaken` |
 | finite reflection | `Por.finite_reflection` (§2) | `Reflection.finite_reflection`, `Model.finite_reflection` |
 | first representation | `Por.Supply.initial_finite_graph` (§3) | `OrdinalSupply.initial_finite_graph`, `Model.initial_finite_graph` |
 
-The names the core (beginning of [06](06-combinatorial-layer.md)) calls are given in thin files (short files that only connect the core with the semantic layer, beginning of [06](06-combinatorial-layer.md)), with Phyrion's statements unchanged.
+The names the combinatorial layer calls are given in the following files, with Phyrion's statements unchanged.
 
 - [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean): `R S θ a b := Por.R S θ a b`. `key_weaken` and `finite_reflection` return the `Por` theorems.
 - [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean): `Label` and `top` are those of `Por.Supply`. `initial_finite_graph` returns `Por.Supply.initial_finite_graph`.
@@ -85,7 +85,7 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 The third item of step 4 uses "lowering pointwise keeps the key condition" of [03](03-sigma1-elementary.md) §8.
 
-### 3.2 Closed points are in the relation R
+### 3.2 Good points are in the relation R
 
 **Theorem (`good_R`).** For labels $`\alpha, \beta`$, if $`\mathrm{Good}(\alpha)`$, $`\mathrm{Good}(\beta)`$ and $`\alpha \lt \beta \lt \omega_1`$, then $`R(\kappa, \alpha, \beta)`$ for every key $`\kappa`$.
 
@@ -97,13 +97,13 @@ The third item of step 4 uses "lowering pointwise keeps the key condition" of [0
 
 The first is `absA'` at $`\alpha`$, the second `absA'` at $`\beta`$ (`absA'` is `absA` with `top_abs` plugged in). $`\square`$
 
-The key $`\kappa`$ is arbitrary: closed points are related at every key.
+The key $`\kappa`$ is arbitrary: Good points are related at every key.
 
 ### 3.3 A representation of every finite graph
 
 **Theorem (`initial_finite_graph`).** For every graph $`(G, N)`$ there are $`\beta \lt \omega_1`$ and a strictly increasing $`f \lt \beta`$ such that $`G`$ holds at $`f`$ and $`N`$ holds for the top $`\beta`$.
 
-**Proof.** Let $`n`$ be the number of vertices of the graph. Put $`\beta := c_n`$ and $`f(i) := c_i`$ (the sequence of closed points of [08](08-closure-chain.md) §7).
+**Proof.** Let $`n`$ be the number of vertices of the graph. Put $`\beta := c_n`$ and $`f(i) := c_i`$ (the sequence of Good points of [08](08-closure-chain.md) §7).
 
 - $`f`$ is strictly increasing and $`c_i \lt c_n`$ (`points_strictMono`), and $`c_n \lt \omega_1`$ (`points_lt`).
 - An internal atom $`e`$ has parent $`\lt`$ child, so `good_R` gives $`R(\mathrm{eval}\ t_e\ f, c_{p_e}, c_{q_e})`$.
@@ -113,7 +113,7 @@ One sequence $`c`$ represents all graphs at once. No key condition (`KeysBelow`)
 
 ### 3.4 First representation with a control
 
-`initial_controlled_graph` in [OmegaY/Model.lean](../../OmegaY/Model.lean) uses `initial_finite_graph` with one more control atom added to $`N`$, and also obtains the control relation and "the demand keys are below the control key". The key comparison follows from the comparison of templates (`eval_lt_of_template_lt`). The core does not call this theorem (checked with `grep`).
+`initial_controlled_graph` in [OmegaY/Model.lean](../../OmegaY/Model.lean) uses `initial_finite_graph` with one more top atom (the one that plays the role of `control` of [06](06-combinatorial-layer.md) §7) added to $`N`$, and also obtains the control relation and "the demand keys are below the key of `control`". The key comparison follows from the comparison of templates (`eval_lt_of_template_lt`). The combinatorial layer does not call this theorem (checked with `grep`).
 
 ## 4. The final theorems and the axioms
 
@@ -130,7 +130,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 
 **Axioms.** [OmegaY/Audit.lean](../../OmegaY/Audit.lean) checks the axioms of every theorem whose name starts with `OmegaY.` or `Por.`. All depend only on `propext`, `Classical.choice` and `Quot.sound` ([README](../../README-en.md) "Axiom audit").
 
-**Strength.** The proof uses the axiom of choice and the regularity of $`\omega_1`$. The labels are closed points below $`\omega_1`$ whose concrete values are unknown. No ordinal bound and no ordinal notation system (a way to write ordinals as finite strings of symbols) is obtained.
+**Strength.** The proof uses the axiom of choice and the regularity of $`\omega_1`$. The labels are Good points below $`\omega_1`$ whose concrete values are unknown. No ordinal bound and no ordinal notation system (a way to write ordinals as finite strings of symbols) is obtained.
 
 ## 5. Where this repository uses it
 
@@ -141,7 +141,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 | [notes/01-design.md](../../notes/01-design.md) §3, §4 | the proofs of the three theorems and the split into files |
 | [Por/Relation.lean](../../Por/Relation.lean) | §2 |
 | [Por/Supply.lean](../../Por/Supply.lean) | §3 |
-| [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean), [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean), [OmegaY/Model.lean](../../OmegaY/Model.lean) | the thin files of §1 |
+| [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean), [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean), [OmegaY/Model.lean](../../OmegaY/Model.lean) | the files of §1 |
 | [OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/WellFounded.lean), [OmegaY/Audit.lean](../../OmegaY/Audit.lean) | §4 |
 
 ## 6. Lean correspondence
@@ -154,9 +154,9 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 | lowering witnesses | `lower` | same |
 | one step of absoluteness | `absA`, `absA'` | same |
 | absoluteness of top predicates | `top_abs` | same |
-| relation between closed points | `good_R` | same |
+| relation between Good points | `good_R` | same |
 | first representation | `initial_finite_graph` | same |
-| thin files | `Reflection.R`, `Reflection.key_weaken`, `Reflection.finite_reflection` | [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean) |
+| the files of §1 | `Reflection.R`, `Reflection.key_weaken`, `Reflection.finite_reflection` | [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean) |
 | same | `OrdinalSupply.initial_finite_graph` | [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean) |
 | instances for keys of length $`m`$ | `Model.R`, `Model.key_weaken`, `Model.finite_reflection`, `Model.initial_finite_graph`, `Model.initial_controlled_graph` | [OmegaY/Model.lean](../../OmegaY/Model.lean) |
 | final theorems | `omegaY_step_wellFounded`, `omegaY_generated_isWellOrder`, `omegaY_descendants_isWellOrder`, `omegaY_trajectory_terminates` | [OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/WellFounded.lean) |

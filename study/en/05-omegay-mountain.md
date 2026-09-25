@@ -15,11 +15,11 @@ The example values were computed with `#eval` of `Canonical.build`, `Canonical.f
 
 ## 1. Expressions
 
-**Definition (expression).** An **expression** is a finite sequence of positive integers $`s = (s_0, \ldots, s_x)`$ that is empty or has $`s_0 = 1`$ (`Canonical.Legal`, `Dynamics.Expr`). Satisfying this condition is called **legal**, and an expression is also called a legal expression.
+**Definition (expression).** An **expression** is a finite sequence of positive integers $`s = (s_0, \ldots, s_x)`$ that is empty or has $`s_0 = 1`$ (`Canonical.Legal`, `Dynamics.Expr`).
 
 - Columns are numbered from 0. The $`i`$-th entry is "column $`i`$". The number of the last column is written $`x`$.
 - An expression from which expansion (§4) starts is called a **seed**. The standard seeds are $`(1, m)`$ with $`m`$ an integer $`\ge 2`$. In Lean `Dynamics.seed n` $`= (1, n+2)`$.
-- Expressions are ordered lexicographically (`Dynamics.Lex`): the first differing entry decides, and a proper prefix is smaller. As in [02](02-well-founded.md) §1, this order is not well-founded on all expressions.
+- Expressions are ordered by the lexicographic order of [02](02-well-founded.md) §1 (`Dynamics.Lex`). This order is not well-founded on all expressions.
 
 ## 2. Rows
 
@@ -79,7 +79,7 @@ The **mountain** $`M(s)`$ of an expression $`s`$ is an array of columns, and a c
 - Follow the left leg $`L`$ of $`\nu`$. In the column of $`L`$, climb up from $`L`$ as long as the next node's row is at most $`\mathrm{row}(\nu)`$ (`climb`). The node reached is the new candidate $`\nu`$.
 - If the new candidate has $`0 \lt \mathrm{value}(\nu) \lt v`$, then $`\nu`$ is the father. Otherwise repeat the Q step from this $`\nu`$.
 
-The row of the bottom nodes (row 1) is called the **bottom row**. In the bottom row the candidates are the bottom nodes of columns $`c-1, c-2, \ldots`$ in turn. So the father of a bottom node is the bottom node of the rightmost column with value smaller than $`s_c`$. This is the same as the parent in row 0 of a 1-Y mountain (the 1-Y mountain counts the bottom row as 0).
+The bottom nodes are in row 1. In row 1 the candidates are the bottom nodes of columns $`c-1, c-2, \ldots`$ in turn. So the father of a bottom node is the bottom node of the rightmost column with value smaller than $`s_c`$. This is the same as the parent in row 0 of a 1-Y mountain (the 1-Y mountain counts the bottom row as 0).
 
 **Definition (edge).** If a node $`u`$ (not a phantom) has a node $`u^+`$ directly above it, there is an **edge** from $`u`$ to $`u^+`$. The left leg of $`u^+`$ is the **father** $`\pi`$ of the edge. The father is always in a column to the left.
 
@@ -123,7 +123,7 @@ The jump $`\mathrm{jump}(\mathrm{row}(u), \mathrm{row}(\pi))`$ is the **degree**
 
 The length of $`s[N]`$ is $`x + N w`$.
 
-**Copying a column (`copyColumn`).** When column $`y`$ is copied in block $`b`$, column $`y`$ of $`M(s')`$ is called the **source column**, and its edges the **source edges**. Write $`\mathrm{col}(p)`$ for the number of the column of a node $`p`$. For each marker $`\mu`$ of $`y`$, three kinds of nodes are placed.
+**Copying a column (`copyColumn`).** When column $`y`$ is copied in block $`b`$, the edges of column $`y`$ of $`M(s')`$ are called the **source edges**. Write $`\mathrm{col}(p)`$ for the number of the column of a node $`p`$. For each marker $`\mu`$ of $`y`$, three kinds of nodes are placed.
 
 - **Translation** (`copyEdge`): a node in row $`\mathrm{row}(\mu)`$. Let $`\ell`$ be the left leg of $`\mu`$. The left leg of the new node is the same node $`\ell`$ if $`\ell`$ is left of the root column. Otherwise it is the highest node of column $`\mathrm{col}(\ell) + b w`$ whose row is below $`\mathrm{row}(\mu)`$. A phantom marker is copied to a phantom.
 - **Contour** (`contour`): first fix the reference row $`g`$. In the current last column (the copy of column $`x`$ in block $`b-1`$; for $`b = 1`$, column $`x`$ of $`M(s')`$), take for each boundary row the highest node strictly below it (`below`). $`g`$ is the row of the last of these whose row is at least $`\mathrm{row}(\mu)`$ (`referenceAt`). Then copy the source edges upward from $`\mu`$ in order. Stop before an edge whose upper node is another marker. Stop at the top of the column. A source edge of degree $`d`$ becomes an edge from the current row $`h`$ to the row $`h + \omega^d`$; the first $`h`$ is $`g`$. The left leg is the image of the father of the source edge, by the same rule as for translation.
@@ -162,12 +162,12 @@ Column 5 is the copy of column 1 in block 2. The source father $`(0, 1)`$ is cop
 
 ## 5. Weak magma and the official ω-Y
 
-The official ω-Y is defined by `expand` in Naruyoko's program ([notes/00-survey.md](../../notes/00-survey.md) §1.2). The fill rule of §4 is called the **weak magma** rule. Weak-magma ω-Y is ω-Y with the expansion of §4. It does not agree with the official ω-Y. An expression reached from a seed by repeatedly expanding and taking prefixes is called a **standard form**. On 3001 standard forms reached from $`(1, 3)`$, $`(1, 4)`$, $`(1, 5)`$ by the official expansion, 480 of the 9003 expansions with $`N = 1, 2, 3`$ give different results (notes/00-survey.md §1.6).
+The official ω-Y is defined by `expand` in Naruyoko's program ([notes/00-survey.md](../../notes/00-survey.md) §1.2). The fill rule of §4 is called the **weak magma** rule. Weak-magma ω-Y is ω-Y with the expansion of §4. It does not agree with the official ω-Y. On 3001 expressions reached from $`(1, 3)`$, $`(1, 4)`$, $`(1, 5)`$ by repeatedly taking official expansions and prefixes, 480 of the 9003 expansions with $`N = 1, 2, 3`$ give different results (notes/00-survey.md §1.6).
 
 According to [notes/02-feasibility.md](../../notes/02-feasibility.md) §2, only the fill rule differs.
 
 - weak: the left legs of the gap nodes all lie in one column $`\mathrm{col}(p) + b w`$, where $`p`$ is the father of the source edge from $`\mu`$ upward.
-- official: for each gap row, choose one node of the root column. It is called the **sub-root** (how it is chosen is in notes/02-feasibility.md §2.2). Let $`z`$ be the node of column $`y`$ of $`M(s')`$ in the row of the sub-root. Let $`y'`$ be the column of the left leg of $`z`$ ($`y' = y - 1`$ if $`z`$ is in the bottom row). The left legs of the gap nodes lie in the copy of column $`y'`$ ($`y' + b w`$ if $`y' \ge c_r`$, and $`y'`$ if $`y' \lt c_r`$).
+- official: for each gap row, choose one node of the root column (how it is chosen is in notes/02-feasibility.md §2.2). Let $`z`$ be the node of column $`y`$ of $`M(s')`$ in the row of the chosen node. Let $`y'`$ be the column of the left leg of $`z`$ ($`y' = y - 1`$ if $`z`$ is in the bottom row). The left legs of the gap nodes lie in the copy of column $`y'`$ ($`y' + b w`$ if $`y' \ge c_r`$, and $`y'`$ if $`y' \lt c_r`$).
 
 **Example.** In $`(1, 3, 3)[2]`$, the left leg of the node in row 2 of column 4 (a gap node) is $`(2, 1)`$ (value 2) in weak and $`(3, 1)`$ (value 5) in the official version. The bottom value of column 4 is $`2 + 2 = 4`$ in weak and $`2 + 5 = 7`$ in the official version. In total, weak gives $`(1, 3, 2, 5, 4, 9)`$ and the official version $`(1, 3, 2, 5, 7, 12)`$ (the official values are from notes/02-feasibility.md §2.3 and were not computed in Lean).
 
@@ -203,14 +203,14 @@ All are values of `#eval Expansion.expand s N`.
 
 **Definition (one expansion step).** $`t \prec s`$ (`Dynamics.Step t s`) means $`s \ne ()`$ and $`t = s[N]`$ for some $`N`$.
 
-- `Dynamics.next s N` is the successful result of the expansion program. It succeeds on every legal expression (`expand_total`).
+- `Dynamics.next s N` is the successful result of the expansion program. It succeeds on every expression (`expand_total`).
 - One expansion step strictly decreases the lexicographic order (`Dynamics.next_lex`).
-- If in every row of a mountain the coefficients above exponent $`D`$ are 0, $`D`$ is called a **dimension** of the mountain ([06](06-combinatorial-layer.md) §3). If a mountain has dimension $`D`$, so does the mountain after expansion (`expandDiagram_key_dimension`, `Dynamics.next_key_dimension`). The expressions reached from an expression $`s`$ by repeated expansion steps are the **descendants** of $`s`$. So one $`D`$, chosen for the starting expression, serves all its descendants (`Dynamics.fixed_dimension_for_descendants`). $`D`$ fixes the length $`D + 1`$ of the keys in [06](06-combinatorial-layer.md).
+- If in every row of a mountain the coefficients above exponent $`D`$ are 0, $`D`$ is called a **dimension** of the mountain. If a mountain has dimension $`D`$, so does the mountain after expansion (`expandDiagram_key_dimension`, `Dynamics.next_key_dimension`). So one $`D`$, chosen for the starting expression, serves all expressions reached from it by repeated expansion steps (`Dynamics.fixed_dimension_for_descendants`). $`D`$ fixes the length $`D + 1`$ of the keys in [06](06-combinatorial-layer.md).
 
 The final theorems ([OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/WellFounded.lean), namespace `OmegaY.Expansion`) are:
 
 1. `omegaY_step_wellFounded`: $`\prec`$ is well-founded.
-2. `omegaY_generated_isWellOrder`: the set of expressions generated from the seeds (the descendants of the seeds) is well-ordered by the lexicographic order.
+2. `omegaY_generated_isWellOrder`: the set of expressions generated from the seeds is well-ordered by the lexicographic order.
 3. `omegaY_descendants_isWellOrder`: for every expression, the set of expressions reachable from it is well-ordered by the lexicographic order.
 4. `omegaY_trajectory_terminates`: however the numbers of copies are chosen, repeated expansion reaches the empty expression.
 
@@ -230,7 +230,7 @@ The final theorems ([OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/W
 
 | Concept | Lean | File |
 |---|---|---|
-| legal expressions, expressions | `Canonical.Legal`, `Dynamics.Expr` | [OmegaY/Canonical/Totality.lean](../../OmegaY/Canonical/Totality.lean), [OmegaY/Expansion/LegalDynamics.lean](../../OmegaY/Expansion/LegalDynamics.lean) |
+| expressions | `Canonical.Legal`, `Dynamics.Expr` | [OmegaY/Canonical/Totality.lean](../../OmegaY/Canonical/Totality.lean), [OmegaY/Expansion/LegalDynamics.lean](../../OmegaY/Expansion/LegalDynamics.lean) |
 | seeds, lexicographic order | `Dynamics.seed`, `Dynamics.Lex` | [OmegaY/Expansion/LegalDynamics.lean](../../OmegaY/Expansion/LegalDynamics.lean) |
 | rows, jump, adding a power, next row | `Row`, `Row.jump`, `Row.bump`, `Row.B` | [OmegaY/Rows.lean](../../OmegaY/Rows.lean) |
 | nodes, mountains | `Canonical.Cell`, `Canonical.Ref`, `Canonical.Mountain`, `Canonical.phantom` | [OmegaY/Canonical/Build.lean](../../OmegaY/Canonical/Build.lean) |

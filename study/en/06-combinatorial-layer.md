@@ -8,19 +8,19 @@ Prerequisites
 |---|---|
 | [01 Ordinals and ω₁](01-ordinals.md) | label, $`\omega_1`$, $`\mathrm{Fin}\ n`$, $`\mathrm{Option}`$ |
 | [02 Well-founded relations and recursion](02-well-founded.md) | keys $`\mathrm{Key}_m`$, coordinate, top, termination by a bound on labels (§6) |
-| [05 The ω-Y sequence and its mountain](05-omegay-mountain.md) | expression, legal, row, jump, mountain, node, edge, father, degree, root, block, expansion, dimension, $`\mathrm{col}`$ |
+| [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | key syntax, template |
+| [05 The ω-Y sequence and its mountain](05-omegay-mountain.md) | expression, row, jump, mountain, node, edge, father, degree, root, block, expansion, dimension, $`\mathrm{col}`$ |
 
 This note explains the part of Phyrion's proof that does not use the meaning of the labels. This part is called the **combinatorial layer**. This layer proves well-foundedness of expansion using only three theorems (§5) about the label relation $`R`$. This repository uses the layer unchanged ([NOTICE](../../NOTICE)). Most of it is in the 549 modules of `OmegaY/`; this note explains only its entry and exit points.
 
 - $`R(\theta, a, b)`$ is a relation with three arguments: $`\theta`$ is a key, and $`a`$ and $`b`$ are labels. The combinatorial layer does not use the definition of $`R`$.
 - The part that defines $`R`$ and proves the three theorems of §5 is called the **semantic layer** (§10). The semantic layer of this repository is explained in [07](07-relation-r.md)–[09](09-obligations.md).
-- Among the files of `OmegaY/`, `Reflection.lean`, `Reflection/`, `KeyReflection.lean` and `Model.lean` are short files that only connect the combinatorial layer with the semantic layer. They are called the **thin files**. The remaining files are called the **core**.
 
 ## 1. Keys and templates
 
-**Definition (key syntax `KeySyntax`).** Let $`\mathrm{Label}`$ be the type of labels and $`\mathrm{Key}`$ the type of keys, both linear orders. Let $`n`$ be a natural number; the points numbered $`0, \ldots, n-1`$ are called **vertices**. In ω-Y the vertices are the columns of a mountain. A key syntax consists of three things ([OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean)). It is the same as the key syntax of [03](03-sigma1-elementary.md) §7.
+**Key syntax `KeySyntax`.** Here the key syntax ([03](03-sigma1-elementary.md) §7) is written in terms of vertices. Let $`n`$ be a natural number; the points numbered $`0, \ldots, n-1`$ are called **vertices**. In ω-Y the vertices are the columns of a mountain. A key syntax consists of three things ([OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean)).
 
-- `Template n`: the type of **templates** over $`n`$ vertices.
+- `Template n`: the type of templates over $`n`$ vertices.
 - `eval t f`: the key obtained by evaluating the template $`t`$ at the vertex labels $`f : \mathrm{Fin}\ n \to \mathrm{Label}`$.
 - `monotone_eval`: if $`g \le f`$ pointwise, then $`\mathrm{eval}\ t\ g \le \mathrm{eval}\ t\ f`$.
 
@@ -46,7 +46,7 @@ Because of `eval_lt_of_template_lt`, comparing keys reduces to comparing column 
 
 ## 2. Internal atoms and top atoms
 
-**Definition (atoms).** Let $`S`$ be a key syntax and $`n`$ the number of vertices. The following two kinds, each carrying a template $`t`$ over $`n`$ variables, are called **atoms** ([OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean)). The parent $`p`$ and the child $`q`$ are vertices. $`f : \mathrm{Fin}\ n \to \mathrm{Label}`$ gives the labels of the vertices. $`b`$ is a label called the **top** ([02](02-well-founded.md) §3). The top is not the label of any vertex.
+**Definition (atoms).** Let $`S`$ be a key syntax and $`n`$ the number of vertices. The following two kinds, each carrying a template $`t`$ over $`n`$ variables, are called **atoms** ([OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean)). The parent $`p`$ and the child $`q`$ are vertices. $`f : \mathrm{Fin}\ n \to \mathrm{Label}`$ gives the labels of the vertices. $`b`$ is a label, the top ([02](02-well-founded.md) §3). $`b`$ is not the label of any vertex.
 
 | Lean | Components | What holds (labels $`f`$) |
 |---|---|---|
@@ -70,7 +70,7 @@ Each mountain edge gets a key template ([OmegaY/Geometry/MountainKeys.lean](../.
 
 **Definition (scale root).** Let $`k`$ be a natural number. The **scale-$`k`$ father** of a node $`u`$ is the father of the edge from $`u`$ upward, if that edge has degree at most $`k`$ (`scaleParent`). Following scale-$`k`$ fathers until there is none gives the **scale-$`k`$ root** $`\rho_k(u)`$ (`scaleRoot`). A larger scale allows more edges to be followed, so the root is in the same column or further left (`scaleRoot_scale_antitone`).
 
-**Definition (dimension).** If every row of a mountain has coefficient 0 at all exponents above $`D`$, then $`D`$ is a **dimension** of the mountain (`MountainKeyDimension`). Every finite mountain has one (`exists_key_dimension`). The degree of each edge is at most $`D`$ (`degree_le`).
+**Dimension.** A dimension $`D`$ of a mountain ([05](05-omegay-mountain.md) §7) is `MountainKeyDimension` in Lean. Every finite mountain has one (`exists_key_dimension`). The degree of each edge is at most $`D`$ (`degree_le`).
 
 **Definition (the key of an edge, `keyTemplate`).** For an edge $`e`$ (father $`\pi`$, degree $`d`$) of a mountain of dimension $`D`$, the template has length $`m = D + 1`$, and coordinate $`i`$ corresponds to scale $`D - i`$.
 
@@ -175,21 +175,21 @@ One finite reflection adds one block of columns ([OmegaY/Splice.lean](../../Omeg
 
 ## 7. Repeated reflection with reservoirs
 
-Expansion adds blocks $`N`$ times. For this the facts needed by the next reflection are carried along as **reservoirs**. A reservoir is a list of atoms: a list $`F`$ of internal atoms (the **internal reservoir**) and a list $`T`$ of top atoms (the **top reservoir**) ([OmegaY/Splice/Reservoirs.lean](../../OmegaY/Splice/Reservoirs.lean), [OmegaY/Splice/IteratedReservoirs.lean](../../OmegaY/Splice/IteratedReservoirs.lean)).
+Expansion adds blocks $`N`$ times. For this the facts needed by the next reflection are carried along as **reservoirs**. The reservoirs are a list $`F`$ of internal atoms and a list $`T`$ of top atoms ([OmegaY/Splice/Reservoirs.lean](../../OmegaY/Splice/Reservoirs.lean), [OmegaY/Splice/IteratedReservoirs.lean](../../OmegaY/Splice/IteratedReservoirs.lean)).
 
-**Definition (`ReservoirState G F T control f β`).** $`G`$ is the list of internal atoms of the current graph, $`F`$ the internal reservoir, and $`T`$ the top reservoir. `control` is a top atom, called the **control atom**; write $`t_c`$ for its template. $`f`$ are the labels of the columns and $`\beta`$ is a label (the top). `ReservoirState G F T control f β` means that the following six hold.
+**Definition (`ReservoirState G F T control f β`).** $`G`$ is the list of internal atoms of the current graph, and $`F`$ and $`T`$ are the reservoirs. `control` is a top atom; write $`t_c`$ for its template. $`f`$ are the labels of the columns and $`\beta`$ is a label (the top). `ReservoirState G F T control f β` means that the following six hold.
 
 | Field | Content |
 |---|---|
 | `strict`, `bounded` | $`f`$ is strictly increasing and $`f \lt \beta`$ |
 | `graph` | the current graph $`G`$ holds |
-| `internal` | the internal reservoir $`F`$ holds |
-| `virtual` | the top reservoir $`T`$ holds for the top $`\beta`$ |
+| `internal` | the reservoir $`F`$ holds |
+| `virtual` | the reservoir $`T`$ holds for the top $`\beta`$ |
 | `controlled` | $`R(\mathrm{eval}\ t_c\ f,\ f(\mathrm{control.parent}),\ \beta)`$ |
 
-**Theorem (`splice_reservoirs`).** Assume: a state `ReservoirState G F T control f β`; every atom of the list $`N`$ of demands has an atom of $`T`$ with the same parent and a template key $`\mathrm{templateKey}`$ (§1) at least as large (`DemandCovered`); the template keys of the atoms of $`N`$ are strictly below the template key of the control atom; and the atoms of the new graph $`H`$ are `ReservoirClassified` (the three kinds of §6, with kind 2 taken from $`F`$ and kind 3 being demands with weaker keys). Then one finite reflection with cut `control.parent` gives a state with the same $`\beta`$ for $`H`$ and the `moved` images of $`F`$, $`T`$ and `control`.
+**Theorem (`splice_reservoirs`).** Assume: a state `ReservoirState G F T control f β`; every atom of the list $`N`$ of demands has an atom of $`T`$ with the same parent and a template key $`\mathrm{templateKey}`$ (§1) at least as large (`DemandCovered`); the template keys of the atoms of $`N`$ are strictly below the template key of `control`; and the atoms of the new graph $`H`$ are `ReservoirClassified` (the three kinds of §6, with kind 2 taken from $`F`$ and kind 3 being demands with weaker keys). Then one finite reflection with cut `control.parent` gives a state with the same $`\beta`$ for $`H`$ and the `moved` images of $`F`$, $`T`$ and `control`.
 
-The reflection is given $`G`$ and $`F`$ together. That the demand keys are below the control key gives `KeysBelow` for finite reflection.
+The reflection is given $`G`$ and $`F`$ together. That the demand keys are below the key of `control` gives `KeysBelow` for finite reflection.
 
 **Definition (block indices).** Let $`x`$ be the number of the last column of the original expression. Without the last column there are $`x`$ columns. Let $`y`$ be the root column ($`c_r`$ of [05](05-omegay-mountain.md) §4). $`b`$ is the number of a block, and $`i \in \mathrm{Fin}\ x`$ an original column.
 
@@ -199,11 +199,11 @@ The reflection is given $`G`$ and $`F`$ together. That the demand keys are below
 | `blockCut b` | $`y + b(x - y)`$ |
 | `blockSource b i` | $`i`$ if $`i \lt y`$, otherwise $`i + b(x - y)`$ |
 
-**Theorem (`iterated_reservoirs`).** If there is a state for block 0, and in each block the demands are covered by the top reservoir (`DemandCovered`), the demand keys are below the control key, and the graph of the next block is classified, then there is a state for block $`b`$ for every $`b`$. $`\beta`$ does not change. The cut of block $`b`$ is `blockCut b`.
+**Theorem (`iterated_reservoirs`).** If there is a state for block 0, and in each block the demands are covered by the reservoir $`T`$ (`DemandCovered`), the demand keys are below the key of `control`, and the graph of the next block is classified, then there is a state for block $`b`$ for every $`b`$. $`\beta`$ does not change. The cut of block $`b`$ is `blockCut b`.
 
 ## 8. Descent of the last label
 
-**Theorem (`ActualRepresentationDescent`, `actual_representation_descent`).** Let $`s = (s_0, \ldots, s_x)`$ be a nonempty legal expression, $`D`$ a dimension of its mountain, and $`f`$ a representation of its mountain. $`f(x)`$ is the label of the last column, called the **last label**. Then for every natural number $`N`$ there is a representation $`f'`$ (dimension $`D`$) of the mountain of $`s[N]`$ whose labels are all below $`f(x)`$.
+**Theorem (`ActualRepresentationDescent`, `actual_representation_descent`).** Let $`s = (s_0, \ldots, s_x)`$ be a nonempty expression, $`D`$ a dimension of its mountain, and $`f`$ a representation of its mountain. $`f(x)`$ is the label of the last column. Then for every natural number $`N`$ there is a representation $`f'`$ (dimension $`D`$) of the mountain of $`s[N]`$ whose labels are all below $`f(x)`$.
 
 **Case 1 (the last column is deleted).** Restrict $`f`$ to the prefix (`expandDiagram_trivial_representation_descent`). The labels are all below $`f(x)`$ (`restrict_below_last`).
 
@@ -233,17 +233,17 @@ The labels of the state of block $`N`$ form a representation of the mountain of 
 
 **Example ($`(1, 3, 3)`$).** $`x = 2`$, and the root column is 0. The control edge is the edge $`2 \to \omega`$ of column 2, with key $`(f_0, \top)`$. The lower edge is the edge $`1 \to 2`$ of column 2, with key $`(f_0, f_0)`$. $`\beta = f_2`$.
 
-- Block 0: labels $`(f_0, f_1)`$. The control relation is $`R((f_0, \top), f_0, f_2)`$, and the top reservoir is $`R((f_0, f_0), f_0, f_2)`$.
+- Block 0: labels $`(f_0, f_1)`$. The control relation is $`R((f_0, \top), f_0, f_2)`$, and the reservoir $`T`$ is $`R((f_0, f_0), f_0, f_2)`$.
 - Block 0 → 1: the cut is $`0`$. Reflection gives $`g_0 \lt g_1 \lt f_0`$. The new labels are $`(g_0, g_1, f_0, f_1)`$.
 - Block 1 → 2: the cut is $`2`$, with label $`f_0`$. Reflection gives $`g'_2 \lt g'_3 \lt f_0`$; columns 0 and 1 do not move. The new labels are $`(g_0, g_1, g'_2, g'_3, f_0, f_1)`$.
 
 This is a representation of $`(1, 3, 3)[2] = (1, 3, 2, 5, 4, 9)`$, and every label is below $`f_2`$. Which edge falls into which kind is shown by `actual_splice_edge_classified` in Lean.
 
-**Well-foundedness.** $`D`$ does not change along descendants ([05](05-omegay-mountain.md) §7). From the theorem above and the induction of [02](02-well-founded.md) §6 (`accessible_of_representation_below`), $`\prec`$ is well-founded (`step_wellFounded_of_actual_representation_descent`). The first representation comes from `keyRepresentation_exists`.
+**Well-foundedness.** $`D`$ does not change under repeated expansion ([05](05-omegay-mountain.md) §7). From the theorem above and the induction of [02](02-well-founded.md) §6 (`accessible_of_representation_below`), $`\prec`$ is well-founded (`step_wellFounded_of_actual_representation_descent`). The first representation comes from `keyRepresentation_exists`.
 
 ## 9. Where the three theorems are used
 
-These are the calls in the core (see the beginning of this note) found with `grep` (excluding the thin files `Reflection.lean`, `Reflection/`, `KeyReflection.lean` and `Model.lean`).
+These are the calls in the combinatorial layer found with `grep`. `Reflection.lean`, `Reflection/`, `KeyReflection.lean` and `Model.lean` are excluded; they are short files that only connect the combinatorial layer with the semantic layer.
 
 | Theorem | Called from |
 |---|---|
@@ -253,7 +253,7 @@ These are the calls in the core (see the beginning of this note) found with `gre
 
 ## 10. What is left for the semantic layer
 
-The combinatorial layer does not ask why finite reflection holds. The job of the **semantic layer** is to supply an $`R`$ satisfying the three theorems of §5.
+The combinatorial layer does not ask why finite reflection holds. The job of the semantic layer is to supply an $`R`$ satisfying the three theorems of §5.
 
 - Phyrion's semantic layer: $`R(\theta, a, b)`$ says "finite positive graphs below $`b`$ can be compressed below $`a`$" (the meaning of the words is in [04](04-patterns-of-resemblance.md) §5 and [notes/00-survey.md](../../notes/00-survey.md) §3.2). It is not included in this repository.
 - The semantic layer of this repository: $`R`$ is the relation of $`\Sigma_1`$-elementary substructures of [07 The relation R](07-relation-r.md). The proofs are in [09 Proofs of the three theorems](09-obligations.md).
@@ -263,7 +263,7 @@ The combinatorial layer does not ask why finite reflection holds. The job of the
 | Place | Use |
 |---|---|
 | [README](../../README-en.md) "Structure of the proof" | the two layers and the table of the three theorems |
-| [notes/01-design.md](../../notes/01-design.md) §1 | the names the core uses from the semantic layer |
+| [notes/01-design.md](../../notes/01-design.md) §1 | the names the combinatorial layer uses from the semantic layer |
 | [notes/00-survey.md](../../notes/00-survey.md) §3.2, §3.5 | keys, keys of mountain edges, preservation of the dimension, correspondence with 1-Y |
 | [notes/02-feasibility.md](../../notes/02-feasibility.md) §3, §4 | in the official ω-Y the upper bound on the keys of copied edges fails |
 | [OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean) | the definitions of §1 and §2 (Phyrion's, copied unchanged) |

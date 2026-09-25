@@ -15,14 +15,14 @@ This note explains the definition of the label relation $`R`$ of this repository
 
 ## 1. Notation
 
-- $`\mathrm{Label}`$: the type of labels. Any well-ordered linear order works (the Lean assumptions are `LinearOrder` and `WellFoundedLT`). The concrete case used for the final theorems is called the **model**. In the model $`\mathrm{Label} = \{o \le \omega_1\}`$ ([01](01-ordinals.md) §6).
-- $`\mathrm{Key}`$: the type of keys, also any well-ordered linear order. In the model it is $`\mathrm{Key}_m`$ ([02](02-well-founded.md) §3; $`m`$ is the key length).
+- $`\mathrm{Label}`$: the type of labels. Any well-ordered linear order works (the Lean assumptions are `LinearOrder` and `WellFoundedLT`). In the final theorems $`\mathrm{Label} = \{o \le \omega_1\}`$ ([01](01-ordinals.md) §6).
+- $`\mathrm{Key}`$: the type of keys, also any well-ordered linear order. In the final theorems it is $`\mathrm{Key}_m`$ ([02](02-well-founded.md) §3; $`m`$ is the key length).
 - $`S`$: the key syntax `KeySyntax Label Key` ([06](06-combinatorial-layer.md) §1).
 - $`R(\theta, a, b)`$: key $`\theta`$, lower point $`a`$ (a label), upper point $`b`$ (a label). $`b`$ is the top ([02](02-well-founded.md) §3). In Lean, `Por.R S θ a b`.
 
 ## 2. The language
 
-Here the symbols of the language of [03](03-sigma1-elementary.md) §7 get their meaning. There are three kinds of symbols. For each template $`t`$ over $`n`$ variables and positions $`i, j \lt n`$ there are the following. $`\mathrm{Rel}_{t,i,j}`$ and $`\mathrm{Top}_{t,i}`$ are $`\mathrm{Rel}_t(v_i, v_j)`$ and $`\mathrm{Top}_t(v_i)`$ of [03](03-sigma1-elementary.md) §7.
+Here the symbols of the language of [03](03-sigma1-elementary.md) §7 get their meaning. There are three kinds of symbols. For each template $`t`$ over $`n`$ variables and positions $`i, j \lt n`$ there are the following.
 
 | Symbol | Number of arguments | Meaning (in the structure of height $`c`$) |
 |---|---|---|
@@ -161,7 +161,7 @@ Both contradict elementarity. This property is not proved in Lean, and the combi
 
 | Place | Use |
 |---|---|
-| [README](../../README-en.md) "The relation R" | the defining formula and the stages of the recursion |
+| [README](../../README-en.md) "The relation R" | the defining formula and the stages |
 | [README](../../README-en.md) "Proofs of the three theorems" | summary of the proof of key weakening |
 | [notes/01-design.md](../../notes/01-design.md) §2, §3.1 | definition, recursion, key weakening |
 | [Por/Relation.lean](../../Por/Relation.lean) | everything in this note |

@@ -6,21 +6,21 @@
 
 | ノート | ここで使う言葉 |
 |---|---|
-| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 組合せの層、コア、薄いファイル、頂点、図式、内部の原子、上端の原子、要求、切れ目、`finite_reflection`、`initial_finite_graph`、制御関係、制御の原子 |
+| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 組合せの層、頂点、図式、内部の原子、上端の原子、要求、切れ目、`finite_reflection`、`initial_finite_graph`、制御関係、`control` |
 | [07 関係 R](07-relation-r.md) | $`R`$、$`\mathfrak A^c_\theta`$、`R_iff`、`key_weaken`、部分的な上端の述語 |
-| [08 ω₁ より下の閉包と閉じた点の列](08-closure-chain.md) | $`\mathfrak B`$、Good、閉じた点、`points` |
+| [08 ω₁ より下の閉包と Good な点の列](08-closure-chain.md) | $`\mathfrak B`$、Good、`points` |
 
 このノートは、関係 $`R`$ が組合せの層の 3 つの定理をどう満たすかを説明する。中心は有限反映（§2）と、最初の表現（§3）である。
 
 ## 1. 一覧
 
-| 定理 | 証明 | コアが呼ぶ名前 |
+| 定理 | 証明 | 組合せの層が呼ぶ名前 |
 |---|---|---|
 | 鍵の弱化 | `Por.key_weaken`（[07](07-relation-r.md) §7） | `Reflection.key_weaken`、`KeyReflection.weaken`、`Model.key_weaken` |
 | 有限反映 | `Por.finite_reflection`（§2） | `Reflection.finite_reflection`、`Model.finite_reflection` |
 | 最初の表現 | `Por.Supply.initial_finite_graph`（§3） | `OrdinalSupply.initial_finite_graph`、`Model.initial_finite_graph` |
 
-コア（[06](06-combinatorial-layer.md) の冒頭）が呼ぶ名前は、Phyrion 氏のものと同じ文のまま、薄いファイル（コアと意味の層をつなぐだけの短いファイル、[06](06-combinatorial-layer.md) の冒頭）で与える。
+組合せの層が呼ぶ名前は、Phyrion 氏のものと同じ文のまま、次のファイルで与える。
 
 - [OmegaY/Reflection.lean](../OmegaY/Reflection.lean)：`R S θ a b := Por.R S θ a b`。`key_weaken` と `finite_reflection` は `Por` の定理をそのまま返す。
 - [OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean)：`Label` と `top` は `Por.Supply` のもの。`initial_finite_graph` は `Por.Supply.initial_finite_graph` を返す。
@@ -85,7 +85,7 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 4 の 3 つめで、[03](03-sigma1-elementary.md) §8 の「各点で下げても鍵の条件が残る」を使う。
 
-### 3.2 閉じた点どうしは R の関係にある
+### 3.2 Good な点どうしは R の関係にある
 
 **定理（`good_R`）.** ラベル $`\alpha, \beta`$ について $`\mathrm{Good}(\alpha)`$、$`\mathrm{Good}(\beta)`$、$`\alpha \lt \beta \lt \omega_1`$ なら、すべての鍵 $`\kappa`$ で $`R(\kappa, \alpha, \beta)`$。
 
@@ -97,13 +97,13 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 1 つめは $`\alpha`$ での `absA'`、2 つめは $`\beta`$ での `absA'` である（`absA'` は `absA` に `top_abs` を入れたもの）。$`\square`$
 
-鍵 $`\kappa`$ は何でもよい。閉じた点どうしは、どの鍵でも関係にある。
+鍵 $`\kappa`$ は何でもよい。Good な点どうしは、どの鍵でも関係にある。
 
 ### 3.3 すべての有限の図式の表現
 
 **定理（`initial_finite_graph`）.** どの図式 $`(G, N)`$ にも、$`\beta \lt \omega_1`$ と狭義増加の $`f \lt \beta`$ があって、$`G`$ が $`f`$ で成り立ち、$`N`$ が上端 $`\beta`$ について成り立つ。
 
-**証明.** $`n`$ を図式の頂点の数とする。$`\beta := c_n`$、$`f(i) := c_i`$（[08](08-closure-chain.md) §7 の閉じた点の列）とする。
+**証明.** $`n`$ を図式の頂点の数とする。$`\beta := c_n`$、$`f(i) := c_i`$（[08](08-closure-chain.md) §7 の Good な点の列）とする。
 
 - $`f`$ は狭義増加で、$`c_i \lt c_n`$ である（`points_strictMono`）。$`c_n \lt \omega_1`$ である（`points_lt`）。
 - 内部の原子 $`e`$ は親 $`\lt`$ 子なので、`good_R` から $`R(\mathrm{eval}\ t_e\ f, c_{p_e}, c_{q_e})`$ である。
@@ -113,7 +113,7 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 ### 3.4 制御つきの最初の表現
 
-[OmegaY/Model.lean](../OmegaY/Model.lean) の `initial_controlled_graph` は、`initial_finite_graph` を $`N`$ に制御の原子を 1 つ足して使い、制御関係と「要求の鍵が制御の鍵より小さい」も得る。鍵の比較は型板の比較（`eval_lt_of_template_lt`）から出る。この定理はコアからは呼ばれない（`grep` で確かめた）。
+[OmegaY/Model.lean](../OmegaY/Model.lean) の `initial_controlled_graph` は、`initial_finite_graph` を、$`N`$ に上端の原子を 1 つ（[06](06-combinatorial-layer.md) §7 の `control` に当たるもの）足して使い、制御関係と「要求の鍵が `control` の鍵より小さい」も得る。鍵の比較は型板の比較（`eval_lt_of_template_lt`）から出る。この定理は組合せの層からは呼ばれない（`grep` で確かめた）。
 
 ## 4. 最終定理と公理
 
@@ -130,7 +130,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 
 **公理.** [OmegaY/Audit.lean](../OmegaY/Audit.lean) は、名前が `OmegaY.` か `Por.` で始まるすべての定理の公理を調べる。どれも `propext`、`Classical.choice`、`Quot.sound` だけに依存する（[README](../README.md)「公理の監査」）。
 
-**強さ.** 証明は選択公理と $`\omega_1`$ の正則性を使う。ラベルは $`\omega_1`$ より下の閉じた点で、具体的な値は分からない。順序数の上界や、順序数の表記系（順序数を有限の記号列で表す方法）は得られない。
+**強さ.** 証明は選択公理と $`\omega_1`$ の正則性を使う。ラベルは $`\omega_1`$ より下の Good な点で、具体的な値は分からない。順序数の上界や、順序数の表記系（順序数を有限の記号列で表す方法）は得られない。
 
 ## 5. このリポジトリでの使われ方
 
@@ -141,7 +141,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 | [notes/01-design.md](../notes/01-design.md) §3、§4 | 3 つの定理の証明と、ファイルの分け方 |
 | [Por/Relation.lean](../Por/Relation.lean) | §2 |
 | [Por/Supply.lean](../Por/Supply.lean) | §3 |
-| [OmegaY/Reflection.lean](../OmegaY/Reflection.lean)、[OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean)、[OmegaY/Model.lean](../OmegaY/Model.lean) | §1 の薄いファイル |
+| [OmegaY/Reflection.lean](../OmegaY/Reflection.lean)、[OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean)、[OmegaY/Model.lean](../OmegaY/Model.lean) | §1 のファイル |
 | [OmegaY/Expansion/WellFounded.lean](../OmegaY/Expansion/WellFounded.lean)、[OmegaY/Audit.lean](../OmegaY/Audit.lean) | §4 |
 
 ## 6. Lean での対応
@@ -154,9 +154,9 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 | 証人を下ろす | `lower` | 同上 |
 | 絶対性の 1 段 | `absA`、`absA'` | 同上 |
 | 上端の述語の絶対性 | `top_abs` | 同上 |
-| 閉じた点どうしの関係 | `good_R` | 同上 |
+| Good な点どうしの関係 | `good_R` | 同上 |
 | 最初の表現 | `initial_finite_graph` | 同上 |
-| 薄いファイル | `Reflection.R`、`Reflection.key_weaken`、`Reflection.finite_reflection` | [OmegaY/Reflection.lean](../OmegaY/Reflection.lean) |
+| §1 のファイル | `Reflection.R`、`Reflection.key_weaken`、`Reflection.finite_reflection` | [OmegaY/Reflection.lean](../OmegaY/Reflection.lean) |
 | 同上 | `OrdinalSupply.initial_finite_graph` | [OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean) |
 | 鍵の長さ $`m`$ への当てはめ | `Model.R`、`Model.key_weaken`、`Model.finite_reflection`、`Model.initial_finite_graph`、`Model.initial_controlled_graph` | [OmegaY/Model.lean](../OmegaY/Model.lean) |
 | 最終定理 | `omegaY_step_wellFounded`、`omegaY_generated_isWellOrder`、`omegaY_descendants_isWellOrder`、`omegaY_trajectory_terminates` | [OmegaY/Expansion/WellFounded.lean](../OmegaY/Expansion/WellFounded.lean) |

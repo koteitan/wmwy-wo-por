@@ -29,9 +29,9 @@
 | 順序数の $`\lt`$、ラベルの $`\lt`$ | はい | `wellFounded_lt` |
 | 鍵の $`\lt`$（§3） | はい | `OmegaY.Keys.key_wellFounded` |
 | $`\mathbb Z`$ の $`\lt`$ | いいえ | |
-| 合法な式の全体の辞書式順序 | いいえ | `OmegaY.Expansion.Dynamics.not_wellFounded_lex_all_legal` |
+| 式の全体の辞書式順序 | いいえ | `OmegaY.Expansion.Dynamics.not_wellFounded_lex_all_legal` |
 
-最後の行の例。**式** は正の整数の有限列で、**合法** な式とは、空か、先頭の項が 1 の式である（[05](05-omegay-mountain.md) §1 で定義する）。式の **辞書式順序** では、最初に違う項の大小で比べる。一方が他方の真の接頭辞なら、短い方が小さい。すると次の無限降下列がある（Lean の証明の中の列 `onesThenTwo`）。
+最後の行の例。式（[05](05-omegay-mountain.md) §1）は、正の整数の有限列で、空か、先頭の項が 1 のものである。式の **辞書式順序** では、最初に違う項の大小で比べる。一方が他方の真の接頭辞なら、短い方が小さい。すると次の無限降下列がある（Lean の証明の中の列 `onesThenTwo`）。
 
 ```math
 (1,2) \gt (1,1,2) \gt (1,1,1,2) \gt (1,1,1,1,2) \gt \cdots
@@ -152,7 +152,7 @@ G : (t : T) → ((t' : T) → r t' t → V) → V
 
 大事な点は、ラベルが 1 つの状態に 1 つに決まっている必要が無いことである。「どれか 1 つのラベル付けがある」ことと「1 段進むと、もっと小さい上界のラベル付けがある」ことだけを使う。
 
-ω-Y の証明では次のように当てはめる（[06](06-combinatorial-layer.md) §8）。表の言葉は後のノートで定義する。式 $`s`$ の展開 $`s[N]`$（$`N`$ はコピーの回数）は [05](05-omegay-mountain.md) §4、$`()`$ は空の式、山は [05](05-omegay-mountain.md) §3、山の次元 $`D`$ は [05](05-omegay-mountain.md) §7 である。山の **表現** は、山の列に付けた $`\omega_1`$ より下のラベルの狭義増加の列で、山の辺ごとの条件を満たすものである（[06](06-combinatorial-layer.md) §4）。
+ω-Y の証明では次のように当てはめる（[06](06-combinatorial-layer.md) §8）。表の言葉は後のノートで定義する。式 $`s`$ の展開 $`s[N]`$（$`N`$ はコピーの回数）は [05](05-omegay-mountain.md) §4、山は [05](05-omegay-mountain.md) §3、山の次元 $`D`$ は [05](05-omegay-mountain.md) §7、山の表現は [06](06-combinatorial-layer.md) §4 である。$`()`$ は空の式である。
 
 | 一般形 | ω-Y |
 |---|---|
@@ -170,7 +170,7 @@ Lean の本体は `Dynamics.accessible_of_representation_below` で、同じ帰�
 | 場所 | 使い方 |
 |---|---|
 | [README](../README.md)「関係 R」 | （上端、鍵）の辞書式順序による整礎再帰 |
-| [notes/01-design.md](../notes/01-design.md) §2.3 | 再帰の段の順序と、右辺が読む段 |
+| [notes/01-design.md](../notes/01-design.md) §2.3 | 段の順序と、右辺が読む段 |
 | [Por/Relation.lean](../Por/Relation.lean) | §3〜§5（`StageLT`、`stage_wf`、`stepF`、`R`、`R_iff`） |
 | [Por/Supply.lean](../Por/Supply.lean) | §2（`top_abs` の鍵についての帰納法） |
 | [OmegaY/Keys.lean](../OmegaY/Keys.lean) | §3（鍵の順序と `key_wellFounded`） |

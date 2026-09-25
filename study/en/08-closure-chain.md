@@ -1,6 +1,6 @@
 [← Back](README.md) | [English](08-closure-chain.md) | [Japanese](../08-closure-chain.md)
 
-# Closure below ω₁ and the sequence of closed points
+# Closure below ω₁ and the sequence of Good points
 
 Prerequisites
 
@@ -10,7 +10,7 @@ Prerequisites
 | [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | witness, parameter, the Tarski–Vaught test, the key syntax $`S`$, template, `Form`, `Sat` |
 | [07 The relation R](07-relation-r.md) | $`R`$, $`\mathrm{Rel}_{t,i,j}`$, $`\mathrm{Top}_{t,i}`$, `relR`, `topR`, $`\vec p \lt a`$ |
 
-This note explains how to build, below $`\omega_1`$, points that are "closed under $`\Sigma_1`$ witnesses". The idea is the same as in the Löwenheim–Skolem theorem: add witnesses and take the supremum. The sequence of such points gives the first labels in [09](09-obligations.md). The Lean file is [Por/Supply.lean](../../Por/Supply.lean). This note assumes that the template types of the key syntax $`S`$ ([03](03-sigma1-elementary.md) §7) are countable (`[∀ n, Countable (S.Template n)]`). The template types of ω-Y are finite (`Keys.template_countable`).
+This note explains how to build, below $`\omega_1`$, points that are closed under $`\Sigma_1`$ witnesses (the Good points of §1). The idea is the same as in the Löwenheim–Skolem theorem: add witnesses and take the supremum. The sequence of such points gives the first labels in [09](09-obligations.md). The Lean file is [Por/Supply.lean](../../Por/Supply.lean). This note assumes that the template types of the key syntax $`S`$ ([03](03-sigma1-elementary.md) §7) are countable (`[∀ n, Countable (S.Template n)]`). The template types of ω-Y are finite (`Keys.template_countable`).
 
 ## 1. The ambient structure and Good
 
@@ -28,7 +28,7 @@ In Lean, truth in $`\mathfrak B`$ is `Sat (relR S) (topR S top) (fun _ => True) 
 \mathrm{Good}(\alpha) :\iff \forall \varphi\ \forall \vec p \lt \alpha\ \bigl(\mathfrak B \models \varphi(\vec p) \implies \mathfrak B{\restriction}\alpha \models \varphi(\vec p)\bigr)
 ```
 
-`Good α` in Lean has this form. $`\mathfrak B{\restriction}\alpha`$ is a genuine substructure of $`\mathfrak B`$ (same interpretations, smaller domain). The converse implication always holds (witnesses $`\lt \alpha`$ are $`\lt \omega_1`$). So by the Tarski–Vaught test of [03](03-sigma1-elementary.md) §6, $`\mathrm{Good}(\alpha)`$ is the same as $`\mathfrak B{\restriction}\alpha \preccurlyeq_{\Sigma_1} \mathfrak B`$. A Good point has, below itself, witnesses for the $`\Sigma_1`$ claims true in $`\mathfrak B`$. So a Good point is also called a **closed point**.
+`Good α` in Lean has this form. $`\mathfrak B{\restriction}\alpha`$ is a genuine substructure of $`\mathfrak B`$ (same interpretations, smaller domain). The converse implication always holds (witnesses $`\lt \alpha`$ are $`\lt \omega_1`$). So by the Tarski–Vaught test of [03](03-sigma1-elementary.md) §6, $`\mathrm{Good}(\alpha)`$ is the same as $`\mathfrak B{\restriction}\alpha \preccurlyeq_{\Sigma_1} \mathfrak B`$. A Good point has, below itself, witnesses for the $`\Sigma_1`$ claims true in $`\mathfrak B`$.
 
 ## 2. There are countably many formulas
 
@@ -78,7 +78,7 @@ The supremum ranges over all formulas with parameters below $`\gamma`$, $`q \in 
 
 ## 5. The tower and λ
 
-**Definition (`tower`, `lam`).** Let $`\gamma`$ be a label and $`k`$ a natural number. Write $`\mathrm{next}^k(\gamma)`$ for `tower S γ k` in Lean, and call it the **closure tower**.
+**Definition (`tower`, `lam`).** Let $`\gamma`$ be a label and $`k`$ a natural number. Write $`\mathrm{next}^k(\gamma)`$ for `tower S γ k` in Lean.
 
 ```math
 \mathrm{next}^0(\gamma) := \gamma, \quad \mathrm{next}^{k+1}(\gamma) := \mathrm{next}\bigl(\mathrm{next}^k(\gamma)\bigr), \qquad \lambda(\gamma) := \sup_{k \in \mathbb N} \mathrm{next}^k(\gamma)
@@ -106,9 +106,9 @@ Proof of `exists_tower`: each $`p_i`$ is below the supremum, so $`p_i \lt \mathr
 
 **Example (shape only).** $`\lambda(0)`$ contains witnesses for every $`\Sigma_1`$ claim true in $`\mathfrak B`$ with parameters below $`\lambda(0)`$. The concrete value of $`\lambda(0)`$ is unknown. The proof does not use the value; it uses only $`\lambda(0) \lt \omega_1`$ and $`\mathrm{Good}(\lambda(0))`$.
 
-**On the set of Good points.** It is neither shown nor used that the set of Good points is closed in $`\omega_1`$ (that the supremum of an increasing sequence of Good points is Good). This "closed" has a different meaning from the "closed" of "closed point" (closed under witnesses, §1). So we do not call it a club (closed unbounded set).
+**On the set of Good points.** It is neither shown nor used that the set of Good points is closed in $`\omega_1`$ (that the supremum of an increasing sequence of Good points is Good). So we do not call it a club (closed unbounded set).
 
-## 7. The sequence of closed points
+## 7. The sequence of Good points
 
 **Definition (`points`).**
 
@@ -131,7 +131,7 @@ Any two points of this sequence are in the relation $`R`$ at every key (`good_R`
 | Place | Use |
 |---|---|
 | [README](../../README-en.md) "Proofs of the three theorems" | "there are countably many formulas, so Good points are cofinal in $`\omega_1`$" |
-| [notes/01-design.md](../../notes/01-design.md) §3.3 | closed points, $`\omega`$ iterations, the sequence of closed points |
+| [notes/01-design.md](../../notes/01-design.md) §3.3 | Good points, $`\omega`$ iterations, the sequence of Good points |
 | [Por/Supply.lean](../../Por/Supply.lean) | everything in this note |
 
 ## 9. Lean correspondence
@@ -145,4 +145,4 @@ Any two points of this sequence are in the relation $`R`$ at every key (`good_R`
 | one step of the closure | `nextO`, `next`, `next_val`, `nextO_lt`, `next_lt`, `lt_next`, `wh_le_nextO`, `wit_below` | same |
 | tower and λ | `tower`, `tower_lt`, `tower_succ_lt`, `tower_mono`, `lamO`, `lam`, `tower_le_lam`, `lam_lt`, `lt_lam`, `exists_tower` | same |
 | λ is Good | `lam_good`, `good_cofinal` | same |
-| the sequence of closed points | `points`, `points_lt`, `points_good`, `points_strictMono` | same |
+| the sequence of Good points | `points`, `points_lt`, `points_good`, `points_strictMono` | same |

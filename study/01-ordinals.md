@@ -113,13 +113,13 @@ Lean では `ω₁` と書く。このリポジトリは次の事実を使う。
 
 Lean では `Ordinal.iSup_lt_omega_one` である。添字の型は `Countable` のインスタンスを持つ必要がある。このリポジトリでは 3 か所で使う（どれも [Por/Supply.lean](../Por/Supply.lean)）。
 
-次の表の言葉は後のノートで定義する。証人の高さは [08](08-closure-chain.md) §3、`Input S γ` は §7、閉包の塔は [08](08-closure-chain.md) §5 である。$`\mathrm{Fin}\ n`$ は集合 $`\{0, 1, \ldots, n-1\}`$ で、`φ.n` は論理式 $`\varphi`$ の変数の数である（[03](03-sigma1-elementary.md) §7）。
+$`\mathrm{Fin}\ n`$ は集合 $`\{0, 1, \ldots, n-1\}`$ である。表の残りの言葉は後のノートで定義する。`φ.n` は論理式 $`\varphi`$ の変数の数である（[03](03-sigma1-elementary.md) §7）。
 
 | 使う場所 | 添字の型 | 上限を取るもの |
 |---|---|---|
-| `wh_lt` | `Fin φ.n` | 1 組の証人の高さ |
+| `wh_lt` | `Fin φ.n` | 1 組の証人の高さ（[08](08-closure-chain.md) §3） |
 | `nextO_lt` | `Input S γ`（§7） | 証人の高さ |
-| `lam_lt` | `ℕ` | 閉包の塔 |
+| `lam_lt` | `ℕ` | `next` のくり返し（[08](08-closure-chain.md) §5） |
 
 ## 6. ラベルの型
 
@@ -139,7 +139,7 @@ Lean では `Por.Supply.Label := {o : Ordinal.{0} // o ≤ ω₁}` と `Por.Supp
 | `Por.Supply.countable_iio` | ラベル $`a \lt \omega_1`$ について、$`a`$ より下のラベルの集合は可算 |
 | `OrdinalSupply.bot_lt_top` | 最小のラベル $`\bot = 0`$ について $`\bot \lt \omega_1`$ |
 
-**なぜ ω₁ 自身をラベルに入れるか.** 停止性の証明は、ω-Y の山（[05](05-omegay-mountain.md) §3）の各列にラベルを付ける。このラベルの列を **表現** と呼ぶ（[06](06-combinatorial-layer.md) §4 で定義する）。表現のラベルはどれも $`\omega_1`$ より下にある（`KeyRepresentation.bounded`）。一方、[07](07-relation-r.md) で定義する関係 $`R(\kappa, x, b)`$（$`\kappa`$ は鍵、$`x`$ と $`b`$ はラベル）は、3 番目の引数 $`b`$（**上端**）が $`\omega_1`$ の場合 $`R(\kappa, x, \omega_1)`$ も使う（[08](08-closure-chain.md) の Good、[09](09-obligations.md) の `top_abs`）。そのために $`\omega_1`$ も同じ型の元にしてある。
+**なぜ ω₁ 自身をラベルに入れるか.** 停止性の証明は、ω-Y の山（[05](05-omegay-mountain.md) §3）の各列に、$`\omega_1`$ より下のラベルを付ける（[06](06-combinatorial-layer.md) §4 の `KeyRepresentation.bounded`）。一方、[07](07-relation-r.md) で定義する関係 $`R(\kappa, x, b)`$（$`\kappa`$ は鍵（[02](02-well-founded.md) §3）、$`x`$ と $`b`$ はラベル）は、$`b = \omega_1`$ の場合も使う（[08](08-closure-chain.md) の Good、[09](09-obligations.md) の `top_abs`）。そのために $`\omega_1`$ も同じ型の元にしてある。
 
 ## 7. パラメータの数え方
 
@@ -173,7 +173,7 @@ Lean では `Por.Supply.Label := {o : Ordinal.{0} // o ≤ ω₁}` と `Por.Supp
 | 場所 | 使い方 |
 |---|---|
 | [README](../README.md)「関係 R」「3 つの定理の証明」 | ラベルは $`\omega_1`$ 以下の順序数、Good な点は $`\omega_1`$ の中で共終 |
-| [notes/01-design.md](../notes/01-design.md) §3.3 | 閉じた点、可算個の論理式、$`\omega`$ 回のくり返し |
+| [notes/01-design.md](../notes/01-design.md) §3.3 | Good な点、可算個の論理式、$`\omega`$ 回のくり返し |
 | [Por/Supply.lean](../Por/Supply.lean) | §4〜§7 のすべて |
 | [OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean) | `Label`、`top`、`OrderBot`、`bot_lt_top` |
 

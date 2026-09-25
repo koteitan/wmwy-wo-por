@@ -2,10 +2,7 @@
 
 # study/
 
-Background notes for reading this repository. They write out, from definitions and small examples, the mathematics the proof takes as known (ordinals, well-founded recursion, model theory) and the two layers of the proof. Every note follows what the Lean code actually does and names the Lean declarations.
-
-- **Combinatorial layer**: the part of Phyrion's proof for ω-Y that deals only with the shape of mountains and expansions. It does not use the definition of the label relation $`R`$, only three theorems about $`R`$ ([06](06-combinatorial-layer.md)).
-- **Semantic layer**: the part that defines the relation $`R`$ and proves the three theorems. In this repository it is a relation of $`\Sigma_1`$-elementary substructures ([07](07-relation-r.md)–[09](09-obligations.md)).
+Background notes for reading this repository. They write out, from definitions and small examples, the mathematics the proof takes as known (ordinals, well-founded recursion, model theory) and the two layers of the proof (Phyrion's combinatorial layer for ω-Y and this repository's semantic layer; both are defined in [06](06-combinatorial-layer.md)). Every note follows what the Lean code actually does and names the Lean declarations.
 
 The structure is the same as [study/](https://github.com/koteitan/1y-wo-por/tree/main/study) (the 1-Y version) of the sister project [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por). Where the mathematics is the same (01–04, 08), the same material is rewritten for the definitions and Lean names of this repository. Notes 05, 06 and 09 are specific to ω-Y.
 
@@ -22,8 +19,8 @@ The writing rules are fixed in [rule.md](rule.md).
 | [05 The ω-Y sequence and its mountain](05-omegay-mountain.md) | expressions, rows below $`\omega^\omega`$, jumps, building the mountain, expansion (decrement, root, markers, translation, contour, fill), weak magma versus the official ω-Y, the final theorems | README "Target", "Notation", "The four final theorems"; notes/00-survey.md §1.3–§1.6; notes/02-feasibility.md §1.1, §2; [OmegaY/Rows.lean](../../OmegaY/Rows.lean), [OmegaY/Canonical/Build.lean](../../OmegaY/Canonical/Build.lean), [OmegaY/Expansion/Build.lean](../../OmegaY/Expansion/Build.lean) |
 | [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | keys and templates, internal and top atoms, scale roots and edge keys, representations, the three theorems, splicing, reservoirs, descent of the last label | README "Structure of the proof"; notes/01-design.md §1; notes/00-survey.md §3.2, §3.5; notes/02-feasibility.md §3, §4; [OmegaY/Keys.lean](../../OmegaY/Keys.lean), [OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean), [OmegaY/Geometry/MountainKeys.lean](../../OmegaY/Geometry/MountainKeys.lean), [OmegaY/Splice.lean](../../OmegaY/Splice.lean), [OmegaY/Splice/](../../OmegaY/Splice/), [OmegaY/Expansion/ActualRepresentationDescent.lean](../../OmegaY/Expansion/ActualRepresentationDescent.lean) |
 | [07 The relation R](07-relation-r.md) | the structures $`\mathfrak A^c_\theta`$, the definition of $`R`$, the (top, key) recursion, `stepF`, `R_iff`, `R_lt`, key weakening `key_weaken` | README "The relation R", "Proofs of the three theorems"; notes/01-design.md §2, §3.1; [Por/Relation.lean](../../Por/Relation.lean) |
-| [08 Closure below ω₁ and the sequence of closed points](08-closure-chain.md) | Good, countably many formulas, heights of witnesses, `next`, `tower`, `lam`, `lam_good`, `good_cofinal`, `points` | README "Proofs of the three theorems"; notes/01-design.md §3.3; [Por/Supply.lean](../../Por/Supply.lean) |
-| [09 Proofs of the three theorems](09-obligations.md) | `finite_reflection`, `top_abs`, `good_R`, `initial_finite_graph`, the thin files, the final theorems and the axioms | README "Proofs of the three theorems", "Axiom audit"; notes/01-design.md §3, §4; [Por/Relation.lean](../../Por/Relation.lean), [Por/Supply.lean](../../Por/Supply.lean), [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean), [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean), [OmegaY/Model.lean](../../OmegaY/Model.lean), [OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/WellFounded.lean) |
+| [08 Closure below ω₁ and the sequence of Good points](08-closure-chain.md) | Good, countably many formulas, heights of witnesses, `next`, `tower`, `lam`, `lam_good`, `good_cofinal`, `points` | README "Proofs of the three theorems"; notes/01-design.md §3.3; [Por/Supply.lean](../../Por/Supply.lean) |
+| [09 Proofs of the three theorems](09-obligations.md) | `finite_reflection`, `top_abs`, `good_R`, `initial_finite_graph`, the files that pass names to the combinatorial layer, the final theorems and the axioms | README "Proofs of the three theorems", "Axiom audit"; notes/01-design.md §3, §4; [Por/Relation.lean](../../Por/Relation.lean), [Por/Supply.lean](../../Por/Supply.lean), [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean), [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean), [OmegaY/Model.lean](../../OmegaY/Model.lean), [OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/WellFounded.lean) |
 
 The notes in `notes/` are in Japanese.
 
@@ -39,7 +36,7 @@ flowchart TB
   N05 --> N06["06 Combinatorial layer"]
   N04 --> N07["07 The relation R"]
   N06 --> N07
-  N07 --> N08["08 Closure and closed points"]
+  N07 --> N08["08 Closure and Good points"]
   N08 --> N09["09 Proofs of the three theorems"]
   N06 --> N09
 ```

@@ -27,7 +27,7 @@ $`\alpha \lt_1 \beta`$ means $`\alpha \lt \beta \land \alpha \le_1 \beta`$.
 The right side uses the $`\le_1`$ of the left side. It looks circular, but it can be defined by well-founded recursion on $`\beta`$.
 
 - The domain of $`(\beta; \le, \le_1)`$ is $`\{x \mid x \lt \beta\}`$. The only instances of $`\le_1`$ read there are $`x \le_1 y`$ with $`x, y \lt \beta`$.
-- The truth of $`x \le_1 y`$ is already fixed at the recursion stage $`y \lt \beta`$ of the recursion on $`y`$.
+- Since $`y \lt \beta`$, the truth of $`x \le_1 y`$ is already fixed earlier in the recursion, before $`\beta`$.
 - The same holds for $`(\alpha; \ldots)`$, and $`\alpha \le \beta`$.
 
 Carlson studied the structures that extend this to $`\le_1, \ldots, \le_N`$ ($`\Sigma_1`$- to $`\Sigma_N`$-elementarity).
@@ -61,13 +61,13 @@ In the order-only language, $`(\omega; \le) \preccurlyeq_{\Sigma_1} (\beta; \le)
 
 ## 3. Use in termination proofs
 
-An expansion ([05](05-omegay-mountain.md) §4) is an operation that makes a new sequence from a sequence. Each entry of the sequence is called a **column**. A termination proof of an expansion puts an ordinal **label** on each column and shows that the labels decrease under expansion ([02](02-well-founded.md) §6). The property needed there is **finite reflection**.
+An expansion ([05](05-omegay-mountain.md) §4) is an operation that makes a new sequence from a sequence. Each entry of the sequence is called a column ([05](05-omegay-mountain.md) §1). A termination proof of an expansion puts an ordinal label ([01](01-ordinals.md) §6) on each column and shows that the labels decrease under expansion ([02](02-well-founded.md) §6). The property needed there is **finite reflection**.
 
 **The shape of finite reflection.** Let $`\alpha \lt_1 \beta`$. Suppose points $`\vec p`$ below $`\alpha`$ and points $`\vec y`$ below $`\beta`$ satisfy finitely many atomic conditions $`\psi(\vec p, \vec y)`$. Then there are points $`\vec y'`$ below $`\alpha`$ with $`\psi(\vec p, \vec y')`$.
 
 **Reason.** $`\exists \vec y\ \psi(\vec p, \vec y)`$ is a $`\Sigma_1`$ formula true in $`(\beta; \ldots)`$. By $`\Sigma_1`$-elementarity it is true in $`(\alpha; \ldots)`$.
 
-In an expansion this is used as follows. Choose a column and call it the **cut**. Let $`\alpha`$ be the old label of the cut column. Let $`\vec p`$ be the old labels of the columns before the cut, and $`\vec y`$ the old labels of the columns that get new labels. The $`\vec y`$ are all at least $`\alpha`$. $`\psi`$ states relations between the labels of columns, for example that the labels of two columns joined by an edge of the mountain ([05](05-omegay-mountain.md) §3), a parent and a child, satisfy $`\le_1`$ and so on. The new labels $`\vec y'`$ given by finite reflection satisfy the same relations, and they are all below $`\alpha`$. So the new labels are smaller than the old ones.
+In an expansion this is used as follows. Choose a column and call it the cut ([06](06-combinatorial-layer.md) §5). Let $`\alpha`$ be the old label of the cut column. Let $`\vec p`$ be the old labels of the columns before the cut, and $`\vec y`$ the old labels of the columns that get new labels. The $`\vec y`$ are all at least $`\alpha`$. $`\psi`$ states relations between the labels of columns, for example that the labels of two columns joined by an edge of the mountain ([05](05-omegay-mountain.md) §3), a parent and a child, satisfy $`\le_1`$ and so on. The new labels $`\vec y'`$ given by finite reflection satisfy the same relations, and they are all below $`\alpha`$. So the new labels are smaller than the old ones.
 
 **Use in bms-elem-pattern.** [bms-elem-pattern](https://github.com/koteitan/bms-elem-pattern) proved termination of BMS with $`\mathcal R_N`$. The labels of two columns that are parent and child in row $`k`$ of a BMS matrix are made to satisfy $`\lt_{k+1}`$ ($`\lt_{k+1}`$ means $`\lt`$ and $`\le_{k+1}`$). Finite reflection uses continuity and cofinality lemmas for each $`\le_n`$. The definition and examples of $`\mathcal R_N`$ are in the note [proof/pss/03-patterns.md](https://github.com/koteitan/bms-elem-pattern/blob/main/proof/pss/03-patterns.md) of that repository.
 
@@ -79,11 +79,11 @@ The label relation required by the combinatorial layer of ω-Y (the part of Phyr
 R(\theta, a, b) \quad (\theta \in \mathrm{Key}_m,\ a, b \in \mathrm{Label})
 ```
 
-$`m`$ is the key length. The key $`\theta`$ is a sequence of $`m`$ entries, each a label or $`\top`$ ([02](02-well-founded.md) §3). The third argument $`b`$ is the top ([02](02-well-founded.md) §3). In this repository $`R(\theta, a, b)`$ is read as "in the language whose top predicates are defined only where the key is below $`\theta`$ (§5), the structure of height $`a`$ is a $`\Sigma_1`$-elementary substructure of the structure of height $`b`$" ([07](07-relation-r.md)). An argument that distinguishes the relations of a family, like the $`j`$ of $`\le_j`$ in $`\mathcal R_N`$ or the first argument $`\theta`$ of $`R`$, is called a **relation index**. This relation causes three problems.
+$`m`$ is the key length. The key $`\theta`$ is a sequence of $`m`$ entries, each a label or $`\top`$ ([02](02-well-founded.md) §3). The third argument $`b`$ is the top ([02](02-well-founded.md) §3). In this repository $`R(\theta, a, b)`$ is read as "in the language whose top predicates are defined only where the key is below $`\theta`$ (§5), the structure of height $`a`$ is a $`\Sigma_1`$-elementary substructure of the structure of height $`b`$" ([07](07-relation-r.md)). This causes three problems.
 
-**Problem 1: the relation index is transfinite.** Keys range over $`\mathrm{Key}_m`$ in lexicographic order. The coordinates are labels, so the order of keys is transfinite. The relation indices $`1, \ldots, N`$ of $`\mathcal R_N`$ ($`\Sigma_1`$- to $`\Sigma_N`$-elementarity) are finitely many and counted by natural numbers. A key cannot be used as such a number.
+**Problem 1: keys are transfinite.** Keys range over $`\mathrm{Key}_m`$ in lexicographic order. The coordinates are labels, so the order of keys is transfinite. The $`j = 1, \ldots, N`$ of $`\le_j`$ in $`\mathcal R_N`$ ($`\Sigma_1`$- to $`\Sigma_N`$-elementarity) are finitely many and counted by natural numbers. A key cannot be used as such a number.
 
-**Problem 2: demands toward the top.** Finite reflection must also make the relation $`R(\kappa, x, b)`$ ($`\kappa`$ a key) from a point $`x`$ to the top $`b`$ true for the new labels. A condition of this form is called a **demand** (the top atoms of [06](06-combinatorial-layer.md) §2). $`b`$ is not an element of the structure $`(b; \ldots)`$. Unfolding the definition of $`R`$ does not give a $`\Sigma_1`$ formula.
+**Problem 2: demands toward the top.** Finite reflection must also make the relation $`R(\kappa, x, b)`$ ($`\kappa`$ a key) from a point $`x`$ to the top $`b`$ true for the new labels. A condition of this form is called a demand (the top atoms of [06](06-combinatorial-layer.md) §2). $`b`$ is not an element of the structure $`(b; \ldots)`$. Unfolding the definition of $`R`$ does not give a $`\Sigma_1`$ formula.
 
 **Problem 3: the keys of demands name points that move.** Let $`f`$ be the labels of the columns ($`f(i)`$ the label of column $`i`$). A demand has the form $`R(\mathrm{eval}\ t\ f, f(p), b)`$, where $`p`$ is a column number and $`t`$ a template ([03](03-sigma1-elementary.md) §7). The template decides which column's label is put at each coordinate of the key. We say that "the template names the column". Phyrion's finite reflection does not require these columns to lie before the cut (§3; see the comment on `finite_reflection` in [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean): "No root used in a key is required to be retained"). So a label inside a key may belong to a witness ([03](03-sigma1-elementary.md) §2) that the reflection relabels. The 1-Y version ([01](01-ordinals.md) §7) decided whether a top predicate is defined by "the position of a parameter". That method does not work here.
 
@@ -91,26 +91,25 @@ $`m`$ is the key length. The key $`\theta`$ is a sequence of $`m`$ entries, each
 
 As in [notes/01-design.md](../../notes/01-design.md) §2, the following changes are made.
 
-1. **Every relation index gives $`\Sigma_1`$-elementarity.** The difference in strength between indices is not the quantifier complexity but which top predicates are defined.
-2. **Top predicates are atomic symbols.** A structure of height $`c`$ has a symbol $`\mathrm{Top}_{t,i}`$ ($`\mathrm{Top}_t(v_i)`$ of [03](03-sigma1-elementary.md) §7) for each template $`t`$ and position $`i`$, interpreted as "$`R(\mathrm{eval}\ t\ \vec v, v_i, c)`$". Demands toward the top become atomic formulas (Problem 2).
+1. **Every key gives $`\Sigma_1`$-elementarity.** The difference in strength between keys is not the quantifier complexity but which top predicates are defined.
+2. **Top predicates are atomic symbols.** A structure of height $`c`$ has a symbol $`\mathrm{Top}_{t,i}`$ ([03](03-sigma1-elementary.md) §7) for each template $`t`$ and position $`i`$, interpreted as "$`R(\mathrm{eval}\ t\ \vec v, v_i, c)`$". Demands toward the top become atomic formulas (Problem 2).
 3. **Top predicates are defined only where the key is below $`\theta`$.** Where they are not defined, top literals are false ([03](03-sigma1-elementary.md) §8). Whether they are defined depends on the value of the key (Problem 3). Lowering witnesses pointwise keeps the key below $`\theta`$, because $`\mathrm{eval}`$ is monotone (`Lit.holds_of_le`).
-4. **Internal relations exist for every key.** For each template $`t`$ and positions $`i, j`$ there is a symbol $`\mathrm{Rel}_{t,i,j}`$ ($`\mathrm{Rel}_t(v_i, v_j)`$ of [03](03-sigma1-elementary.md) §7), interpreted as $`\mathrm{Rel}_{t,i,j}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v, v_i, v_j)`$.
-5. **The recursion runs over (top, key).** The top $`b`$ is the outermost component ([02](02-well-founded.md) §3). The right side at stage of key $`\theta`$ reads only top predicates of keys below $`\theta`$. This is exactly the "defined range" of item 3 (Problem 1).
+4. **Internal relations exist for every key.** For each template $`t`$ and positions $`i, j`$ there is a symbol $`\mathrm{Rel}_{t,i,j}`$ ([03](03-sigma1-elementary.md) §7), interpreted as $`\mathrm{Rel}_{t,i,j}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v, v_i, v_j)`$.
+5. **The stages are (top, key).** The top $`b`$ is the outermost component ([02](02-well-founded.md) §3). The right side at stage of key $`\theta`$ reads only top predicates of keys below $`\theta`$. This is exactly the "defined range" of item 3 (Problem 1).
 
 The resulting relation $`R`$ is not Carlson's $`\mathcal R_N`$ itself. We do not claim that it is the same as $`\mathcal R_N`$. The definition is given in [07 The relation R](07-relation-r.md).
 
 | | $`\mathcal R_N`$ (bms-elem-pattern) | 1-Y version (1y-wo-por) | Phyrion's original semantic layer for ω-Y | this repository |
 |---|---|---|---|---|
-| relation index | $`j = 1, \ldots, N`$ | $`(k, \eta) \in \mathbb N \times \mathrm{Ord}`$ | keys $`\theta \in \mathrm{Key}_m`$ | keys $`\theta \in \mathrm{Key}_m`$ |
+| argument that distinguishes the relations | $`j = 1, \ldots, N`$ | $`(k, \eta) \in \mathbb N \times \mathrm{Ord}`$ | keys $`\theta \in \mathrm{Key}_m`$ | keys $`\theta \in \mathrm{Key}_m`$ |
 | content of $`R(\cdot, a, b)`$ | $`\Sigma_j`$-elementarity | $`\Sigma_1`$-elementarity | finite positive graphs below $`b`$ can be compressed below $`a`$ | $`\Sigma_1`$-elementarity |
-| relation to the top | continuity and cofinality lemmas | atomic symbols (visibility decided by the positions of variables) | demands inside the graphs | partial atomic symbols (defined by the value of the key) |
-| recursion stage | top $`\beta`$ | (top, layer, index) | (top, key) | (top, key) |
+| relation to the top | continuity and cofinality lemmas | atomic symbols (whether defined is decided by the positions of variables) | demands inside the graphs | partial atomic symbols (defined by the value of the key) |
+| recursion | top $`\beta`$ | (top, $`k`$, $`\eta`$) | (top, key) | (top, key) |
 
 The terms of the table are as follows ([notes/00-survey.md](../../notes/00-survey.md) §3.1, §3.2).
 
-- $`(k, \eta)`$ of the 1-Y version: $`k`$ is the number of a row of the 1-Y mountain, called the **layer**. $`\eta`$ is the label of the root column, called the **index**.
-- "Visibility" in the 1-Y version: whether a top predicate is defined.
-- Phyrion's **graph**: a finite set of points with finitely many conditions of the relation $`R`$ between points and finitely many demands from points to the top ([06](06-combinatorial-layer.md) §2). **Positive** means that the conditions contain no negation.
+- $`(k, \eta)`$ of the 1-Y version: $`k`$ is the number of a row of the 1-Y mountain, and $`\eta`$ is the label of the root column.
+- Phyrion's graph: a finite set of points with finitely many conditions of the relation $`R`$ between points and finitely many demands from points to the top (the same shape as a graph of [06](06-combinatorial-layer.md) §2). Positive means that the conditions contain no negation.
 - "Finite positive graphs below $`b`$ can be compressed below $`a`$": suppose a strictly increasing labelling below $`b`$ makes the relations between the points of the graph true, and makes the demands (with keys below $`\theta`$) true for the top $`b`$. Then there is a strictly increasing labelling below $`a`$ that makes the same relations true and the demands true for the top $`a`$. The original labels below $`a`$ are not moved.
 
 Phyrion's original semantic layer is summarized in [notes/00-survey.md](../../notes/00-survey.md) §3.2. It is not included in this repository ([NOTICE](../../NOTICE)).
@@ -131,7 +130,7 @@ $`\le_1`$ itself does not appear in the Lean code of this repository. The corres
 | Concept | Lean | File |
 |---|---|---|
 | the relation $`R`$ | `Por.R` | [Por/Relation.lean](../../Por/Relation.lean) |
-| stages of the recursion | `StageLT`, `stage_wf` | same |
+| stages | `StageLT`, `stage_wf` | same |
 | interpretation of the top predicates | `topR c` | same |
 | interpretation of the internal relations | `relR` | same |
 | the defined range | `allow` $`= (\cdot \lt \theta)`$ in `ElemL` | [Por/Formula.lean](../../Por/Formula.lean) |
