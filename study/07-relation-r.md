@@ -6,31 +6,31 @@
 
 | ノート | ここで使う言葉 |
 |---|---|
-| [02 整礎関係と整礎再帰](02-well-founded.md) | 辞書式順序、整礎再帰、ガードつきの再帰、鍵 |
-| [03 構造と Σ₁ 初等部分構造](03-sigma1-elementary.md) | `Lit`、`Form`、`Sat`、`ElemL`、部分的な上端の述語、`Lit.holds_of_le` |
+| [02 整礎関係と整礎再帰](02-well-founded.md) | 辞書式順序、整礎再帰、ガードつきの再帰、鍵、段、上端 |
+| [03 構造と Σ₁ 初等部分構造](03-sigma1-elementary.md) | 構造の高さ、証人、位置、`Lit`、`Form`、`Sat`、`ElemL`、内部の関係、上端の述語、部分的な上端の述語、`Lit.holds_of_le` |
 | [04 Patterns of resemblance](04-patterns-of-resemblance.md) | 上端の述語を原子記号にする考え方 |
-| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 鍵の構文、型板、`key_weaken` の役割 |
+| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 鍵の構文、型板、組合せの層、`key_weaken` の役割 |
 
 このノートは、このリポジトリのラベルの関係 $`R`$ の定義と、定義から直接出る性質を説明する。Lean のファイルは [Por/Relation.lean](../Por/Relation.lean) である。
 
 ## 1. 記号
 
-- $`\mathrm{Label}`$：ラベルの型。整列した線形順序であればよい（Lean の仮定は `LinearOrder` と `WellFoundedLT`）。モデルでは $`\{o \le \omega_1\}`$ である。
-- $`\mathrm{Key}`$：鍵の型。同じく整列した線形順序であればよい。モデルでは $`\mathrm{Key}_m`$ である。
+- $`\mathrm{Label}`$：ラベルの型。整列した線形順序であればよい（Lean の仮定は `LinearOrder` と `WellFoundedLT`）。最終定理で使う具体的な場合を **モデル** と呼ぶ。モデルでは $`\mathrm{Label} = \{o \le \omega_1\}`$ である（[01](01-ordinals.md) §6）。
+- $`\mathrm{Key}`$：鍵の型。同じく整列した線形順序であればよい。モデルでは $`\mathrm{Key}_m`$ である（[02](02-well-founded.md) §3。$`m`$ は鍵の長さ）。
 - $`S`$：鍵の構文 `KeySyntax Label Key`（[06](06-combinatorial-layer.md) §1）。
-- $`R(\theta, a, b)`$：鍵 $`\theta`$、下の点 $`a`$、上の点 $`b`$。Lean では `Por.R S θ a b`。
+- $`R(\theta, a, b)`$：鍵 $`\theta`$、下の点 $`a`$（ラベル）、上の点 $`b`$（ラベル）。$`b`$ は上端である（[02](02-well-founded.md) §3）。Lean では `Por.R S θ a b`。
 
 ## 2. 言語
 
-記号は 3 種類である。$`n`$ 変数の型板 $`t`$ と位置 $`i, j \lt n`$ ごとに、次の記号がある。
+[03](03-sigma1-elementary.md) §7 の言語の記号に、ここで意味を与える。記号は 3 種類である。$`n`$ 変数の型板 $`t`$ と位置 $`i, j \lt n`$ ごとに、次の記号がある。$`\mathrm{Rel}_{t,i,j}`$ と $`\mathrm{Top}_{t,i}`$ は、[03](03-sigma1-elementary.md) §7 の $`\mathrm{Rel}_t(v_i, v_j)`$ と $`\mathrm{Top}_t(v_i)`$ のことである。
 
-| 記号 | 項数 | 意味（高さ $`c`$ の構造で） |
+| 記号 | 引数の数 | 意味（高さ $`c`$ の構造で） |
 |---|---|---|
 | $`\lt`$ | 2 | ラベルの大小 |
 | $`\mathrm{Rel}_{t,i,j}`$ | $`n`$ | $`\mathrm{Rel}_{t,i,j}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ v_j)`$ |
 | $`\mathrm{Top}_{t,i}`$ | $`n`$ | $`\mathrm{Top}_{t,i}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ c)`$ |
 
-$`\mathrm{Rel}`$ は点どうしの関係、$`\mathrm{Top}`$ は点から上端 $`c`$ への関係である。$`c`$ 自身は領域に無い。どちらの記号も、鍵を $`n`$ 個の点から型板で計算する。
+$`\vec v = (v_0, \ldots, v_{n-1})`$ は変数の値の列である。$`\mathrm{Rel}`$ は点どうしの関係、$`\mathrm{Top}`$ は点から上端 $`c`$（構造の高さ）への関係である。$`c`$ 自身は領域に無い。どちらの記号も、鍵を $`n`$ 個の点から型板で計算する。
 
 Lean では、リテラル `Lit.rel t i j pos` と `Lit.top t i pos` がこれらの記号を読む（[03](03-sigma1-elementary.md) §7）。真の解釈は次のとおりである。
 
@@ -49,7 +49,7 @@ def topR (c : Label) : Key → Label → Prop := fun κ x => R S κ x c
 
 Lean では、$`\mathfrak A^c_\theta`$ での真偽は `Sat (relR S) (topR S c) (· < θ) c φ p` である。
 
-**例.** $`m = 1`$、$`\theta = (\omega)`$ とする。
+**例.** 鍵の長さを $`m = 1`$ とし、$`\theta = (\omega)`$ とする。型板は ω-Y の型板（[06](06-combinatorial-layer.md) §1）で、$`\mathrm{some}\ 0`$ は座標に $`v_0`$ を置き、$`\mathrm{none}`$ は $`\top`$ を置く。
 
 - 型板 $`(\mathrm{some}\ 0)`$ の上端の述語は、$`v_0 \lt \omega`$ のとき定義される。つまり $`v_0`$ が自然数のときである。
 - 型板 $`(\mathrm{none})`$ の上端の述語は、鍵が $`(\top)`$ なので、どこでも定義されない。
@@ -63,7 +63,7 @@ Lean では、$`\mathfrak A^c_\theta`$ での真偽は `Sat (relR S) (topR S c) 
 R(\theta, a, b) \iff a \lt b \ \land\ \mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}
 ```
 
-ここで $`\mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}`$ は、すべての論理式 $`\varphi`$ と、$`a`$ より下のすべてのパラメータ $`\vec p`$ について、次が成り立つことである。
+ここで $`\mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}`$ は、すべての論理式 $`\varphi`$ と、$`a`$ より下のすべてのパラメータ $`\vec p`$ について、次が成り立つことである。列 $`\vec p`$ の各成分が $`a`$ より下であることを $`\vec p \lt a`$ と書く。
 
 ```math
 \mathfrak A^{a}_{\theta} \models \varphi(\vec p) \iff \mathfrak A^{b}_{\theta} \models \varphi(\vec p)
@@ -73,7 +73,7 @@ Lean では `ElemL (relR S) (topR S a) (topR S b) θ a b` である（[03](03-si
 
 ## 5. 再帰
 
-右辺は $`R`$ 自身を読む。段 $`(b, \theta)`$ の辞書式順序 $`\lhd`$（[02](02-well-founded.md) §3）で整礎再帰をする。すべての $`a`$ について一度に定義する。
+右辺は $`R`$ 自身を読む。段 $`(b, \theta)`$（上端と鍵の組）の辞書式順序 $`\lhd`$（[02](02-well-founded.md) §3）で整礎再帰をする。すべての $`a`$ について一度に定義する。
 
 **右辺が読む R.** 3 種類だけで、どれも段が小さい。
 
@@ -142,7 +142,7 @@ R(\theta, a, b) \iff a \lt b \land \mathrm{ElemL}(\mathrm{relR}, \mathrm{topR}(a
 R(\mathrm{eval}\ t\ \vec v,\ v_i,\ a) \iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ b)
 ```
 
-**理由.** すべての変数がパラメータの論理式 $`\mathrm{Top}_{t,i}(\vec v)`$ を使う。高さ $`a`$ では左辺、高さ $`b`$ では右辺を意味する。この性質は Lean の定理としては書いていない。証明では、似た形の `top_abs`（Good な点と $`\omega_1`$ の間での上端の述語の一致、[09](09-obligations.md) §3）を使う。
+**理由.** すべての変数がパラメータの論理式 $`\mathrm{Top}_{t,i}(\vec v)`$ を使う。高さ $`a`$ では左辺、高さ $`b`$ では右辺を意味する。この性質は Lean の定理としては書いていない。証明では、似た形の `top_abs`（Good な点と $`\omega_1`$ の間での上端の述語の一致、[09](09-obligations.md) §3）を使う。Good は [08](08-closure-chain.md) §1 で定義する。
 
 **性質（下の点は極限順序数）.** ラベルが順序数で $`R(\theta, a, b)`$ なら、$`a`$ は 0 でない極限順序数である。
 

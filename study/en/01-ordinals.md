@@ -4,7 +4,7 @@
 
 Prerequisites: none
 
-This note explains the ordinals used as labels and $`\omega_1`$, which bounds the labels. The facts used later are the regularity in §5, the label type in §6 and the counting of parameters in §7.
+This note explains the ordinals used as labels (§6) and $`\omega_1`$, which bounds the labels. The facts used later are the regularity in §5, the label type in §6 and the counting of parameters in §7.
 
 ## 1. Well-orders and ordinals
 
@@ -106,12 +106,14 @@ In Lean it is written `ω₁`. This repository uses the following facts.
 \{\beta \mid \beta \lt \sigma\} = \bigcup_{i \in I} \{\beta \mid \beta \lt \alpha_i\}
 ```
 
-The right side is a countable union of countable sets. Terms with $`\alpha_i = 0`$ add nothing, so drop them. For each remaining $`i`$ choose a surjection $`e_i : \mathbb N \to \alpha_i`$. Enumerating $`I`$ by $`\mathbb N`$, the map $`(n, t) \mapsto e_{i_n}(t)`$ is a surjection from $`\mathbb N \times \mathbb N`$ onto the union. $`\mathbb N \times \mathbb N`$ is countable, so the union is countable. Hence $`\sigma`$ is countable and $`\sigma \lt \omega_1`$. $`\square`$
+The right side is a countable union of countable sets. Terms with $`\alpha_i = 0`$ add nothing, so drop them. For each remaining $`i`$ choose a surjection $`e_i : \mathbb N \to \alpha_i`$. Enumerate $`I`$ by $`\mathbb N`$ and write $`i_n`$ for the $`n`$-th index. Then the map $`(n, t) \mapsto e_{i_n}(t)`$ is a surjection from $`\mathbb N \times \mathbb N`$ onto the union. $`\mathbb N \times \mathbb N`$ is countable, so the union is countable. Hence $`\sigma`$ is countable and $`\sigma \lt \omega_1`$. $`\square`$
 
 - Choosing countably many surjections $`e_i`$ at once uses the axiom of choice (countable choice).
 - It fails for an uncountable index set. For example, $`\sup_{\alpha \lt \omega_1} \alpha = \omega_1`$.
 
 In Lean this is `Ordinal.iSup_lt_omega_one`. The index type must have a `Countable` instance. This repository uses it in three places (all in [Por/Supply.lean](../../Por/Supply.lean)).
+
+The terms of the next table are defined in later notes. The witness height is in [08](08-closure-chain.md) §3, `Input S γ` in §7, and the closure tower in [08](08-closure-chain.md) §5. $`\mathrm{Fin}\ n`$ is the set $`\{0, 1, \ldots, n-1\}`$, and `φ.n` is the number of variables of a formula $`\varphi`$ ([03](03-sigma1-elementary.md) §7).
 
 | Place | Index type | What the supremum is taken of |
 |---|---|---|
@@ -137,27 +139,34 @@ In Lean these are `Por.Supply.Label := {o : Ordinal.{0} // o ≤ ω₁}` and `Po
 | `Por.Supply.countable_iio` | for a label $`a \lt \omega_1`$, the set of labels below $`a`$ is countable |
 | `OrdinalSupply.bot_lt_top` | the least label $`\bot = 0`$ satisfies $`\bot \lt \omega_1`$ |
 
-**Why ω₁ itself is a label.** Every label of a representation lies below $`\omega_1`$ (`KeyRepresentation.bounded` in [06](06-combinatorial-layer.md)). On the other hand, the semantic layer uses relations "with top $`\omega_1`$", $`R(\kappa, x, \omega_1)`$ (Good in [08](08-closure-chain.md), `top_abs` in [09](09-obligations.md)). For this, $`\omega_1`$ is an element of the same type.
+**Why ω₁ itself is a label.** The termination proof puts a label on each column of the ω-Y mountain ([05](05-omegay-mountain.md) §3). This sequence of labels is called a **representation** (defined in [06](06-combinatorial-layer.md) §4). Every label of a representation lies below $`\omega_1`$ (`KeyRepresentation.bounded`). On the other hand, the relation $`R(\kappa, x, b)`$ defined in [07](07-relation-r.md) ($`\kappa`$ a key, $`x`$ and $`b`$ labels) is also used with third argument $`b`$ (the **top**) equal to $`\omega_1`$, as $`R(\kappa, x, \omega_1)`$ (Good in [08](08-closure-chain.md), `top_abs` in [09](09-obligations.md)). For this, $`\omega_1`$ is an element of the same type.
 
 ## 7. Counting parameters
 
 In [08](08-closure-chain.md) we take a supremum over "all formulas with parameters below $`\gamma`$". The index type is chosen as follows.
 
-**Definition (`Input`).**
+Notation. Formulas and parameters are defined in [03](03-sigma1-elementary.md) §2 and §7.
+
+- $`\mathrm{Form}`$ (in Lean `Form S`) is the type of formulas. $`S`$ is the key syntax ([03](03-sigma1-elementary.md) §7).
+- Write $`n_\varphi`$ for the number of variables of a formula $`\varphi`$. The variables are numbered $`0, 1, \ldots, n_\varphi - 1`$. These numbers are called **positions**.
+- For a set $`X`$, $`\mathrm{Option}\,X`$ is the set of the wrapped elements $`\mathrm{some}\ x`$ ($`x \in X`$) and one extra element $`\mathrm{none}`$.
+- $`\sum_{\varphi} X_\varphi`$ is a dependent sum. Its elements are pairs $`(\varphi, q)`$ with $`q \in X_\varphi`$.
+
+**Definition (`Input`).** In Lean it is written `Input S γ`.
 
 ```math
 \mathrm{Input}(\gamma) = \sum_{\varphi \in \mathrm{Form}} \bigl(\mathrm{Fin}\ n_\varphi \to \mathrm{Option}\{\, x \mid x \lt \gamma \,\}\bigr)
 ```
 
-Each position gets a label below $`\gamma`$ or nothing (`none`). `toP` turns an input into a tuple of labels, replacing `none` by $`0`$.
+An input $`(\varphi, q)`$ puts on each position of $`\varphi`$ either a label below $`\gamma`$ or nothing (`none`). `toP` turns $`q`$ into a tuple of labels, replacing `none` by $`0`$ and $`\mathrm{some}\ x`$ by $`x`$.
 
 **Theorem (`input_countable`).** If $`\gamma \lt \omega_1`$, then `Input S γ` is countable.
 
 **Proof.** The type of formulas `Form S` is countable ([08](08-closure-chain.md) §2). The set of labels below $`\gamma`$ is countable (`countable_iio`). Functions on a finite type into a countable type, `Option`, and dependent sums of countable types are countable. $`\square`$
 
-**Example.** Let $`\gamma = \omega + 1`$. For a formula $`\varphi`$ in 3 variables whose positions 0 and 2 are parameters, the parameters $`(3, \cdot, \omega)`$ are given by the input $`(\varphi, (\mathrm{some}\ 3, \mathrm{none}, \mathrm{some}\ \omega))`$.
+**Example.** Let $`\gamma = \omega + 1`$. For a formula $`\varphi`$ in 3 variables whose positions 0 and 2 are parameters, the parameters $`(3, \cdot, \omega)`$ (position 1 is not a parameter, so we write $`\cdot`$) are given by the input $`(\varphi, (\mathrm{some}\ 3, \mathrm{none}, \mathrm{some}\ \omega))`$.
 
-The 1-Y version enumerated the points below $`\gamma`$ by lists of natural numbers, so that the index type did not depend on $`\gamma`$. This repository uses the points themselves as indices. The index type depends on $`\gamma`$, but it is countable, so the theorem of §5 applies directly.
+The **1-Y version** is study/ of the sister project [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por). It explains a proof of the same shape for the 1-Y sequence. The 1-Y version enumerated the labels (points) below $`\gamma`$ by lists of natural numbers, so that the index type did not depend on $`\gamma`$. This repository uses the points themselves as indices. The index type depends on $`\gamma`$, but it is countable, so the theorem of §5 applies directly.
 
 ## 8. Where this repository uses it
 

@@ -2,7 +2,10 @@
 
 # study/
 
-Background notes for reading this repository. They write out, from definitions and small examples, the mathematics the proof takes as known (ordinals, well-founded recursion, model theory) and the two layers of the proof (Phyrion's combinatorial layer for ω-Y and the semantic layer of this repository). Every note follows what the Lean code actually does and names the Lean declarations.
+Background notes for reading this repository. They write out, from definitions and small examples, the mathematics the proof takes as known (ordinals, well-founded recursion, model theory) and the two layers of the proof. Every note follows what the Lean code actually does and names the Lean declarations.
+
+- **Combinatorial layer**: the part of Phyrion's proof for ω-Y that deals only with the shape of mountains and expansions. It does not use the definition of the label relation $`R`$, only three theorems about $`R`$ ([06](06-combinatorial-layer.md)).
+- **Semantic layer**: the part that defines the relation $`R`$ and proves the three theorems. In this repository it is a relation of $`\Sigma_1`$-elementary substructures ([07](07-relation-r.md)–[09](09-obligations.md)).
 
 The structure is the same as [study/](https://github.com/koteitan/1y-wo-por/tree/main/study) (the 1-Y version) of the sister project [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por). Where the mathematics is the same (01–04, 08), the same material is rewritten for the definitions and Lean names of this repository. Notes 05, 06 and 09 are specific to ω-Y.
 

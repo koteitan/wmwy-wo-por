@@ -6,9 +6,9 @@
 
 | ノート | ここで使う言葉 |
 |---|---|
-| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 内部の原子、上端の原子、`finite_reflection`、`initial_finite_graph`、制御関係 |
-| [07 関係 R](07-relation-r.md) | $`R`$、`R_iff`、`key_weaken`、部分的な上端の述語 |
-| [08 ω₁ より下の閉包と閉じた点の列](08-closure-chain.md) | $`\mathfrak B`$、Good、`points` |
+| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 組合せの層、コア、薄いファイル、頂点、図式、内部の原子、上端の原子、要求、切れ目、`finite_reflection`、`initial_finite_graph`、制御関係、制御の原子 |
+| [07 関係 R](07-relation-r.md) | $`R`$、$`\mathfrak A^c_\theta`$、`R_iff`、`key_weaken`、部分的な上端の述語 |
+| [08 ω₁ より下の閉包と閉じた点の列](08-closure-chain.md) | $`\mathfrak B`$、Good、閉じた点、`points` |
 
 このノートは、関係 $`R`$ が組合せの層の 3 つの定理をどう満たすかを説明する。中心は有限反映（§2）と、最初の表現（§3）である。
 
@@ -20,7 +20,7 @@
 | 有限反映 | `Por.finite_reflection`（§2） | `Reflection.finite_reflection`、`Model.finite_reflection` |
 | 最初の表現 | `Por.Supply.initial_finite_graph`（§3） | `OrdinalSupply.initial_finite_graph`、`Model.initial_finite_graph` |
 
-コアが呼ぶ名前は、Phyrion 氏のものと同じ文のまま、薄いファイルで与える。
+コア（[06](06-combinatorial-layer.md) の冒頭）が呼ぶ名前は、Phyrion 氏のものと同じ文のまま、薄いファイル（コアと意味の層をつなぐだけの短いファイル、[06](06-combinatorial-layer.md) の冒頭）で与える。
 
 - [OmegaY/Reflection.lean](../OmegaY/Reflection.lean)：`R S θ a b := Por.R S θ a b`。`key_weaken` と `finite_reflection` は `Por` の定理をそのまま返す。
 - [OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean)：`Label` と `top` は `Por.Supply` のもの。`initial_finite_graph` は `Por.Supply.initial_finite_graph` を返す。
@@ -28,7 +28,7 @@
 
 ## 2. 有限反映
 
-**示すこと.** [06](06-combinatorial-layer.md) §5 の仮定の下で、$`g`$ を作る。記号は次のとおりである。$`n`$ は頂点の数、$`f`$ はラベル、$`b`$ は上端、制御関係は $`R(\theta, f(\mathrm{cut}), b)`$、$`G`$ は内部の原子、$`N`$ は要求である。
+**示すこと.** [06](06-combinatorial-layer.md) §5 の仮定の下で、$`g`$ を作る。記号は次のとおりである。$`n`$ は頂点の数、$`f : \mathrm{Fin}\ n \to \mathrm{Label}`$ は頂点のラベル、$`b`$ は上端、$`\theta`$ は鍵、$`\mathrm{cut}`$ は切れ目、制御関係は $`R(\theta, f(\mathrm{cut}), b)`$、$`G`$ は内部の原子のリスト、$`N`$ は要求（上端の原子）のリストである。原子 $`e`$ の型板を $`t_e`$、親を $`p_e`$、子を $`q_e`$ と書く。
 
 **反映する論理式（`reflForm`）.** 変数は $`v_0, \ldots, v_{n-1}`$ で、$`i \lt \mathrm{cut}`$ の位置をパラメータにする。リテラル（`reflLits`）は次の 3 種類である。
 
@@ -36,7 +36,7 @@
 \bigwedge_{i, j \lt n} \bigl( (v_i \lt v_j) \iff (i \lt j) \bigr) \ \land\ \bigwedge_{e \in G} \mathrm{Rel}_{e}(\vec v) \ \land\ \bigwedge_{d \in N} \mathrm{Top}_{d}(\vec v)
 ```
 
-$`\mathrm{Rel}_e(\vec v)`$ は $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$、$`\mathrm{Top}_d(\vec v)`$ は $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, \text{高さ})`$ である。`reflLits_holds` は、このリテラルがすべて成り立つことを、「$`v`$ の順序が添字の順序と同じ」「$`G`$ が成り立つ」「$`N`$ の鍵が定義されていて成り立つ」の 3 つに書き直す。
+$`\mathrm{Rel}_e(\vec v)`$ は内部の関係 $`\mathrm{Rel}_{t_e, p_e, q_e}(\vec v)`$、つまり $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$ である。$`\mathrm{Top}_d(\vec v)`$ は上端の述語 $`\mathrm{Top}_{t_d, p_d}(\vec v)`$、つまり $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, c)`$ である。$`c`$ は論理式を読む構造の高さである（[07](07-relation-r.md) §2）。`reflLits_holds` は、このリテラルがすべて成り立つことを、「$`v`$ の順序が添字の順序と同じ」「$`G`$ が成り立つ」「$`N`$ の鍵が定義されていて成り立つ」の 3 つに書き直す。
 
 **証明.**
 
@@ -51,7 +51,7 @@ $`\mathrm{Rel}_e(\vec v)`$ は $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})
    - $`G`$ が $`g`$ で成り立つ。$`N`$ が上端 $`f(\mathrm{cut})`$ について成り立つ（高さ $`f(\mathrm{cut})`$ の上端の述語は $`R(\cdot, \cdot, f(\mathrm{cut}))`$）。
    - 各点で $`g \le f`$：$`i \lt \mathrm{cut}`$ なら等しく、そうでなければ $`g(i) \lt f(\mathrm{cut}) \le f(i)`$。$`\square`$
 
-**例（[06](06-combinatorial-layer.md) §8 のブロック 0 → 1）.** $`n = 2`$、$`f = (f_0, f_1)`$、$`\mathrm{cut} = 0`$、$`\theta = (f_0, \top)`$、$`b = f_2`$ とする。$`G`$ は列 1 の 2 つの辺、$`N`$ は下の辺 1 つである。反映する論理式は次のとおりである（パラメータは無い）。
+**例（[06](06-combinatorial-layer.md) §8 のブロック 0 → 1）.** $`n = 2`$、$`f = (f_0, f_1)`$、$`\mathrm{cut} = 0`$、$`\theta = (f_0, \top)`$、$`b = f_2`$ とする。$`G`$ は列 1 の 2 つの辺、$`N`$ は下の辺 1 つである。反映する論理式は次のとおりである（パラメータは無い）。$`\mathrm{Top}_{(v_0, v_0)}(v_0)`$ は、鍵 $`(v_0, v_0)`$ の上端の述語が $`v_0`$ で成り立つことである（ここでは型板の代わりに鍵の値を添字に書く）。
 
 ```math
 \exists v_0\ \exists v_1\ \bigl[\ v_0 \lt v_1 \land R((v_0, v_0), v_0, v_1) \land R((v_0, \top), v_0, v_1) \land \mathrm{Top}_{(v_0, v_0)}(v_0)\ \bigr]
@@ -66,7 +66,7 @@ $`\mathrm{Rel}_e(\vec v)`$ は $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})
 
 ### 3.1 上端の述語の絶対性
 
-**定理（`top_abs`）.** $`\mathrm{Good}(\alpha)`$ かつ $`\alpha \lt \omega_1`$ とする。すべての鍵 $`\kappa`$ と $`x \lt \alpha`$ について次が成り立つ。
+**定理（`top_abs`）.** ラベル $`\alpha`$ について $`\mathrm{Good}(\alpha)`$ かつ $`\alpha \lt \omega_1`$ とする。すべての鍵 $`\kappa`$ とラベル $`x \lt \alpha`$ について次が成り立つ。
 
 ```math
 R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
@@ -87,7 +87,7 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 ### 3.2 閉じた点どうしは R の関係にある
 
-**定理（`good_R`）.** $`\mathrm{Good}(\alpha)`$、$`\mathrm{Good}(\beta)`$、$`\alpha \lt \beta \lt \omega_1`$ なら、すべての鍵 $`\kappa`$ で $`R(\kappa, \alpha, \beta)`$。
+**定理（`good_R`）.** ラベル $`\alpha, \beta`$ について $`\mathrm{Good}(\alpha)`$、$`\mathrm{Good}(\beta)`$、$`\alpha \lt \beta \lt \omega_1`$ なら、すべての鍵 $`\kappa`$ で $`R(\kappa, \alpha, \beta)`$。
 
 **証明.** $`\alpha \lt \beta`$ である。鍵 $`\kappa`$ の論理式 $`\psi`$ と、パラメータ $`\vec p \lt \alpha`$ について、次の同値をつなぐ。
 
@@ -101,9 +101,9 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 ### 3.3 すべての有限の図式の表現
 
-**定理（`initial_finite_graph`）.** どの $`G`$ と $`N`$ にも、$`\beta \lt \omega_1`$ と狭義増加の $`f \lt \beta`$ があって、$`G`$ が $`f`$ で成り立ち、$`N`$ が上端 $`\beta`$ について成り立つ。
+**定理（`initial_finite_graph`）.** どの図式 $`(G, N)`$ にも、$`\beta \lt \omega_1`$ と狭義増加の $`f \lt \beta`$ があって、$`G`$ が $`f`$ で成り立ち、$`N`$ が上端 $`\beta`$ について成り立つ。
 
-**証明.** $`n`$ を頂点の数とする。$`\beta := c_n`$、$`f(i) := c_i`$（[08](08-closure-chain.md) §7 の閉じた点の列）とする。
+**証明.** $`n`$ を図式の頂点の数とする。$`\beta := c_n`$、$`f(i) := c_i`$（[08](08-closure-chain.md) §7 の閉じた点の列）とする。
 
 - $`f`$ は狭義増加で、$`c_i \lt c_n`$ である（`points_strictMono`）。$`c_n \lt \omega_1`$ である（`points_lt`）。
 - 内部の原子 $`e`$ は親 $`\lt`$ 子なので、`good_R` から $`R(\mathrm{eval}\ t_e\ f, c_{p_e}, c_{q_e})`$ である。
@@ -130,7 +130,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 
 **公理.** [OmegaY/Audit.lean](../OmegaY/Audit.lean) は、名前が `OmegaY.` か `Por.` で始まるすべての定理の公理を調べる。どれも `propext`、`Classical.choice`、`Quot.sound` だけに依存する（[README](../README.md)「公理の監査」）。
 
-**強さ.** 証明は選択公理と $`\omega_1`$ の正則性を使う。ラベルは $`\omega_1`$ より下の閉じた点で、具体的な値は分からない。順序数の上界や表記系は得られない。
+**強さ.** 証明は選択公理と $`\omega_1`$ の正則性を使う。ラベルは $`\omega_1`$ より下の閉じた点で、具体的な値は分からない。順序数の上界や、順序数の表記系（順序数を有限の記号列で表す方法）は得られない。
 
 ## 5. このリポジトリでの使われ方
 

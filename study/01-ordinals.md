@@ -4,7 +4,7 @@
 
 前提: なし
 
-このノートは、ラベルに使う順序数と、ラベルの上限に使う $`\omega_1`$ を説明する。使う事実は §5 の正則性、§6 のラベルの型、§7 のパラメータの数え方である。
+このノートは、ラベル（§6）に使う順序数と、ラベルの上限に使う $`\omega_1`$ を説明する。使う事実は §5 の正則性、§6 のラベルの型、§7 のパラメータの数え方である。
 
 ## 1. 整列順序と順序数
 
@@ -106,12 +106,14 @@ Lean では `ω₁` と書く。このリポジトリは次の事実を使う。
 \{\beta \mid \beta \lt \sigma\} = \bigcup_{i \in I} \{\beta \mid \beta \lt \alpha_i\}
 ```
 
-である。右辺は可算集合の可算個の和である。$`\alpha_i = 0`$ の項は和に何も足さないので除く。残りの各 $`i`$ で全射 $`e_i : \mathbb N \to \alpha_i`$ を 1 つずつ選ぶ。$`I`$ を $`\mathbb N`$ で数え上げると、$`(n, t) \mapsto e_{i_n}(t)`$ は $`\mathbb N \times \mathbb N`$ から和の上への全射になる。$`\mathbb N \times \mathbb N`$ は可算なので、和も可算である。よって $`\sigma`$ は可算で、$`\sigma \lt \omega_1`$ である。$`\square`$
+である。右辺は可算集合の可算個の和である。$`\alpha_i = 0`$ の項は和に何も足さないので除く。残りの各 $`i`$ で全射 $`e_i : \mathbb N \to \alpha_i`$ を 1 つずつ選ぶ。$`I`$ を $`\mathbb N`$ で数え上げ、$`n`$ 番目の添字を $`i_n`$ と書く。すると $`(n, t) \mapsto e_{i_n}(t)`$ は $`\mathbb N \times \mathbb N`$ から和の上への全射になる。$`\mathbb N \times \mathbb N`$ は可算なので、和も可算である。よって $`\sigma`$ は可算で、$`\sigma \lt \omega_1`$ である。$`\square`$
 
 - 全射 $`e_i`$ を可算個同時に選ぶところで、選択公理（可算選択）を使う。
 - 添字が非可算なら成り立たない。例えば $`\sup_{\alpha \lt \omega_1} \alpha = \omega_1`$ である。
 
 Lean では `Ordinal.iSup_lt_omega_one` である。添字の型は `Countable` のインスタンスを持つ必要がある。このリポジトリでは 3 か所で使う（どれも [Por/Supply.lean](../Por/Supply.lean)）。
+
+次の表の言葉は後のノートで定義する。証人の高さは [08](08-closure-chain.md) §3、`Input S γ` は §7、閉包の塔は [08](08-closure-chain.md) §5 である。$`\mathrm{Fin}\ n`$ は集合 $`\{0, 1, \ldots, n-1\}`$ で、`φ.n` は論理式 $`\varphi`$ の変数の数である（[03](03-sigma1-elementary.md) §7）。
 
 | 使う場所 | 添字の型 | 上限を取るもの |
 |---|---|---|
@@ -137,27 +139,34 @@ Lean では `Por.Supply.Label := {o : Ordinal.{0} // o ≤ ω₁}` と `Por.Supp
 | `Por.Supply.countable_iio` | ラベル $`a \lt \omega_1`$ について、$`a`$ より下のラベルの集合は可算 |
 | `OrdinalSupply.bot_lt_top` | 最小のラベル $`\bot = 0`$ について $`\bot \lt \omega_1`$ |
 
-**なぜ ω₁ 自身をラベルに入れるか.** 表現のラベルはどれも $`\omega_1`$ より下にある（[06](06-combinatorial-layer.md) の `KeyRepresentation.bounded`）。一方、意味の層は「上端が $`\omega_1`$ の関係」$`R(\kappa, x, \omega_1)`$ を使う（[08](08-closure-chain.md) の Good、[09](09-obligations.md) の `top_abs`）。そのために $`\omega_1`$ も同じ型の元にしてある。
+**なぜ ω₁ 自身をラベルに入れるか.** 停止性の証明は、ω-Y の山（[05](05-omegay-mountain.md) §3）の各列にラベルを付ける。このラベルの列を **表現** と呼ぶ（[06](06-combinatorial-layer.md) §4 で定義する）。表現のラベルはどれも $`\omega_1`$ より下にある（`KeyRepresentation.bounded`）。一方、[07](07-relation-r.md) で定義する関係 $`R(\kappa, x, b)`$（$`\kappa`$ は鍵、$`x`$ と $`b`$ はラベル）は、3 番目の引数 $`b`$（**上端**）が $`\omega_1`$ の場合 $`R(\kappa, x, \omega_1)`$ も使う（[08](08-closure-chain.md) の Good、[09](09-obligations.md) の `top_abs`）。そのために $`\omega_1`$ も同じ型の元にしてある。
 
 ## 7. パラメータの数え方
 
 [08](08-closure-chain.md) では、「$`\gamma`$ より下のパラメータを持つすべての論理式」について上限を取る。添字の型を次のように決める。
 
-**定義（`Input`）.**
+記号は次のとおりである。論理式とパラメータは [03](03-sigma1-elementary.md) §2、§7 で定義する。
+
+- $`\mathrm{Form}`$（Lean では `Form S`）は論理式の型である。$`S`$ は鍵の構文である（[03](03-sigma1-elementary.md) §7）。
+- 論理式 $`\varphi`$ の変数の数を $`n_\varphi`$ と書く。変数には $`0, 1, \ldots, n_\varphi - 1`$ の番号がある。この番号を **位置** と呼ぶ。
+- 集合 $`X`$ について、$`\mathrm{Option}\,X`$ は $`X`$ の元 $`x`$ を包んだ $`\mathrm{some}\ x`$ と、1 つの余分な元 $`\mathrm{none}`$ からなる集合である。
+- $`\sum_{\varphi} X_\varphi`$ は依存和で、その元は組 $`(\varphi, q)`$（$`q \in X_\varphi`$）である。
+
+**定義（`Input`）.** Lean では `Input S γ` と書く。
 
 ```math
 \mathrm{Input}(\gamma) = \sum_{\varphi \in \mathrm{Form}} \bigl(\mathrm{Fin}\ n_\varphi \to \mathrm{Option}\{\, x \mid x \lt \gamma \,\}\bigr)
 ```
 
-各位置に、$`\gamma`$ より下のラベルを置くか、何も置かない（`none`）。`toP` は、`none` を $`0`$ に置き換えてラベルの列にする関数である。
+入力 $`(\varphi, q)`$ は、$`\varphi`$ の各位置に、$`\gamma`$ より下のラベルを置くか、何も置かない（`none`）。`toP` は、$`q`$ の `none` を $`0`$ に、$`\mathrm{some}\ x`$ を $`x`$ に置き換えてラベルの列にする関数である。
 
 **定理（`input_countable`）.** $`\gamma \lt \omega_1`$ なら、`Input S γ` は可算である。
 
 **証明.** 論理式の型 `Form S` は可算である（[08](08-closure-chain.md) §2）。$`\gamma`$ より下のラベルの集合は可算である（`countable_iio`）。可算な型の上の有限の関数の型、`Option`、依存和は、どれも可算である。$`\square`$
 
-**例.** $`\gamma = \omega + 1`$ とする。3 変数の論理式 $`\varphi`$ で、位置 0 と 2 をパラメータにするとき、パラメータ $`(3, \cdot, \omega)`$ は入力 $`(\varphi, (\mathrm{some}\ 3, \mathrm{none}, \mathrm{some}\ \omega))`$ で表される。
+**例.** $`\gamma = \omega + 1`$ とする。3 変数の論理式 $`\varphi`$ で、位置 0 と 2 をパラメータにするとき、パラメータ $`(3, \cdot, \omega)`$（位置 1 はパラメータでないので $`\cdot`$ と書く）は入力 $`(\varphi, (\mathrm{some}\ 3, \mathrm{none}, \mathrm{some}\ \omega))`$ で表される。
 
-1-Y 版は、$`\gamma`$ より下の点を自然数の列で数え上げて、添字の型を $`\gamma`$ に依らないものにした。このリポジトリは点をそのまま添字にする。添字の型は $`\gamma`$ に依るが、可算なので §5 の定理をそのまま使える。
+**1-Y 版** は、姉妹プロジェクト [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por) の study/ である。1-Y 数列について、このリポジトリと同じ形の証明を説明している。1-Y 版は、$`\gamma`$ より下のラベル（点）を自然数の列で数え上げて、添字の型を $`\gamma`$ に依らないものにした。このリポジトリは点をそのまま添字にする。添字の型は $`\gamma`$ に依るが、可算なので §5 の定理をそのまま使える。
 
 ## 8. このリポジトリでの使われ方
 

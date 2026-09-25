@@ -6,14 +6,19 @@
 
 | ノート | ここで使う言葉 |
 |---|---|
-| [02 整礎関係と整礎再帰](02-well-founded.md) | 鍵 $`\mathrm{Key}_m`$、ラベルの上界による停止（§6） |
-| [05 ω-Y 数列と山](05-omegay-mountain.md) | 式、行、跳び、辺、父、次数、根、ブロック、展開 |
+| [01 順序数と ω₁](01-ordinals.md) | ラベル、$`\omega_1`$、$`\mathrm{Fin}\ n`$、$`\mathrm{Option}`$ |
+| [02 整礎関係と整礎再帰](02-well-founded.md) | 鍵 $`\mathrm{Key}_m`$、座標、上端、ラベルの上界による停止（§6） |
+| [05 ω-Y 数列と山](05-omegay-mountain.md) | 式、合法、行、跳び、山、節点、辺、父、次数、根、ブロック、展開、次元、$`\mathrm{col}`$ |
 
-このノートは、Phyrion 氏の証明のうち、ラベルの意味を使わない部分（組合せの層）を説明する。この層は、ラベルの関係 $`R`$ についての 3 つの定理だけを使って、展開の整礎性を示す。このリポジトリは、この層を変えずに使う（[NOTICE](../NOTICE)）。層の大部分は `OmegaY/` の 549 モジュールにあり、ここではその入口と出口だけを説明する。
+このノートは、Phyrion 氏の証明のうち、ラベルの意味を使わない部分を説明する。この部分を **組合せの層** と呼ぶ。この層は、ラベルの関係 $`R`$ についての 3 つの定理（§5）だけを使って、展開の整礎性を示す。このリポジトリは、この層を変えずに使う（[NOTICE](../NOTICE)）。層の大部分は `OmegaY/` の 549 モジュールにあり、ここではその入口と出口だけを説明する。
+
+- $`R(\theta, a, b)`$ は 3 つの引数を持つ関係である。$`\theta`$ は鍵、$`a`$ と $`b`$ はラベルである。組合せの層は $`R`$ の定義を使わない。
+- $`R`$ を定義し、§5 の 3 つの定理を示す部分を **意味の層** と呼ぶ（§10）。このリポジトリの意味の層は [07](07-relation-r.md)〜[09](09-obligations.md) で説明する。
+- `OmegaY/` のファイルのうち、`Reflection.lean`、`Reflection/`、`KeyReflection.lean`、`Model.lean` は、組合せの層と意味の層をつなぐだけの短いファイルである。これを **薄いファイル** と呼ぶ。残りのファイルを **コア** と呼ぶ。
 
 ## 1. 鍵と型板
 
-**定義（鍵の構文 `KeySyntax`）.** 鍵の構文は次の 3 つの組である（[OmegaY/Reflection/Interface.lean](../OmegaY/Reflection/Interface.lean)）。
+**定義（鍵の構文 `KeySyntax`）.** $`\mathrm{Label}`$ をラベルの型、$`\mathrm{Key}`$ を鍵の型とする。どちらも線形順序である。$`n`$ を自然数とし、番号 $`0, \ldots, n-1`$ の点を **頂点** と呼ぶ。ω-Y では頂点は山の列である。鍵の構文は次の 3 つの組である（[OmegaY/Reflection/Interface.lean](../OmegaY/Reflection/Interface.lean)）。[03](03-sigma1-elementary.md) §7 の鍵の構文と同じものである。
 
 - `Template n`：$`n`$ 個の頂点の上の **型板** の型。
 - `eval t f`：型板 $`t`$ を頂点のラベル $`f : \mathrm{Fin}\ n \to \mathrm{Label}`$ で評価した鍵。
@@ -34,21 +39,21 @@
 | `Keys.eval_mono` | 各点で $`g \le f`$ なら $`\mathrm{eval}\ t\ g \le \mathrm{eval}\ t\ f`$ |
 | `Keys.templateKey t` | $`\mathrm{eval}\ t\ \mathrm{id}`$。頂点の番号そのものをラベルとして評価した鍵 |
 | `Keys.eval_lt_of_template_lt` | $`f`$ が狭義増加で、$`\mathrm{templateKey}\ t \lt \mathrm{templateKey}\ s`$ なら $`\mathrm{eval}\ t\ f \lt \mathrm{eval}\ s\ f`$ |
-| `Keys.relabel t μ`、`Keys.eval_relabel` | 頂点を $`\mu`$ で付け替えた型板。$`\mathrm{eval}(\mathrm{relabel}\ t\ \mu)\ h = \mathrm{eval}\ t\ (h \circ \mu)`$ |
-| `Keys.shared_root_before_infinity` | $`(a, a) \lt (a, \top)`$ |
+| `Keys.relabel t μ`、`Keys.eval_relabel` | 頂点の写像 $`\mu : \mathrm{Fin}\ n \to \mathrm{Fin}\ n'`$ で頂点を付け替えた型板。新しい頂点のラベル $`h : \mathrm{Fin}\ n' \to \mathrm{Label}`$ について $`\mathrm{eval}(\mathrm{relabel}\ t\ \mu)\ h = \mathrm{eval}\ t\ (h \circ \mu)`$ |
+| `Keys.shared_root_before_infinity` | ラベル $`a`$ について $`(a, a) \lt (a, \top)`$ |
 
 `eval_lt_of_template_lt` があるので、鍵の比べ方は列の番号の比べ方で決まる。ラベルを選ぶ前に、組合せだけで比べられる。
 
 ## 2. 内部の原子と上端の原子
 
-**定義（原子）.** 型板 $`t`$ を持つ次の 2 種類を使う（[OmegaY/Reflection/Interface.lean](../OmegaY/Reflection/Interface.lean)）。
+**定義（原子）.** $`S`$ を鍵の構文、$`n`$ を頂点の数とする。$`n`$ 変数の型板 $`t`$ を持つ次の 2 種類を **原子** と呼ぶ（[OmegaY/Reflection/Interface.lean](../OmegaY/Reflection/Interface.lean)）。親 $`p`$ と子 $`q`$ は頂点である。$`f : \mathrm{Fin}\ n \to \mathrm{Label}`$ は頂点のラベルである。$`b`$ はラベルで、**上端** と呼ぶ（[02](02-well-founded.md) §3）。上端はどの頂点のラベルでもない。
 
 | Lean | 成分 | 成り立つこと（ラベル $`f`$） |
 |---|---|---|
 | `InternalAtom S n` | 型板、親 $`p`$、子 $`q`$、$`p \lt q`$ | $`R(\mathrm{eval}\ t\ f,\ f(p),\ f(q))`$ |
 | `TopAtom S n` | 型板、親 $`p`$ | 上端 $`b`$ について $`R(\mathrm{eval}\ t\ f,\ f(p),\ b)`$ |
 
-上端の原子は、図式の外にある点 $`b`$ への辺である。**要求** とも呼ぶ。
+頂点の数 $`n`$ の **図式** は、内部の原子のリスト $`G`$ と上端の原子のリスト $`N`$ の組である。上端の原子は、図式の外にある点 $`b`$ への辺である。上端の原子を **要求** とも呼ぶ。原子の鍵は $`\mathrm{eval}\ t\ f`$ である。
 
 | Lean | 意味 |
 |---|---|
@@ -63,7 +68,7 @@
 
 **定義（辺）.** `RealStoredEdge` は、phantom でない節点 `lower`、その真上の節点 `upper`、`upper` の左の脚 `parent` の組である（[05](05-omegay-mountain.md) §3 の辺）。**次数** は $`d = \mathrm{jump}(\mathrm{row}(\mathrm{lower}), \mathrm{row}(\mathrm{parent}))`$ である（`degree`）。
 
-**定義（尺度の根）.** 節点 $`u`$ の **尺度 $`k`$ の父** は、$`u`$ から上への辺の父で、その辺の次数が $`k`$ 以下のものである（`scaleParent`）。尺度 $`k`$ の父を無くなるまでたどった節点を **尺度 $`k`$ の根** $`\rho_k(u)`$ と呼ぶ（`scaleRoot`）。尺度が大きいほど、たどれる辺が多いので、根は同じ列か、より左の列にある（`scaleRoot_scale_antitone`）。
+**定義（尺度の根）.** $`k`$ を自然数とする。節点 $`u`$ の **尺度 $`k`$ の父** は、$`u`$ から上への辺の父で、その辺の次数が $`k`$ 以下のものである（`scaleParent`）。尺度 $`k`$ の父を無くなるまでたどった節点を **尺度 $`k`$ の根** $`\rho_k(u)`$ と呼ぶ（`scaleRoot`）。尺度が大きいほど、たどれる辺が多いので、根は同じ列か、より左の列にある（`scaleRoot_scale_antitone`）。
 
 **定義（次元）.** 山のすべての行で、指数 $`D`$ より上の係数が 0 のとき、$`D`$ を山の **次元** と呼ぶ（`MountainKeyDimension`）。有限の山には次元がある（`exists_key_dimension`）。辺の次数は $`D`$ 以下である（`degree_le`）。
 
@@ -93,11 +98,11 @@ $`(1, 3, 5)`$ の列 2 の最初の辺は、父が列 1 にあるのに、鍵は
 
 ## 4. 表現
 
-**定義（表現 `KeyRepresentation hF D`）.** 山（`Frame`）の **表現** は、列のラベル $`f : \mathrm{Fin}\ \mathit{width} \to \mathrm{Label}`$ で、次を満たすものである（[OmegaY/Geometry/RepresentedMountain.lean](../OmegaY/Geometry/RepresentedMountain.lean)）。
+**定義（表現 `KeyRepresentation hF D`）.** 山と、その次元 $`D`$（§3）を固定する。Lean では山を `Frame` と書き、`hF` は山の形の条件（`Frame.Ordered`）の証明である。$`\mathit{width}`$ は山の列の数である。山の **表現** とは、列のラベル $`f : \mathrm{Fin}\ \mathit{width} \to \mathrm{Label}`$ で、次を満たすもののことである（[OmegaY/Geometry/RepresentedMountain.lean](../OmegaY/Geometry/RepresentedMountain.lean)）。
 
 1. $`f`$ は狭義増加（`strictMono`）。
 2. どの $`f(i)`$ も $`\omega_1`$ より小さい（`bounded`）。
-3. どの辺 $`e`$ でも $`R_{D+1}(\mathrm{eval}\ \kappa_D(e)\ f,\ f(\mathrm{col}\,\pi),\ f(\mathrm{col}\,\mathrm{lower}))`$（`edges`）。
+3. どの辺 $`e`$（父 $`\pi`$、下の節点 $`\mathrm{lower}`$）でも $`R_{D+1}(\mathrm{eval}\ \kappa_D(e)\ f,\ f(\mathrm{col}\,\pi),\ f(\mathrm{col}\,\mathrm{lower}))`$（`edges`）。
 
 $`R_{D+1}`$ は長さ $`D + 1`$ の鍵の関係 `Model.R (D + 1)` である。
 
@@ -116,7 +121,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 ## 5. 3 つの定理
 
-組合せの層が意味の層から使うのは、次の 3 つの定理だけである（[notes/01-design.md](../notes/01-design.md) §1）。$`R`$ は `Reflection.R S`、$`\mathrm{top}`$ は $`\omega_1`$ である。
+組合せの層が意味の層から使うのは、次の 3 つの定理だけである（[notes/01-design.md](../notes/01-design.md) §1）。$`R`$ は `Reflection.R S`、$`\mathrm{top}`$ は $`\omega_1`$ である。$`\theta, \Theta`$ は鍵、$`a, b, \beta`$ はラベルである。$`n`$ は頂点の数、$`(G, N)`$ は頂点の数 $`n`$ の図式（§2）である。すべての $`i`$ で $`f(i) \lt b`$ であることを $`f \lt b`$ と書く。
 
 **定理（`key_weaken`）.** $`\theta \le \Theta`$ かつ $`R(\Theta, a, b)`$ なら $`R(\theta, a, b)`$。
 
@@ -125,9 +130,9 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 1. $`f : \mathrm{Fin}\ n \to \mathrm{Label}`$ は狭義増加で、$`f \lt b`$（`Bounded f b`）。
 2. $`G`$ の内部の原子が $`f`$ で成り立つ。
 3. $`N`$ の上端の原子の鍵がどれも $`\theta`$ より小さく、$`N`$ が上端 $`b`$ について成り立つ。
-4. 切れ目 $`\mathrm{cut}`$ について $`R(\theta, f(\mathrm{cut}), b)`$（**制御関係**）。
+4. 頂点 $`\mathrm{cut} \in \mathrm{Fin}\ n`$ について $`R(\theta, f(\mathrm{cut}), b)`$。この頂点を **切れ目**、この関係を **制御関係** と呼ぶ。
 
-このとき、次を満たす $`g`$ がある。
+このとき、次を満たす $`g : \mathrm{Fin}\ n \to \mathrm{Label}`$ がある。
 
 1. $`g`$ は狭義増加で、$`g \lt f(\mathrm{cut})`$。
 2. $`i \lt \mathrm{cut}`$ なら $`g(i) = f(i)`$。
@@ -136,13 +141,13 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 鍵が名指す列は、切れ目より前でなくてよい。
 
-**定理（`initial_finite_graph`）.** どの有限の $`G`$ と $`N`$ にも、ある $`\beta \lt \omega_1`$ と狭義増加の $`f \lt \beta`$ があって、$`G`$ が $`f`$ で成り立ち、$`N`$ が上端 $`\beta`$ について成り立つ。
+**定理（`initial_finite_graph`）.** どの図式 $`(G, N)`$ にも、ある $`\beta \lt \omega_1`$ と狭義増加の $`f \lt \beta`$ があって、$`G`$ が $`f`$ で成り立ち、$`N`$ が上端 $`\beta`$ について成り立つ。
 
 ## 6. 1 ブロックの継ぎ合わせ
 
-有限反映 1 回で、列を 1 ブロック増やす（[OmegaY/Splice.lean](../OmegaY/Splice.lean)）。列の数を $`n`$、切れ目を $`\mathrm{cut}`$ とする。
+有限反映 1 回で、列を 1 ブロック増やす（[OmegaY/Splice.lean](../OmegaY/Splice.lean)）。図式の頂点を列と呼ぶ。列の数を $`n`$、切れ目を $`\mathrm{cut}`$ とする（§5）。
 
-**定義（列の写像）.** 新しい列の数は $`n + (n - \mathrm{cut})`$ である（`Splice.width`）。
+**定義（列の写像）.** 新しい列の数は $`n + (n - \mathrm{cut})`$ である（`Splice.width`）。次の写像は、古い列 $`i \in \mathrm{Fin}\ n`$ を新しい列へ写す。
 
 | Lean | 写像 |
 |---|---|
@@ -150,7 +155,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 | `moved i` | $`i \lt \mathrm{cut}`$ なら $`i`$、そうでなければ $`n + (i - \mathrm{cut})`$ |
 | `boundary` | 列 $`n`$（$`= \mathrm{moved}(\mathrm{cut})`$） |
 
-**定義（新しいラベル `labels cut f g`）.** 列 $`i \lt n`$ には $`g(i)`$、列 $`i \ge n`$ には $`f(\mathrm{cut} + i - n)`$ を付ける。つまり、古い列 $`\mathrm{cut}, \ldots, n - 1`$ のラベルが右端にそのまま並ぶ。
+**定義（新しいラベル `labels cut f g`）.** $`f`$ は古いラベル、$`g`$ は有限反映（§5）で得たラベルである。新しい列 $`i \lt n`$ には $`g(i)`$、列 $`i \ge n`$ には $`f(\mathrm{cut} + i - n)`$ を付ける。つまり、古い列 $`\mathrm{cut}, \ldots, n - 1`$ のラベルが右端にそのまま並ぶ。
 
 **例.** $`n = 4`$、$`\mathrm{cut} = 1`$ なら、新しいラベルは次のとおりである。
 
@@ -160,19 +165,19 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 **定理（`reflected_block`）.** §5 の有限反映の仮定の下で、反映で得た $`g`$ について、`labels cut f g` は狭義増加で $`b`$ より小さい。$`G`$ の原子を `old` で写したものは、新しいラベルで成り立つ（`old` の列のラベルは $`g`$ だから）。`moved` で写したものも、新しいラベルで成り立つ（`moved` の列のラベルは $`f`$ だから）。
 
-**定義（分類 `Classified`）.** 新しい図式の原子 $`e`$ は、次のどれかである。
+**定義（分類 `Classified`）.** 新しい列の上の図式の原子 $`e`$ が **分類される** とは、次のどれかであることをいう。
 
 1. $`G`$ の原子を `old` で写したもの。
-2. 端点が $`G`$ の原子 $`s`$ を `moved` で写したものと同じで、型板の鍵が $`s`$ を写した型板の鍵以下のもの（鍵を弱めた写し）。
-3. 要求 $`d \in N`$ から作った `seamAtom`：親は `old` $`d`$ の親、子は `boundary`。
+2. 親と子が、$`G`$ の原子 $`s`$ の親と子を `moved` で写したものと同じで、型板の鍵 $`\mathrm{templateKey}`$（§1）が、$`s`$ の型板を `moved` で付け替えた型板（`relabel`、§1）の鍵以下のもの（鍵を弱めた写し）。
+3. 要求 $`\tau \in N`$ から作った `seamAtom`：親は $`\tau`$ の親を `old` で写した列、子は `boundary`。
 
 **定理（`classified_graph_represented`）.** 新しい図式がすべて分類されるなら、新しいラベルで全体が成り立つ。1 は反映から、2 は `key_weaken`（`holds_weakened_copy`）から、3 は要求が上端 $`f(\mathrm{cut})`$ について成り立つことと、`boundary` のラベルが $`f(\mathrm{cut})`$ であることから出る（`holds_seam`）。
 
 ## 7. 予備を持つ反映のくり返し
 
-展開では、ブロックを $`N`$ 回くり返し増やす。そのために、次の反映に要る事実を **予備** として持ち運ぶ（[OmegaY/Splice/Reservoirs.lean](../OmegaY/Splice/Reservoirs.lean)、[OmegaY/Splice/IteratedReservoirs.lean](../OmegaY/Splice/IteratedReservoirs.lean)）。
+展開では、ブロックを $`N`$ 回くり返し増やす。そのために、次の反映に要る事実を **予備** として持ち運ぶ。予備は原子のリストで、内部の原子のリスト $`F`$（**内部の予備**）と、上端の原子のリスト $`T`$（**上端の予備**）がある（[OmegaY/Splice/Reservoirs.lean](../OmegaY/Splice/Reservoirs.lean)、[OmegaY/Splice/IteratedReservoirs.lean](../OmegaY/Splice/IteratedReservoirs.lean)）。
 
-**定義（`ReservoirState G F T control f β`）.** 次の 6 つが成り立つことである。
+**定義（`ReservoirState G F T control f β`）.** $`G`$ は今の図式の内部の原子のリスト、$`F`$ は内部の予備、$`T`$ は上端の予備である。`control` は上端の原子で、**制御の原子** と呼ぶ。その型板を $`t_c`$ と書く。$`f`$ は列のラベル、$`\beta`$ はラベル（上端）である。`ReservoirState G F T control f β` とは、次の 6 つが成り立つことをいう。
 
 | 成分 | 内容 |
 |---|---|
@@ -180,13 +185,13 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 | `graph` | 今の図式 $`G`$ が成り立つ |
 | `internal` | 内部の予備 $`F`$ が成り立つ |
 | `virtual` | 上端の予備 $`T`$ が上端 $`\beta`$ について成り立つ |
-| `controlled` | $`R(\mathrm{eval}\ \kappa_c\ f,\ f(\mathrm{control.parent}),\ \beta)`$ |
+| `controlled` | $`R(\mathrm{eval}\ t_c\ f,\ f(\mathrm{control.parent}),\ \beta)`$ |
 
-**定理（`splice_reservoirs`）.** 次を仮定する。状態 `ReservoirState G F T control f β`。要求 $`N`$ の各原子に、親が同じで型板の鍵が以上の $`T`$ の原子がある（`DemandCovered`）。要求の型板の鍵は、制御の型板の鍵より真に小さい。新しい図式 $`H`$ の原子は `ReservoirClassified` である（§6 の 3 種類で、2 は $`F`$ から、3 は鍵を弱めた要求）。このとき、切れ目を `control.parent` とする有限反映 1 回で、$`H`$、`moved` で写した $`F`$、$`T`$、`control` について、同じ $`\beta`$ の状態が得られる。
+**定理（`splice_reservoirs`）.** 次を仮定する。状態 `ReservoirState G F T control f β`。要求のリスト $`N`$ の各原子に、親が同じで、型板の鍵 $`\mathrm{templateKey}`$（§1）が以上の $`T`$ の原子がある（`DemandCovered`）。$`N`$ の原子の型板の鍵は、制御の原子の型板の鍵より真に小さい。新しい図式 $`H`$ の原子は `ReservoirClassified` である（§6 の 3 種類で、2 は $`F`$ から、3 は鍵を弱めた要求）。このとき、切れ目を `control.parent` とする有限反映 1 回で、$`H`$、`moved` で写した $`F`$、$`T`$、`control` について、同じ $`\beta`$ の状態が得られる。
 
 反映には $`G`$ と $`F`$ をまとめて渡す。要求の鍵が制御の鍵より小さいことが、有限反映の `KeysBelow` になる。
 
-**定義（ブロックの番号）.** 始めの列の数を $`x`$、根の列を $`y`$ とする。
+**定義（ブロックの番号）.** 元の式の最後の列の番号を $`x`$ とする。最後の列を除くと、列は $`x`$ 個である。根の列を $`y`$（[05](05-omegay-mountain.md) §4 の $`c_r`$）とする。$`b`$ はブロックの番号、$`i \in \mathrm{Fin}\ x`$ は元の列である。
 
 | Lean | 値 |
 |---|---|
@@ -194,11 +199,11 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 | `blockCut b` | $`y + b(x - y)`$ |
 | `blockSource b i` | $`i \lt y`$ なら $`i`$、そうでなければ $`i + b(x - y)`$ |
 
-**定理（`iterated_reservoirs`）.** ブロック 0 の状態があり、各ブロックで要求が上端の予備で覆われ、要求の鍵が制御の鍵より小さく、次のブロックの図式が分類されるなら、すべての $`b`$ でブロック $`b`$ の状態がある。$`\beta`$ は変わらない。ブロック $`b`$ の切れ目は `blockCut b` である。
+**定理（`iterated_reservoirs`）.** ブロック 0 の状態があり、各ブロックで要求が上端の予備で覆われ（`DemandCovered`）、要求の鍵が制御の鍵より小さく、次のブロックの図式が分類されるなら、すべての $`b`$ でブロック $`b`$ の状態がある。$`\beta`$ は変わらない。ブロック $`b`$ の切れ目は `blockCut b` である。
 
 ## 8. 末尾のラベルによる降下
 
-**定理（`ActualRepresentationDescent`、`actual_representation_descent`）.** 合法な空でない式 $`s`$ の山の表現 $`f`$（次元 $`D`$）と、どの $`N`$ についても、$`s[N]`$ の山の表現 $`f'`$（次元 $`D`$）で、すべてのラベルが $`f(x)`$ より小さいものがある。
+**定理（`ActualRepresentationDescent`、`actual_representation_descent`）.** $`s = (s_0, \ldots, s_x)`$ を合法な空でない式、$`D`$ をその山の次元、$`f`$ をその山の表現とする。$`f(x)`$ は最後の列のラベルで、**末尾のラベル** と呼ぶ。このとき、どの自然数 $`N`$ についても、$`s[N]`$ の山の表現 $`f'`$（次元 $`D`$）で、すべてのラベルが $`f(x)`$ より小さいものがある。
 
 **場合 1（最後の列を消すとき）.** $`f`$ を接頭辞に制限する（`expandDiagram_trivial_representation_descent`）。ラベルはどれも $`f(x)`$ より小さい（`restrict_below_last`）。
 
@@ -219,7 +224,10 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 どれも古い表現 $`f`$ の辺の関係そのものなので、反映を使わずに成り立つ。
 
-次に、ブロック $`b`$ から $`b + 1`$ へ §7 の `splice_reservoirs` を使う（`iterated_actual_reservoirs`）。そのとき要るのは、ブロック $`b+1`$ の山のすべての辺が `ReservoirClassified` であることである（`actual_splice_edge_classified`）。これは展開のプログラムの形についての有限の事実で、weak magma の充填の規則を使う。複写の辺の鍵の上界と、充填の辺の分類が、その中心である（[notes/02-feasibility.md](../notes/02-feasibility.md) §3.1、§4.2）。
+次に、ブロック $`b`$ から $`b + 1`$ へ §7 の `splice_reservoirs` を使う（`iterated_actual_reservoirs`）。そのとき要るのは、ブロック $`b+1`$ の山のすべての辺が `ReservoirClassified` であることである（`actual_splice_edge_classified`）。これは展開のプログラムの形についての有限の事実で、weak magma の充填の規則（[05](05-omegay-mountain.md) §5）を使う。中心は次の 2 つである（[notes/02-feasibility.md](../notes/02-feasibility.md) §3.1、§4.2）。
+
+- **複写の辺の鍵の上界**（`ActualCopiedKeyBound`）：新しいブロックの辺 $`e`$ には、$`M(s')`$ の源の辺 $`e'`$（[05](05-omegay-mountain.md) §4）がある。$`e`$ の父の列と子の列は、$`e'`$ の父の列と子の列を写したものである。$`e`$ の鍵は、$`e'`$ の鍵を写したもの以下である。
+- **充填の辺の分類**（`ActualFillCopiedKey`）：すき間の節点（[05](05-omegay-mountain.md) §4）への辺の鍵は、同じ列を端点に持つ写した辺の鍵より小さい。そのため、その写した辺の上界から `key_weaken` で扱える。
 
 ブロック $`N`$ の状態のラベルは、$`s[N]`$ の山の表現である（`representationOfSpliceGraph`）。どれも $`\beta = f(x)`$ より小さい（`represent_actual_expansion`）。
 
@@ -235,7 +243,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 ## 9. 3 つの定理が使われる場所
 
-`grep` で探した、コアの中の呼び出しである（薄いファイル `Reflection.lean`、`Reflection/`、`KeyReflection.lean`、`Model.lean` を除く）。
+`grep` で探した、コア（冒頭）の中の呼び出しである（薄いファイル `Reflection.lean`、`Reflection/`、`KeyReflection.lean`、`Model.lean` を除く）。
 
 | 定理 | 呼び出す場所 |
 |---|---|
@@ -247,7 +255,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 組合せの層は、有限反映がなぜ成り立つかを問わない。§5 の 3 つの定理を満たす $`R`$ を与えるのが **意味の層** の仕事である。
 
-- Phyrion 氏の意味の層：$`R(\theta, a, b)`$ は「$`b`$ より下の有限の正の図式を $`a`$ より下へ圧縮できる」ことである（[notes/00-survey.md](../notes/00-survey.md) §3.2）。このリポジトリには含めない。
+- Phyrion 氏の意味の層：$`R(\theta, a, b)`$ は「$`b`$ より下の有限の正の図式を $`a`$ より下へ圧縮できる」ことである（言葉の意味は [04](04-patterns-of-resemblance.md) §5、[notes/00-survey.md](../notes/00-survey.md) §3.2）。このリポジトリには含めない。
 - このリポジトリの意味の層：$`R`$ は [07 関係 R](07-relation-r.md) の $`\Sigma_1`$ 初等部分構造の関係である。証明は [09 3 つの定理の証明](09-obligations.md) にある。
 
 ## 11. このリポジトリでの使われ方

@@ -6,9 +6,9 @@ Prerequisites
 
 | Note | Terms used here |
 |---|---|
-| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | internal atoms, top atoms, `finite_reflection`, `initial_finite_graph`, control relation |
-| [07 The relation R](07-relation-r.md) | $`R`$, `R_iff`, `key_weaken`, partial top predicates |
-| [08 Closure below ω₁ and the sequence of closed points](08-closure-chain.md) | $`\mathfrak B`$, Good, `points` |
+| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | combinatorial layer, core, thin files, vertex, graph, internal atoms, top atoms, demand, cut, `finite_reflection`, `initial_finite_graph`, control relation, control atom |
+| [07 The relation R](07-relation-r.md) | $`R`$, $`\mathfrak A^c_\theta`$, `R_iff`, `key_weaken`, partial top predicates |
+| [08 Closure below ω₁ and the sequence of closed points](08-closure-chain.md) | $`\mathfrak B`$, Good, closed point, `points` |
 
 This note explains how the relation $`R`$ satisfies the three theorems of the combinatorial layer. The core is finite reflection (§2) and the first representation (§3).
 
@@ -20,7 +20,7 @@ This note explains how the relation $`R`$ satisfies the three theorems of the co
 | finite reflection | `Por.finite_reflection` (§2) | `Reflection.finite_reflection`, `Model.finite_reflection` |
 | first representation | `Por.Supply.initial_finite_graph` (§3) | `OrdinalSupply.initial_finite_graph`, `Model.initial_finite_graph` |
 
-The names the core calls are given in thin files, with Phyrion's statements unchanged.
+The names the core (beginning of [06](06-combinatorial-layer.md)) calls are given in thin files (short files that only connect the core with the semantic layer, beginning of [06](06-combinatorial-layer.md)), with Phyrion's statements unchanged.
 
 - [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean): `R S θ a b := Por.R S θ a b`. `key_weaken` and `finite_reflection` return the `Por` theorems.
 - [OmegaY/Reflection/OrdinalSupply.lean](../../OmegaY/Reflection/OrdinalSupply.lean): `Label` and `top` are those of `Por.Supply`. `initial_finite_graph` returns `Por.Supply.initial_finite_graph`.
@@ -28,7 +28,7 @@ The names the core calls are given in thin files, with Phyrion's statements unch
 
 ## 2. Finite reflection
 
-**What is shown.** Under the assumptions of [06](06-combinatorial-layer.md) §5, construct $`g`$. Notation: $`n`$ is the number of vertices, $`f`$ the labels, $`b`$ the top, the control relation is $`R(\theta, f(\mathrm{cut}), b)`$, $`G`$ the internal atoms, and $`N`$ the demands.
+**What is shown.** Under the assumptions of [06](06-combinatorial-layer.md) §5, construct $`g`$. Notation: $`n`$ is the number of vertices, $`f : \mathrm{Fin}\ n \to \mathrm{Label}`$ the labels of the vertices, $`b`$ the top, $`\theta`$ a key, $`\mathrm{cut}`$ the cut, the control relation is $`R(\theta, f(\mathrm{cut}), b)`$, $`G`$ the list of internal atoms, and $`N`$ the list of demands (top atoms). For an atom $`e`$, write $`t_e`$ for its template, $`p_e`$ for its parent and $`q_e`$ for its child.
 
 **The reflected formula (`reflForm`).** The variables are $`v_0, \ldots, v_{n-1}`$, and the positions $`i \lt \mathrm{cut}`$ are parameters. The literals (`reflLits`) are of three kinds:
 
@@ -36,7 +36,7 @@ The names the core calls are given in thin files, with Phyrion's statements unch
 \bigwedge_{i, j \lt n} \bigl( (v_i \lt v_j) \iff (i \lt j) \bigr) \ \land\ \bigwedge_{e \in G} \mathrm{Rel}_{e}(\vec v) \ \land\ \bigwedge_{d \in N} \mathrm{Top}_{d}(\vec v)
 ```
 
-$`\mathrm{Rel}_e(\vec v)`$ is $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$, and $`\mathrm{Top}_d(\vec v)`$ is $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, \text{height})`$. `reflLits_holds` rewrites "all these literals hold" into three statements: "the order of $`v`$ is the order of the indices", "$`G`$ holds", and "the keys of $`N`$ are defined and $`N`$ holds".
+$`\mathrm{Rel}_e(\vec v)`$ is the internal relation $`\mathrm{Rel}_{t_e, p_e, q_e}(\vec v)`$, that is, $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$. $`\mathrm{Top}_d(\vec v)`$ is the top predicate $`\mathrm{Top}_{t_d, p_d}(\vec v)`$, that is, $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, c)`$, where $`c`$ is the height of the structure in which the formula is read ([07](07-relation-r.md) §2). `reflLits_holds` rewrites "all these literals hold" into three statements: "the order of $`v`$ is the order of the indices", "$`G`$ holds", and "the keys of $`N`$ are defined and $`N`$ holds".
 
 **Proof.**
 
@@ -51,7 +51,7 @@ $`\mathrm{Rel}_e(\vec v)`$ is $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`
    - $`G`$ holds at $`g`$, and $`N`$ holds for the top $`f(\mathrm{cut})`$ (the top predicates at height $`f(\mathrm{cut})`$ are $`R(\cdot, \cdot, f(\mathrm{cut}))`$);
    - $`g \le f`$ pointwise: equal for $`i \lt \mathrm{cut}`$, and otherwise $`g(i) \lt f(\mathrm{cut}) \le f(i)`$. $`\square`$
 
-**Example (block 0 → 1 of [06](06-combinatorial-layer.md) §8).** Let $`n = 2`$, $`f = (f_0, f_1)`$, $`\mathrm{cut} = 0`$, $`\theta = (f_0, \top)`$ and $`b = f_2`$. $`G`$ is the two edges of column 1 and $`N`$ is the one lower edge. The reflected formula is (there are no parameters):
+**Example (block 0 → 1 of [06](06-combinatorial-layer.md) §8).** Let $`n = 2`$, $`f = (f_0, f_1)`$, $`\mathrm{cut} = 0`$, $`\theta = (f_0, \top)`$ and $`b = f_2`$. $`G`$ is the two edges of column 1 and $`N`$ is the one lower edge. The reflected formula is as follows (there are no parameters). $`\mathrm{Top}_{(v_0, v_0)}(v_0)`$ says that the top predicate of key $`(v_0, v_0)`$ holds at $`v_0`$ (here the value of the key is written as the subscript instead of the template).
 
 ```math
 \exists v_0\ \exists v_1\ \bigl[\ v_0 \lt v_1 \land R((v_0, v_0), v_0, v_1) \land R((v_0, \top), v_0, v_1) \land \mathrm{Top}_{(v_0, v_0)}(v_0)\ \bigr]
@@ -66,7 +66,7 @@ $`\mathrm{Rel}_e(\vec v)`$ is $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`
 
 ### 3.1 Absoluteness of top predicates
 
-**Theorem (`top_abs`).** Let $`\mathrm{Good}(\alpha)`$ and $`\alpha \lt \omega_1`$. For every key $`\kappa`$ and $`x \lt \alpha`$:
+**Theorem (`top_abs`).** Let $`\alpha`$ be a label with $`\mathrm{Good}(\alpha)`$ and $`\alpha \lt \omega_1`$. For every key $`\kappa`$ and label $`x \lt \alpha`$:
 
 ```math
 R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
@@ -87,7 +87,7 @@ The third item of step 4 uses "lowering pointwise keeps the key condition" of [0
 
 ### 3.2 Closed points are in the relation R
 
-**Theorem (`good_R`).** If $`\mathrm{Good}(\alpha)`$, $`\mathrm{Good}(\beta)`$ and $`\alpha \lt \beta \lt \omega_1`$, then $`R(\kappa, \alpha, \beta)`$ for every key $`\kappa`$.
+**Theorem (`good_R`).** For labels $`\alpha, \beta`$, if $`\mathrm{Good}(\alpha)`$, $`\mathrm{Good}(\beta)`$ and $`\alpha \lt \beta \lt \omega_1`$, then $`R(\kappa, \alpha, \beta)`$ for every key $`\kappa`$.
 
 **Proof.** $`\alpha \lt \beta`$ holds. For a formula $`\psi`$ at key $`\kappa`$ and parameters $`\vec p \lt \alpha`$, chain the equivalences
 
@@ -101,9 +101,9 @@ The key $`\kappa`$ is arbitrary: closed points are related at every key.
 
 ### 3.3 A representation of every finite graph
 
-**Theorem (`initial_finite_graph`).** For every $`G`$ and $`N`$ there are $`\beta \lt \omega_1`$ and a strictly increasing $`f \lt \beta`$ such that $`G`$ holds at $`f`$ and $`N`$ holds for the top $`\beta`$.
+**Theorem (`initial_finite_graph`).** For every graph $`(G, N)`$ there are $`\beta \lt \omega_1`$ and a strictly increasing $`f \lt \beta`$ such that $`G`$ holds at $`f`$ and $`N`$ holds for the top $`\beta`$.
 
-**Proof.** Let $`n`$ be the number of vertices. Put $`\beta := c_n`$ and $`f(i) := c_i`$ (the sequence of closed points of [08](08-closure-chain.md) §7).
+**Proof.** Let $`n`$ be the number of vertices of the graph. Put $`\beta := c_n`$ and $`f(i) := c_i`$ (the sequence of closed points of [08](08-closure-chain.md) §7).
 
 - $`f`$ is strictly increasing and $`c_i \lt c_n`$ (`points_strictMono`), and $`c_n \lt \omega_1`$ (`points_lt`).
 - An internal atom $`e`$ has parent $`\lt`$ child, so `good_R` gives $`R(\mathrm{eval}\ t_e\ f, c_{p_e}, c_{q_e})`$.
@@ -130,7 +130,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 
 **Axioms.** [OmegaY/Audit.lean](../../OmegaY/Audit.lean) checks the axioms of every theorem whose name starts with `OmegaY.` or `Por.`. All depend only on `propext`, `Classical.choice` and `Quot.sound` ([README](../../README-en.md) "Axiom audit").
 
-**Strength.** The proof uses the axiom of choice and the regularity of $`\omega_1`$. The labels are closed points below $`\omega_1`$ whose concrete values are unknown. No ordinal bound or notation system is obtained.
+**Strength.** The proof uses the axiom of choice and the regularity of $`\omega_1`$. The labels are closed points below $`\omega_1`$ whose concrete values are unknown. No ordinal bound and no ordinal notation system (a way to write ordinals as finite strings of symbols) is obtained.
 
 ## 5. Where this repository uses it
 

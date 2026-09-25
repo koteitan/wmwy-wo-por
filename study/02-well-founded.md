@@ -16,7 +16,7 @@
 
 整礎であることと、$`x_0 \succ x_1 \succ x_2 \succ \cdots`$ となる無限降下列が無いことは同値である。「無限降下列が無いなら整礎」の向きには、選択公理の弱い形（従属選択）を使う。
 
-**Lean での定義.** Lean は `Acc`（到達可能）を使う。
+**Lean での定義.** Lean は `Acc`（到達可能）を使う。`r` は関係 $`\prec`$ で、`r y x` は $`y \prec x`$ を表す。
 
 - `Acc r x` は、「$`r\,y\,x`$ となるすべての $`y`$ について `Acc r y`」のとき成り立つ。帰納的に定義される。
 - `WellFounded r` は、すべての $`x`$ で `Acc r x` が成り立つことである。
@@ -31,13 +31,13 @@
 | $`\mathbb Z`$ の $`\lt`$ | いいえ | |
 | 合法な式の全体の辞書式順序 | いいえ | `OmegaY.Expansion.Dynamics.not_wellFounded_lex_all_legal` |
 
-最後の行の例。式の辞書式順序では真の接頭辞が小さく、最初に違う項で比べる。すると次の無限降下列がある（Lean の証明の中の列 `onesThenTwo`）。
+最後の行の例。**式** は正の整数の有限列で、**合法** な式とは、空か、先頭の項が 1 の式である（[05](05-omegay-mountain.md) §1 で定義する）。式の **辞書式順序** では、最初に違う項の大小で比べる。一方が他方の真の接頭辞なら、短い方が小さい。すると次の無限降下列がある（Lean の証明の中の列 `onesThenTwo`）。
 
 ```math
 (1,2) \gt (1,1,2) \gt (1,1,1,2) \gt (1,1,1,1,2) \gt \cdots
 ```
 
-ω-Y の展開は辞書式順序を下げる（`Dynamics.next_lex`、[05](05-omegay-mountain.md) §7）。それでも辞書式順序だけでは停止は出ない。そこでラベルを使う（§6）。
+ω-Y の展開（式から新しい式を作る操作。[05](05-omegay-mountain.md) §4 で定義する）は辞書式順序を下げる（`Dynamics.next_lex`、[05](05-omegay-mountain.md) §7）。それでも辞書式順序だけでは停止は出ない。そこでラベルを使う（§6）。
 
 ## 2. 整礎帰納法
 
@@ -51,7 +51,7 @@
 
 **証明.** $`P`$ が偽になる $`x`$ の集合が空でないとする。その極小元 $`x`$ を取る。$`y \prec x`$ なら $`P(y)`$ は真である。仮定から $`P(x)`$ も真になり、矛盾する。$`\square`$
 
-Lean では `WellFounded.induction` と `WellFoundedLT.induction` である。[09 3 つの定理の証明](09-obligations.md) の `top_abs` は、鍵の順序でこれを使う。
+Lean では `WellFounded.induction` と `WellFoundedLT.induction` である。[09 3 つの定理の証明](09-obligations.md) の `top_abs` は、鍵（§3）の順序でこれを使う。
 
 ## 3. 辞書式積と鍵の順序
 
@@ -67,21 +67,15 @@ Lean では `WellFounded.induction` と `WellFoundedLT.induction` である。[0
 
 **例.** $`\mathbb N \times \mathbb N`$ で、$`(1, 0)`$ より小さい組は $`(0, 0), (0, 1), (0, 2), \ldots`$ と無限個ある。それでも降下列はどれも有限である。例えば $`(1,0) \succ (0, 100) \succ (0, 99) \succ \cdots \succ (0, 0)`$ は 102 項で止まる。
 
-Lean では `Prod.Lex` と `WellFounded.prod_lex` である。関係 $`R`$ の再帰の段の順序はこの形である（[Por/Relation.lean](../Por/Relation.lean)）。
+Lean では `Prod.Lex` と `WellFounded.prod_lex` である。
 
-```math
-(b', \kappa') \lhd (b, \theta) \iff b' \lt b\ \lor\ (b' = b \land \kappa' \lt \theta)
-```
-
-$`b`$ はラベル（上端）、$`\kappa`$ は鍵である。Lean では `StageLT := Prod.Lex (· < ·) (· < ·)` と `stage_wf` である。
-
-**定義（鍵）.** 長さ $`m`$ の **鍵** は、ラベルか $`\top`$ を $`m`$ 個並べた列である。$`\top`$ はどのラベルよりも大きい。
+**定義（鍵）.** $`m`$ を自然数とする。長さ $`m`$ の **鍵** は、ラベル（[01](01-ordinals.md) §6）か $`\top`$ を $`m`$ 個並べた列である。$`\top`$ はラベルでない新しい元で、どのラベルよりも大きい。[01](01-ordinals.md) §6 の $`\mathrm{top} = \omega_1`$ はラベルなので、$`\omega_1 \lt \top`$ である。
 
 ```math
 \mathrm{Key}_m = \mathrm{Lex}\bigl(\mathrm{Fin}\ m \to \mathrm{Label} \cup \{\top\}\bigr)
 ```
 
-順序は **最初に違う座標** で比べる辞書式順序である。Lean では `OmegaY.Keys.Key m Label := Lex (Fin m → WithTop Label)` である。
+$`\mathrm{Fin}\ m = \{0, \ldots, m-1\}`$（[01](01-ordinals.md) §5）で、$`\mathrm{Fin}\ m \to X`$ は $`X`$ の元を $`m`$ 個並べた列である。列の $`i`$ 番目の元を **座標** $`i`$ と呼ぶ。$`\mathrm{Lex}(\ldots)`$ は、この列の集合に辞書式順序を入れたものである。つまり **最初に違う座標** で比べる。Lean では `OmegaY.Keys.Key m Label := Lex (Fin m → WithTop Label)` である。
 
 | 比べる 2 つの鍵（$`m = 2`$） | 結果 | 理由 |
 |---|---|---|
@@ -95,15 +89,23 @@ $`b`$ はラベル（上端）、$`\kappa`$ は鍵である。Lean では `Stage
 
 Lean では、Mathlib のインスタンス（有限の添字の上の辞書式順序は整礎）から `wellFounded_lt` で出す。
 
+**定義（段と上端）.** [07](07-relation-r.md) で定義する関係 $`R(\theta, a, b)`$（$`\theta`$ は鍵、$`a`$ と $`b`$ はラベル）は、組 $`(b, \theta)`$ についての整礎再帰で定義する（§4）。この組を **段** と呼ぶ。3 番目の引数 $`b`$ を **上端** と呼ぶ。段の順序 $`\lhd`$ は、ラベルの順序と鍵の順序の辞書式積である（[Por/Relation.lean](../Por/Relation.lean)）。
+
+```math
+(b', \kappa') \lhd (b, \theta) \iff b' \lt b\ \lor\ (b' = b \land \kappa' \lt \theta)
+```
+
+$`b', b`$ はラベル、$`\kappa', \theta`$ は鍵である。上の 2 つの定理から、$`\lhd`$ は整礎である。Lean では `StageLT := Prod.Lex (· < ·) (· < ·)` と `stage_wf` である。
+
 ## 4. 整礎再帰
 
-**定理（整礎再帰）.** $`\prec`$ を $`T`$ の上の整礎関係とする。各 $`t \in T`$ と、「$`t`$ より小さい鍵での値」を受け取って、$`t`$ での値を返す規則 $`G`$ があるとする。このとき、次を満たす関数 $`F`$ がちょうど 1 つある。
+**定理（整礎再帰）.** $`\prec`$ を $`T`$ の上の整礎関係とする。$`V`$ を値の集合とする。各 $`t \in T`$ と、「$`t`$ より小さい引数での値」を受け取って、$`t`$ での値を返す規則 $`G`$ があるとする。このとき、次を満たす関数 $`F : T \to V`$ がちょうど 1 つある。$`F{\restriction}X`$ は、$`F`$ を集合 $`X`$ に制限した関数である。
 
 ```math
 F(t) = G\bigl(t,\ F{\restriction}\{t' \mid t' \prec t\}\bigr)
 ```
 
-**例（Ackermann 関数）.** 鍵を $`\mathbb N \times \mathbb N`$ の辞書式順序とする。
+**例（Ackermann 関数）.** 引数の組 $`(m, n)`$ の集合 $`\mathbb N \times \mathbb N`$ に、§3 の辞書式順序を入れる。
 
 ```math
 \begin{aligned}
@@ -113,19 +115,19 @@ A(m+1, n+1) &= A\bigl(m,\ A(m+1, n)\bigr).
 \end{aligned}
 ```
 
-右辺が呼ぶ鍵 $`(m, 1)`$、$`(m+1, n)`$、$`(m, \cdot)`$ は、どれも左辺の鍵より辞書式に小さい。だから整礎再帰で定義できる。
+右辺が呼ぶ引数 $`(m, 1)`$、$`(m+1, n)`$、$`(m, \cdot)`$ は、どれも左辺の引数より辞書式に小さい。だから整礎再帰で定義できる。
 
-**Lean での形.** `WellFounded.fix` は、規則 $`G`$ を次の型で受け取る。
+**Lean での形.** `WellFounded.fix` は、規則 $`G`$ を次の型で受け取る。`r` は関係 $`\prec`$ で、`r t' t` は $`t' \prec t`$ である。
 
 ```lean
 G : (t : T) → ((t' : T) → r t' t → V) → V
 ```
 
-2 番目の引数（以下 `IH`）は、鍵 `t'` と、`t'` が小さいことの証明を受け取る。証明が無いと呼べない。定義の等式は `WellFounded.fix_eq` である。
+2 番目の引数（以下 `IH`）は、引数 `t'` と、`t'` が小さいことの証明を受け取る。証明が無いと呼べない。定義の等式は `WellFounded.fix_eq` である。
 
 ## 5. ガードつきの再帰
 
-関係 $`R`$ の定義では、「どの段を読むか」が論理式の中の変数の値で決まる。書く前に、読む段が小さいとは言えない。そこで次の形にする。
+関係 $`R`$ の定義（[07](07-relation-r.md)）では、「どの段（§3）を読むか」が論理式（[03](03-sigma1-elementary.md) §2）の中の変数の値で決まる。書く前に、読む段が小さいとは言えない。そこで次の形にする。
 
 1. 読みたい値を $`\exists h : (\text{段が小さい}),\ \mathrm{IH}(\text{段}, h)`$ と書く。これを **ガード** と呼ぶ。段が小さくないところでは、この式は偽になる。
 2. 定義の等式 `fix_eq` を得る。この段階では、右辺にガードが付いている。
@@ -139,7 +141,7 @@ G : (t : T) → ((t' : T) → r t' t → V) → V
 
 状態の集合 $`X`$ の上の 1 段の関係 $`\to`$ が整礎であることを、整礎な順序 $`(L, \lt)`$ のラベルで示す。
 
-**定理.** 状態とラベルの間の関係 $`\mathrm{valid}(s, \alpha)`$ が次を満たすとする。
+**定理.** 状態 $`s \in X`$ とラベル $`\alpha \in L`$ の間の関係 $`\mathrm{valid}(s, \alpha)`$ が次を満たすとする。
 
 - ある $`\alpha_0`$ があって、どの状態 $`s`$ でも $`\mathrm{valid}(s, \alpha_0)`$ である。
 - $`\mathrm{valid}(s, \alpha)`$ で $`s \to t`$ なら、ある $`\alpha' \lt \alpha`$ で $`\mathrm{valid}(t, \alpha')`$ である。
@@ -150,7 +152,7 @@ G : (t : T) → ((t' : T) → r t' t → V) → V
 
 大事な点は、ラベルが 1 つの状態に 1 つに決まっている必要が無いことである。「どれか 1 つのラベル付けがある」ことと「1 段進むと、もっと小さい上界のラベル付けがある」ことだけを使う。
 
-ω-Y の証明では次のように当てはめる（[06](06-combinatorial-layer.md) §8）。
+ω-Y の証明では次のように当てはめる（[06](06-combinatorial-layer.md) §8）。表の言葉は後のノートで定義する。式 $`s`$ の展開 $`s[N]`$（$`N`$ はコピーの回数）は [05](05-omegay-mountain.md) §4、$`()`$ は空の式、山は [05](05-omegay-mountain.md) §3、山の次元 $`D`$ は [05](05-omegay-mountain.md) §7 である。山の **表現** は、山の列に付けた $`\omega_1`$ より下のラベルの狭義増加の列で、山の辺ごとの条件を満たすものである（[06](06-combinatorial-layer.md) §4）。
 
 | 一般形 | ω-Y |
 |---|---|

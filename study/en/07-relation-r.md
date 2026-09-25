@@ -6,31 +6,31 @@ Prerequisites
 
 | Note | Terms used here |
 |---|---|
-| [02 Well-founded relations and recursion](02-well-founded.md) | lexicographic order, well-founded recursion, guarded recursion, keys |
-| [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | `Lit`, `Form`, `Sat`, `ElemL`, partial top predicates, `Lit.holds_of_le` |
+| [02 Well-founded relations and recursion](02-well-founded.md) | lexicographic order, well-founded recursion, guarded recursion, keys, stage, top |
+| [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | height of a structure, witness, position, `Lit`, `Form`, `Sat`, `ElemL`, internal relation, top predicate, partial top predicates, `Lit.holds_of_le` |
 | [04 Patterns of resemblance](04-patterns-of-resemblance.md) | the idea of making top predicates atomic symbols |
-| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | key syntax, templates, the role of `key_weaken` |
+| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | key syntax, templates, combinatorial layer, the role of `key_weaken` |
 
 This note explains the definition of the label relation $`R`$ of this repository and the properties that follow directly from it. The Lean file is [Por/Relation.lean](../../Por/Relation.lean).
 
 ## 1. Notation
 
-- $`\mathrm{Label}`$: the type of labels. Any well-ordered linear order works (the Lean assumptions are `LinearOrder` and `WellFoundedLT`). In the model it is $`\{o \le \omega_1\}`$.
-- $`\mathrm{Key}`$: the type of keys, also any well-ordered linear order. In the model it is $`\mathrm{Key}_m`$.
+- $`\mathrm{Label}`$: the type of labels. Any well-ordered linear order works (the Lean assumptions are `LinearOrder` and `WellFoundedLT`). The concrete case used for the final theorems is called the **model**. In the model $`\mathrm{Label} = \{o \le \omega_1\}`$ ([01](01-ordinals.md) §6).
+- $`\mathrm{Key}`$: the type of keys, also any well-ordered linear order. In the model it is $`\mathrm{Key}_m`$ ([02](02-well-founded.md) §3; $`m`$ is the key length).
 - $`S`$: the key syntax `KeySyntax Label Key` ([06](06-combinatorial-layer.md) §1).
-- $`R(\theta, a, b)`$: key $`\theta`$, lower point $`a`$, upper point $`b`$. In Lean, `Por.R S θ a b`.
+- $`R(\theta, a, b)`$: key $`\theta`$, lower point $`a`$ (a label), upper point $`b`$ (a label). $`b`$ is the top ([02](02-well-founded.md) §3). In Lean, `Por.R S θ a b`.
 
 ## 2. The language
 
-There are three kinds of symbols. For each template $`t`$ over $`n`$ variables and positions $`i, j \lt n`$ there are:
+Here the symbols of the language of [03](03-sigma1-elementary.md) §7 get their meaning. There are three kinds of symbols. For each template $`t`$ over $`n`$ variables and positions $`i, j \lt n`$ there are the following. $`\mathrm{Rel}_{t,i,j}`$ and $`\mathrm{Top}_{t,i}`$ are $`\mathrm{Rel}_t(v_i, v_j)`$ and $`\mathrm{Top}_t(v_i)`$ of [03](03-sigma1-elementary.md) §7.
 
-| Symbol | Arity | Meaning (in the structure of height $`c`$) |
+| Symbol | Number of arguments | Meaning (in the structure of height $`c`$) |
 |---|---|---|
 | $`\lt`$ | 2 | the order of labels |
 | $`\mathrm{Rel}_{t,i,j}`$ | $`n`$ | $`\mathrm{Rel}_{t,i,j}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ v_j)`$ |
 | $`\mathrm{Top}_{t,i}`$ | $`n`$ | $`\mathrm{Top}_{t,i}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ c)`$ |
 
-$`\mathrm{Rel}`$ is a relation between points, and $`\mathrm{Top}`$ a relation from a point to the top $`c`$. $`c`$ itself is not in the domain. Both symbols compute their key from the $`n`$ points by the template.
+$`\vec v = (v_0, \ldots, v_{n-1})`$ is the tuple of values of the variables. $`\mathrm{Rel}`$ is a relation between points, and $`\mathrm{Top}`$ a relation from a point to the top $`c`$ (the height of the structure). $`c`$ itself is not in the domain. Both symbols compute their key from the $`n`$ points by the template.
 
 In Lean the literals `Lit.rel t i j pos` and `Lit.top t i pos` read these symbols ([03](03-sigma1-elementary.md) §7). The true interpretations are:
 
@@ -49,7 +49,7 @@ def topR (c : Label) : Key → Label → Prop := fun κ x => R S κ x c
 
 In Lean, truth in $`\mathfrak A^c_\theta`$ is `Sat (relR S) (topR S c) (· < θ) c φ p`.
 
-**Example.** Let $`m = 1`$ and $`\theta = (\omega)`$.
+**Example.** Let the key length be $`m = 1`$ and $`\theta = (\omega)`$. The templates are ω-Y templates ([06](06-combinatorial-layer.md) §1): $`\mathrm{some}\ 0`$ puts $`v_0`$ at the coordinate, and $`\mathrm{none}`$ puts $`\top`$.
 
 - The top predicate of the template $`(\mathrm{some}\ 0)`$ is defined when $`v_0 \lt \omega`$, that is, when $`v_0`$ is a natural number.
 - The top predicate of the template $`(\mathrm{none})`$ has key $`(\top)`$, so it is defined nowhere.
@@ -63,7 +63,7 @@ In Lean, truth in $`\mathfrak A^c_\theta`$ is `Sat (relR S) (topR S c) (· < θ)
 R(\theta, a, b) \iff a \lt b \ \land\ \mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}
 ```
 
-Here $`\mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}`$ means that for every formula $`\varphi`$ and all parameters $`\vec p`$ below $`a`$:
+Here $`\mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}`$ means that for every formula $`\varphi`$ and all parameters $`\vec p`$ below $`a`$ the following holds. We write $`\vec p \lt a`$ when every entry of the tuple $`\vec p`$ is below $`a`$.
 
 ```math
 \mathfrak A^{a}_{\theta} \models \varphi(\vec p) \iff \mathfrak A^{b}_{\theta} \models \varphi(\vec p)
@@ -73,7 +73,7 @@ In Lean this is `ElemL (relR S) (topR S a) (topR S b) θ a b` ([03](03-sigma1-el
 
 ## 5. Recursion
 
-The right side reads $`R`$ itself. The definition uses well-founded recursion on the lexicographic order $`\lhd`$ of the stages $`(b, \theta)`$ ([02](02-well-founded.md) §3), for all $`a`$ at once.
+The right side reads $`R`$ itself. The definition uses well-founded recursion on the lexicographic order $`\lhd`$ of the stages $`(b, \theta)`$ (pairs of a top and a key, [02](02-well-founded.md) §3), for all $`a`$ at once.
 
 **What the right side reads.** Only three kinds, all at smaller stages.
 
@@ -142,7 +142,7 @@ The second direction needs lowering the witnesses pointwise. That is why the mon
 R(\mathrm{eval}\ t\ \vec v,\ v_i,\ a) \iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ b)
 ```
 
-**Reason.** Use the formula $`\mathrm{Top}_{t,i}(\vec v)`$ in which every variable is a parameter. At height $`a`$ it means the left side, at height $`b`$ the right side. This property is not stated as a Lean theorem. The proofs use the similar `top_abs` (agreement of top predicates between a Good point and $`\omega_1`$, [09](09-obligations.md) §3).
+**Reason.** Use the formula $`\mathrm{Top}_{t,i}(\vec v)`$ in which every variable is a parameter. At height $`a`$ it means the left side, at height $`b`$ the right side. This property is not stated as a Lean theorem. The proofs use the similar `top_abs` (agreement of top predicates between a Good point and $`\omega_1`$, [09](09-obligations.md) §3). Good is defined in [08](08-closure-chain.md) §1.
 
 **Property (the lower point is a limit ordinal).** If the labels are ordinals and $`R(\theta, a, b)`$, then $`a`$ is a nonzero limit ordinal.
 
