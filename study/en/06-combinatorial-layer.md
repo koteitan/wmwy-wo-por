@@ -9,7 +9,7 @@ Prerequisites
 | [01 Ordinals and ω₁](01-ordinals.md) | label, $`\omega_1`$, $`\mathrm{Fin}\ n`$, $`\mathrm{Option}`$ |
 | [02 Well-founded relations and recursion](02-well-founded.md) | keys $`\mathrm{Key}_m`$, coordinate, top, termination by a bound on labels (§6) |
 | [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | key syntax, template |
-| [05 The ω-Y sequence and its mountain](05-omegay-mountain.md) | expression, row, jump, mountain, node, edge, father, degree, root, block, expansion, dimension, $`\mathrm{col}`$ |
+| [05 The ω-Y sequence and its mountain](05-omegay-mountain.md) | expression, row, jump, mountain, node, edge, parent, degree, root, block, expansion, dimension, $`\mathrm{col}`$ |
 
 This note explains the part of Phyrion's proof that does not use the meaning of the labels. This part is called the **combinatorial layer**. This layer proves well-foundedness of expansion using only three theorems (§5) about the label relation $`R`$. This repository uses the layer unchanged ([NOTICE](../../NOTICE)). Most of it is in the 549 modules of `OmegaY/`; this note explains only its entry and exit points.
 
@@ -68,21 +68,21 @@ Each mountain edge gets a key template ([OmegaY/Geometry/MountainKeys.lean](../.
 
 **Definition (edge).** `RealStoredEdge` is a triple of a node `lower` that is not a phantom, the node `upper` directly above it, and the left leg `parent` of `upper` (the edges of [05](05-omegay-mountain.md) §3). The **degree** is $`d = \mathrm{jump}(\mathrm{row}(\mathrm{lower}), \mathrm{row}(\mathrm{parent}))`$ (`degree`).
 
-**Definition (scale root).** Let $`k`$ be a natural number. The **scale-$`k`$ father** of a node $`u`$ is the father of the edge from $`u`$ upward, if that edge has degree at most $`k`$ (`scaleParent`). Following scale-$`k`$ fathers until there is none gives the **scale-$`k`$ root** $`\rho_k(u)`$ (`scaleRoot`). A larger scale allows more edges to be followed, so the root is in the same column or further left (`scaleRoot_scale_antitone`).
+**Definition (scale root).** Let $`k`$ be a natural number. The **scale-$`k`$ parent** of a node $`u`$ is the parent of the edge from $`u`$ upward, if that edge has degree at most $`k`$ (`scaleParent`). Following scale-$`k`$ parents until there is none gives the **scale-$`k`$ root** $`\rho_k(u)`$ (`scaleRoot`). A larger scale allows more edges to be followed, so the root is in the same column or further left (`scaleRoot_scale_antitone`).
 
 **Dimension.** A dimension $`D`$ of a mountain ([05](05-omegay-mountain.md) §7) is `MountainKeyDimension` in Lean. Every finite mountain has one (`exists_key_dimension`). The degree of each edge is at most $`D`$ (`degree_le`).
 
-**Definition (the key of an edge, `keyTemplate`).** For an edge $`e`$ (father $`\pi`$, degree $`d`$) of a mountain of dimension $`D`$, the template has length $`m = D + 1`$, and coordinate $`i`$ corresponds to scale $`D - i`$.
+**Definition (the key of an edge, `keyTemplate`).** For an edge $`e`$ (parent $`\pi`$, degree $`d`$) of a mountain of dimension $`D`$, the template has length $`m = D + 1`$, and coordinate $`i`$ corresponds to scale $`D - i`$.
 
 ```math
 \kappa_D(e) = \bigl(\mathrm{col}\,\rho_D(\pi),\ \mathrm{col}\,\rho_{D-1}(\pi),\ \ldots,\ \mathrm{col}\,\rho_d(\pi),\ \underbrace{\top, \ldots, \top}_{d}\bigr)
 ```
 
-There are $`D + 1 - d`$ finite coordinates, and each names a column at or left of the father's column (`keyTemplate_column_bound`). The child's column is never named.
+There are $`D + 1 - d`$ finite coordinates, and each names a column at or left of the parent's column (`keyTemplate_column_bound`). The child's column is never named.
 
 **Example.** The values below were checked with `#eval` of a small function that follows the definitions of `keyTemplate` and `scaleRoot`. $`f_j`$ is the label of column $`j`$.
 
-| Expression | $`D`$ | Edge (column, rows) | Father | Degree | Key |
+| Expression | $`D`$ | Edge (column, rows) | Parent | Degree | Key |
 |---|---|---|---|---|---|
 | $`(1, 3)`$ | 1 | column 1, $`1 \to 2`$ | $`(0, 1)`$ | 0 | $`(f_0, f_0)`$ |
 | | | column 1, $`2 \to \omega`$ | $`(0, 1)`$ | 1 | $`(f_0, \top)`$ |
@@ -92,7 +92,7 @@ There are $`D + 1 - d`$ finite coordinates, and each names a column at or left o
 | $`(1, 3, 5)`$ | 1 | column 2, $`1 \to 2`$ | $`(1, 1)`$ | 0 | $`(f_0, f_0)`$ |
 | | | column 2, $`2 \to \omega`$ | $`(0, 1)`$ | 1 | $`(f_0, \top)`$ |
 
-The first edge of column 2 of $`(1, 3, 5)`$ has its father in column 1, but its key names column 0. The edge from the father $`(1, 1)`$ upward has degree 0 and father $`(0, 1)`$. A key names the roots of the father, not the father itself.
+The first edge of column 2 of $`(1, 3, 5)`$ has its parent in column 1, but its key names column 0. The edge from the parent $`(1, 1)`$ upward has degree 0 and parent $`(0, 1)`$. A key names the roots of the parent, not the parent itself.
 
 **Theorem (`key_strict_in_column`).** Of two edges in the same column, the lower edge has a strictly smaller key than the upper edge (for strictly increasing labels). In each column of the table above, keys also increase upward.
 
@@ -102,7 +102,7 @@ The first edge of column 2 of $`(1, 3, 5)`$ has its father in column 1, but its 
 
 1. $`f`$ is strictly increasing (`strictMono`).
 2. every $`f(i)`$ is below $`\omega_1`$ (`bounded`).
-3. for every edge $`e`$ (father $`\pi`$, lower node $`\mathrm{lower}`$), $`R_{D+1}(\mathrm{eval}\ \kappa_D(e)\ f,\ f(\mathrm{col}\,\pi),\ f(\mathrm{col}\,\mathrm{lower}))`$ (`edges`).
+3. for every edge $`e`$ (parent $`\pi`$, lower node $`\mathrm{lower}`$), $`R_{D+1}(\mathrm{eval}\ \kappa_D(e)\ f,\ f(\mathrm{col}\,\pi),\ f(\mathrm{col}\,\mathrm{lower}))`$ (`edges`).
 
 $`R_{D+1}`$ is the relation `Model.R (D + 1)` for keys of length $`D + 1`$.
 
@@ -209,7 +209,7 @@ The reflection is given $`G`$ and $`F`$ together. That the demand keys are below
 
 **Case 2 (blocks are copied).** Notation (`RootGeometry`, [OmegaY/Expansion/InitialControlKeys.lean](../../OmegaY/Expansion/InitialControlKeys.lean)):
 
-- **control edge**: the top edge of column $`x`$ (`controlEdge`). Its father is the root $`r`$.
+- **control edge**: the top edge of column $`x`$ (`controlEdge`). Its parent is the root $`r`$.
 - **lower edges**: the edges of column $`x`$ below the control edge (`LowerEdge`). Their keys are strictly below the key of the control edge (`lower_key_strict`, from `key_strict_in_column` of §3).
 - $`\beta = f(x)`$.
 
@@ -226,7 +226,7 @@ Each of these is an edge relation of the old representation $`f`$ itself, so it 
 
 Next, `splice_reservoirs` of §7 is applied from block $`b`$ to block $`b + 1`$ (`iterated_actual_reservoirs`). What is needed is that every edge of the mountain of block $`b+1`$ is `ReservoirClassified` (`actual_splice_edge_classified`). This is a finite fact about the shape of the expansion program, and it uses the weak-magma fill rule ([05](05-omegay-mountain.md) §5). Its core is the following two facts ([notes/02-feasibility.md](../../notes/02-feasibility.md) §3.1, §4.2).
 
-- **Key bound for copied edges** (`ActualCopiedKeyBound`): an edge $`e`$ of a new block has a source edge $`e'`$ of $`M(s')`$ ([05](05-omegay-mountain.md) §4). The father column and child column of $`e`$ are the copies of those of $`e'`$. The key of $`e`$ is at most the copy of the key of $`e'`$.
+- **Key bound for copied edges** (`ActualCopiedKeyBound`): an edge $`e`$ of a new block has a source edge $`e'`$ of $`M(s')`$ ([05](05-omegay-mountain.md) §4). The parent column and child column of $`e`$ are the copies of those of $`e'`$. The key of $`e`$ is at most the copy of the key of $`e'`$.
 - **Classification of fill edges** (`ActualFillCopiedKey`): the key of an edge to a gap node ([05](05-omegay-mountain.md) §4) is below the key of a copied edge with the same endpoint columns. So it is handled from the bound of that copied edge by `key_weaken`.
 
 The labels of the state of block $`N`$ form a representation of the mountain of $`s[N]`$ (`representationOfSpliceGraph`). They are all below $`\beta = f(x)`$ (`represent_actual_expansion`).

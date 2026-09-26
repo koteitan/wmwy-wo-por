@@ -9,7 +9,7 @@
 | [01 順序数と ω₁](01-ordinals.md) | ラベル、$`\omega_1`$、$`\mathrm{Fin}\ n`$、$`\mathrm{Option}`$ |
 | [02 整礎関係と整礎再帰](02-well-founded.md) | 鍵 $`\mathrm{Key}_m`$、座標、上端、ラベルの上界による停止（§6） |
 | [03 構造と Σ₁ 初等部分構造](03-sigma1-elementary.md) | 鍵の構文、型板 |
-| [05 ω-Y 数列と山](05-omegay-mountain.md) | 式、行、跳び、山、節点、辺、父、次数、根、ブロック、展開、次元、$`\mathrm{col}`$ |
+| [05 ω-Y 数列と山](05-omegay-mountain.md) | 式、行、跳び、山、節点、辺、親、次数、根、ブロック、展開、次元、$`\mathrm{col}`$ |
 
 このノートは、Phyrion 氏の証明のうち、ラベルの意味を使わない部分を説明する。この部分を **組合せの層** と呼ぶ。この層は、ラベルの関係 $`R`$ についての 3 つの定理（§5）だけを使って、展開の整礎性を示す。このリポジトリは、この層を変えずに使う（[NOTICE](../NOTICE)）。層の大部分は `OmegaY/` の 549 モジュールにあり、ここではその入口と出口だけを説明する。
 
@@ -68,21 +68,21 @@
 
 **定義（辺）.** `RealStoredEdge` は、phantom でない節点 `lower`、その真上の節点 `upper`、`upper` の左の脚 `parent` の組である（[05](05-omegay-mountain.md) §3 の辺）。**次数** は $`d = \mathrm{jump}(\mathrm{row}(\mathrm{lower}), \mathrm{row}(\mathrm{parent}))`$ である（`degree`）。
 
-**定義（尺度の根）.** $`k`$ を自然数とする。節点 $`u`$ の **尺度 $`k`$ の父** は、$`u`$ から上への辺の父で、その辺の次数が $`k`$ 以下のものである（`scaleParent`）。尺度 $`k`$ の父を無くなるまでたどった節点を **尺度 $`k`$ の根** $`\rho_k(u)`$ と呼ぶ（`scaleRoot`）。尺度が大きいほど、たどれる辺が多いので、根は同じ列か、より左の列にある（`scaleRoot_scale_antitone`）。
+**定義（尺度の根）.** $`k`$ を自然数とする。節点 $`u`$ の **尺度 $`k`$ の親** は、$`u`$ から上への辺の親で、その辺の次数が $`k`$ 以下のものである（`scaleParent`）。尺度 $`k`$ の親を無くなるまでたどった節点を **尺度 $`k`$ の根** $`\rho_k(u)`$ と呼ぶ（`scaleRoot`）。尺度が大きいほど、たどれる辺が多いので、根は同じ列か、より左の列にある（`scaleRoot_scale_antitone`）。
 
 **次元.** 山の次元 $`D`$（[05](05-omegay-mountain.md) §7）は、Lean では `MountainKeyDimension` である。有限の山には次元がある（`exists_key_dimension`）。辺の次数は $`D`$ 以下である（`degree_le`）。
 
-**定義（辺の鍵 `keyTemplate`）.** 次元 $`D`$ の山の辺 $`e`$（父 $`\pi`$、次数 $`d`$）の型板は、長さ $`m = D + 1`$ で、座標 $`i`$ は尺度 $`D - i`$ に当たる。
+**定義（辺の鍵 `keyTemplate`）.** 次元 $`D`$ の山の辺 $`e`$（親 $`\pi`$、次数 $`d`$）の型板は、長さ $`m = D + 1`$ で、座標 $`i`$ は尺度 $`D - i`$ に当たる。
 
 ```math
 \kappa_D(e) = \bigl(\mathrm{col}\,\rho_D(\pi),\ \mathrm{col}\,\rho_{D-1}(\pi),\ \ldots,\ \mathrm{col}\,\rho_d(\pi),\ \underbrace{\top, \ldots, \top}_{d}\bigr)
 ```
 
-有限の座標は $`D + 1 - d`$ 個で、どれも父の列以下の列を指す（`keyTemplate_column_bound`）。子の列は指さない。
+有限の座標は $`D + 1 - d`$ 個で、どれも親の列以下の列を指す（`keyTemplate_column_bound`）。子の列は指さない。
 
 **例.** 次の値は、`keyTemplate` と `scaleRoot` の定義をそのままたどる小さい関数を書き、`#eval` で確かめた。$`f_j`$ は列 $`j`$ のラベルである。
 
-| 式 | $`D`$ | 辺（列、行） | 父 | 次数 | 鍵 |
+| 式 | $`D`$ | 辺（列、行） | 親 | 次数 | 鍵 |
 |---|---|---|---|---|---|
 | $`(1, 3)`$ | 1 | 列 1、$`1 \to 2`$ | $`(0, 1)`$ | 0 | $`(f_0, f_0)`$ |
 | | | 列 1、$`2 \to \omega`$ | $`(0, 1)`$ | 1 | $`(f_0, \top)`$ |
@@ -92,7 +92,7 @@
 | $`(1, 3, 5)`$ | 1 | 列 2、$`1 \to 2`$ | $`(1, 1)`$ | 0 | $`(f_0, f_0)`$ |
 | | | 列 2、$`2 \to \omega`$ | $`(0, 1)`$ | 1 | $`(f_0, \top)`$ |
 
-$`(1, 3, 5)`$ の列 2 の最初の辺は、父が列 1 にあるのに、鍵は列 0 を指す。父 $`(1, 1)`$ から上への辺は次数 0 で、その父は $`(0, 1)`$ だからである。鍵は父ではなく、父の根を指す。
+$`(1, 3, 5)`$ の列 2 の最初の辺は、親が列 1 にあるのに、鍵は列 0 を指す。親 $`(1, 1)`$ から上への辺は次数 0 で、その親は $`(0, 1)`$ だからである。鍵は親ではなく、親の根を指す。
 
 **定理（`key_strict_in_column`）.** 同じ列の 2 つの辺で、下の辺の鍵は上の辺の鍵より真に小さい（ラベルが狭義増加のとき）。上の表の各列でも、鍵は上へ行くほど大きい。
 
@@ -102,7 +102,7 @@ $`(1, 3, 5)`$ の列 2 の最初の辺は、父が列 1 にあるのに、鍵は
 
 1. $`f`$ は狭義増加（`strictMono`）。
 2. どの $`f(i)`$ も $`\omega_1`$ より小さい（`bounded`）。
-3. どの辺 $`e`$（父 $`\pi`$、下の節点 $`\mathrm{lower}`$）でも $`R_{D+1}(\mathrm{eval}\ \kappa_D(e)\ f,\ f(\mathrm{col}\,\pi),\ f(\mathrm{col}\,\mathrm{lower}))`$（`edges`）。
+3. どの辺 $`e`$（親 $`\pi`$、下の節点 $`\mathrm{lower}`$）でも $`R_{D+1}(\mathrm{eval}\ \kappa_D(e)\ f,\ f(\mathrm{col}\,\pi),\ f(\mathrm{col}\,\mathrm{lower}))`$（`edges`）。
 
 $`R_{D+1}`$ は長さ $`D + 1`$ の鍵の関係 `Model.R (D + 1)` である。
 
@@ -209,7 +209,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 **場合 2（ブロックを写すとき）.** 記号を次のとおりとする（`RootGeometry`、[OmegaY/Expansion/InitialControlKeys.lean](../OmegaY/Expansion/InitialControlKeys.lean)）。
 
-- **制御の辺**：列 $`x`$ の一番上の辺（`controlEdge`）。父は根 $`r`$ である。
+- **制御の辺**：列 $`x`$ の一番上の辺（`controlEdge`）。親は根 $`r`$ である。
 - **下の辺**：列 $`x`$ の、制御の辺より下の辺（`LowerEdge`）。鍵は制御の辺の鍵より真に小さい（`lower_key_strict`、§3 の `key_strict_in_column` から）。
 - $`\beta = f(x)`$。
 
@@ -226,7 +226,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 次に、ブロック $`b`$ から $`b + 1`$ へ §7 の `splice_reservoirs` を使う（`iterated_actual_reservoirs`）。そのとき要るのは、ブロック $`b+1`$ の山のすべての辺が `ReservoirClassified` であることである（`actual_splice_edge_classified`）。これは展開のプログラムの形についての有限の事実で、weak magma の充填の規則（[05](05-omegay-mountain.md) §5）を使う。中心は次の 2 つである（[notes/02-feasibility.md](../notes/02-feasibility.md) §3.1、§4.2）。
 
-- **複写の辺の鍵の上界**（`ActualCopiedKeyBound`）：新しいブロックの辺 $`e`$ には、$`M(s')`$ の源の辺 $`e'`$（[05](05-omegay-mountain.md) §4）がある。$`e`$ の父の列と子の列は、$`e'`$ の父の列と子の列を写したものである。$`e`$ の鍵は、$`e'`$ の鍵を写したもの以下である。
+- **複写の辺の鍵の上界**（`ActualCopiedKeyBound`）：新しいブロックの辺 $`e`$ には、$`M(s')`$ の源の辺 $`e'`$（[05](05-omegay-mountain.md) §4）がある。$`e`$ の親の列と子の列は、$`e'`$ の親の列と子の列を写したものである。$`e`$ の鍵は、$`e'`$ の鍵を写したもの以下である。
 - **充填の辺の分類**（`ActualFillCopiedKey`）：すき間の節点（[05](05-omegay-mountain.md) §4）への辺の鍵は、同じ列を端点に持つ写した辺の鍵より小さい。そのため、その写した辺の上界から `key_weaken` で扱える。
 
 ブロック $`N`$ の状態のラベルは、$`s[N]`$ の山の表現である（`representationOfSpliceGraph`）。どれも $`\beta = f(x)`$ より小さい（`represent_actual_expansion`）。

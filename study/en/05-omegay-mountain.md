@@ -71,17 +71,17 @@ The **mountain** $`M(s)`$ of an expression $`s`$ is an array of columns, and a c
 
 1. Node 0 is the **phantom** (a placeholder node), with row 0 and value 0.
 2. Node 1 is the **bottom node**, with row 1 and value $`s_c`$. Its left leg is the phantom of column $`c - 1`$ (none for $`c = 0`$).
-3. While the value $`v`$ of the top node $`u`$ is greater than 1, repeat (`growColumn`): find the **father** $`\pi`$ of $`u`$, and put above $`u`$ a node with row $`B(\mathrm{row}(u), \mathrm{row}(\pi))`$, value $`v - \mathrm{value}(\pi)`$ and left leg $`\pi`$.
+3. While the value $`v`$ of the top node $`u`$ is greater than 1, repeat (`growColumn`): find the **parent** $`\pi`$ of $`u`$, and put above $`u`$ a node with row $`B(\mathrm{row}(u), \mathrm{row}(\pi))`$, value $`v - \mathrm{value}(\pi)`$ and left leg $`\pi`$.
 4. When a node of value 1 is reached, the column is finished. Every column has value 1 at the top.
 
-**Definition (finding the father, `findParent`).** Start with the candidate $`\nu`$ equal to $`u`$ itself. Repeat the following Q step (`nextCandidate`).
+**Definition (finding the parent, `findParent`).** Start with the candidate $`\nu`$ equal to $`u`$ itself. Repeat the following Q step (`nextCandidate`).
 
 - Follow the left leg $`L`$ of $`\nu`$. In the column of $`L`$, climb up from $`L`$ as long as the next node's row is at most $`\mathrm{row}(\nu)`$ (`climb`). The node reached is the new candidate $`\nu`$.
-- If the new candidate has $`0 \lt \mathrm{value}(\nu) \lt v`$, then $`\nu`$ is the father. Otherwise repeat the Q step from this $`\nu`$.
+- If the new candidate has $`0 \lt \mathrm{value}(\nu) \lt v`$, then $`\nu`$ is the parent. Otherwise repeat the Q step from this $`\nu`$.
 
-The bottom nodes are in row 1. In row 1 the candidates are the bottom nodes of columns $`c-1, c-2, \ldots`$ in turn. So the father of a bottom node is the bottom node of the rightmost column with value smaller than $`s_c`$. This is the same as the parent in row 0 of a 1-Y mountain (the 1-Y mountain counts the bottom row as 0).
+The bottom nodes are in row 1. In row 1 the candidates are the bottom nodes of columns $`c-1, c-2, \ldots`$ in turn. So the parent of a bottom node is the bottom node of the rightmost column with value smaller than $`s_c`$. This is the same as the parent in row 0 of a 1-Y mountain (the 1-Y mountain counts the bottom row as 0).
 
-**Definition (edge).** If a node $`u`$ (not a phantom) has a node $`u^+`$ directly above it, there is an **edge** from $`u`$ to $`u^+`$. The left leg of $`u^+`$ is the **father** $`\pi`$ of the edge. The father is always in a column to the left.
+**Definition (edge).** If a node $`u`$ (not a phantom) has a node $`u^+`$ directly above it, there is an **edge** from $`u`$ to $`u^+`$. The left leg of $`u^+`$ is the **parent** $`\pi`$ of the edge. The parent is always in a column to the left.
 
 ```math
 \mathrm{value}(u^+) = \mathrm{value}(u) - \mathrm{value}(\pi), \qquad \mathrm{row}(u^+) = \mathrm{row}(u) + \omega^{\mathrm{jump}(\mathrm{row}(u), \mathrm{row}(\pi))}
@@ -89,7 +89,7 @@ The bottom nodes are in row 1. In row 1 the candidates are the bottom nodes of c
 
 The jump $`\mathrm{jump}(\mathrm{row}(u), \mathrm{row}(\pi))`$ is the **degree** of the edge (`RealStoredEdge.degree` in [06](06-combinatorial-layer.md)).
 
-**Example ($`(1, 4, 20)`$).** In the table, "$`v \leftarrow (j, h)`$" means that the value is $`v`$ and the left leg (the father of the edge from the node below) is the node of column $`j`$ in row $`h`$. The Lean reference `Ref` uses the index from the bottom instead of the row. The left leg of the bottom row (the phantom of the left column) is not written. An ω-Y mountain has no layers as in 1-Y; the whole mountain is one table.
+**Example ($`(1, 4, 20)`$).** In the table, "$`v \leftarrow (j, h)`$" means that the value is $`v`$ and the left leg (the parent of the edge from the node below) is the node of column $`j`$ in row $`h`$. The Lean reference `Ref` uses the index from the bottom instead of the row. The left leg of the bottom row (the phantom of the left column) is not written. An ω-Y mountain has no layers as in 1-Y; the whole mountain is one table.
 
 | row | column 0 | column 1 | column 2 |
 |---|---|---|---|
@@ -106,10 +106,10 @@ The jump $`\mathrm{jump}(\mathrm{row}(u), \mathrm{row}(\pi))`$ is the **degree**
 | $`0`$ | phantom | phantom | phantom |
 
 - Column 0: the bottom node has value 1, so the column ends with the phantom and the bottom node.
-- Column 1: the left leg of the bottom node (value 4) is the phantom of column 0, from which the search climbs to the node of row 1 (value 1). Since $`1 \lt 4`$, it is the father. The next node has row $`B(1, 1) = 2`$ and value 3. The left leg of the node in row 2 is $`(0, 1)`$, and column 0 has no node above it, so the father is $`(0, 1)`$ again: row $`B(2, 1) = 2 + \omega = \omega`$ (jump 1), value 2. Likewise row $`B(\omega, 1) = \omega + \omega^2 = \omega^2`$ (jump 2), value 1, and the column ends.
-- Column 2: for every node, the first candidate of step Q is already the father. The next table lists, from the bottom node up, how the father is found and the row and value of the next node.
+- Column 1: the left leg of the bottom node (value 4) is the phantom of column 0, from which the search climbs to the node of row 1 (value 1). Since $`1 \lt 4`$, it is the parent. The next node has row $`B(1, 1) = 2`$ and value 3. The left leg of the node in row 2 is $`(0, 1)`$, and column 0 has no node above it, so the parent is $`(0, 1)`$ again: row $`B(2, 1) = 2 + \omega = \omega`$ (jump 1), value 2. Likewise row $`B(\omega, 1) = \omega + \omega^2 = \omega^2`$ (jump 2), value 1, and the column ends.
+- Column 2: for every node, the first candidate of step Q is already the parent. The next table lists, from the bottom node up, how the parent is found and the row and value of the next node.
 
-| Node (row, value) | Candidates (step Q) | Father | Row of the next node $`B`$ | Next value |
+| Node (row, value) | Candidates (step Q) | Parent | Row of the next node $`B`$ | Next value |
 |---|---|---|---|---|
 | $`1`$, 20 | The left leg is the phantom of column 1. Row $`1 \le 1`$, so climb to $`(1, 1)`$. Value 4 | $`(1, 1)`$ | $`B(1, 1) = 2`$ (jump 0) | $`20 - 4 = 16`$ |
 | $`2`$, 16 | From the left leg $`(1, 1)`$, row $`2 \le 2`$, so climb to $`(1, 2)`$ (not to row $`\omega`$). Value 3 | $`(1, 2)`$ | $`B(2, 2) = 3`$ (jump 0) | $`16 - 3 = 13`$ |
@@ -121,7 +121,7 @@ The jump $`\mathrm{jump}(\mathrm{row}(u), \mathrm{row}(\pi))`$ is the **degree**
 | $`\omega^2 + 1`$, 3 | Left leg $`(1, \omega^2)`$, the top of column 1. Value 1 | $`(1, \omega^2)`$ | $`B(\omega^2 + 1, \omega^2) = \omega^2 + \omega`$ (jump 1) | $`3 - 1 = 2`$ |
 | $`\omega^2 + \omega`$, 2 | Likewise value 1 | $`(1, \omega^2)`$ | $`B(\omega^2 + \omega, \omega^2) = \omega^2 \cdot 2`$ (jump 2) | $`2 - 1 = 1`$ |
 
-The fathers of column 2 go up column 1 from the bottom. The first node after the father changes lies in the same row as the father, and its jump is 0. After that, while the father stays the same, the jump grows to 1 and 2. When the new row reaches the row of the next node of column 1 (rows $`\omega`$ and $`\omega^2`$), step Q climbs to that node and the father changes. The values go down by the values of the fathers (4, 3, 2, 1 of column 1).
+The parents of column 2 go up column 1 from the bottom. The first node after the parent changes lies in the same row as the parent, and its jump is 0. After that, while the parent stays the same, the jump grows to 1 and 2. When the new row reaches the row of the next node of column 1 (rows $`\omega`$ and $`\omega^2`$), step Q climbs to that node and the parent changes. The values go down by the values of the parents (4, 3, 2, 1 of column 1).
 
 ## 4. Expansion
 
@@ -131,10 +131,10 @@ The fathers of column 2 go up column 1 from the bottom. The first node after the
 
 **Case 2.** Otherwise the steps are (`expandDiagram`):
 
-1. **Root.** In the mountain of $`s`$, the father of the top edge of column $`x`$ is the **root** $`r`$. Let $`c_r`$ be the column of the root and $`w = x - c_r`$ the width.
+1. **Root.** In the mountain of $`s`$, the parent of the top edge of column $`x`$ is the **root** $`r`$. Let $`c_r`$ be the column of the root and $`w = x - c_r`$ the width.
 2. **Decrement.** Build the mountain $`M(s')`$ of $`s' = (s_0, \ldots, s_{x-1}, s_x - 1)`$.
 3. **Boundary rows.** In the mountain of $`s`$, list, from the top, the row of the top node of column $`x`$ and the rows of the nodes of the root column at or below the root, excluding the phantom (`boundaries`).
-4. **Markers.** A node of $`M(s')`$ to the right of the root column is a **marker** (`markers`) if it is in the same row as a node $`z`$ of the root column (the root or a node below it, including the phantom) and reaches $`z`$ by following **weak fathers**. The weak father of a node $`u`$ is the father $`\pi`$ of the edge from $`u`$ upward, provided $`\mathrm{row}(\pi) = \mathrm{row}(u)`$ (`weakParent`).
+4. **Markers.** A node of $`M(s')`$ to the right of the root column is a **marker** (`markers`) if it is in the same row as a node $`z`$ of the root column (the root or a node below it, including the phantom) and reaches $`z`$ by following **weak parents**. The weak parent of a node $`u`$ is the parent $`\pi`$ of the edge from $`u`$ upward, provided $`\mathrm{row}(\pi) = \mathrm{row}(u)`$ (`weakParent`).
 5. **Blocks.** For $`b = 1, \ldots, N`$ in order, copy the columns $`y = c_r + 1, \ldots, x`$ to the columns $`y + b w`$ (`copyBlock`, `copyColumn`). The $`w`$ columns copied in the $`b`$-th round are called **block** $`b`$.
 6. **Cut.** Delete the last column (the copy of column $`x`$ in block $`N`$). Read the value of the bottom node of each column (`valuesOf`).
 
@@ -143,8 +143,8 @@ The length of $`s[N]`$ is $`x + N w`$.
 **Copying a column (`copyColumn`).** When column $`y`$ is copied in block $`b`$, the edges of column $`y`$ of $`M(s')`$ are called the **source edges**. Write $`\mathrm{col}(p)`$ for the number of the column of a node $`p`$. For each marker $`\mu`$ of $`y`$, three kinds of nodes are placed.
 
 - **Translation** (`copyEdge`): a node in row $`\mathrm{row}(\mu)`$. Let $`\ell`$ be the left leg of $`\mu`$. The left leg of the new node is the same node $`\ell`$ if $`\ell`$ is left of the root column. Otherwise it is the highest node of column $`\mathrm{col}(\ell) + b w`$ whose row is below $`\mathrm{row}(\mu)`$. A phantom marker is copied to a phantom.
-- **Contour** (`contour`): first fix the reference row $`g`$. In the current last column (the copy of column $`x`$ in block $`b-1`$; for $`b = 1`$, column $`x`$ of $`M(s')`$), take for each boundary row the highest node strictly below it (`below`). $`g`$ is the row of the last of these whose row is at least $`\mathrm{row}(\mu)`$ (`referenceAt`). Then copy the source edges upward from $`\mu`$ in order. Stop before an edge whose upper node is another marker. Stop at the top of the column. A source edge of degree $`d`$ becomes an edge from the current row $`h`$ to the row $`h + \omega^d`$; the first $`h`$ is $`g`$. The left leg is the image of the father of the source edge, by the same rule as for translation.
-- **Fill** (`fill`, the weak magma): let $`p`$ be the father of the source edge from $`\mu`$ upward. For every node $`q`$ of column $`\mathrm{col}(p) + b w`$ with $`\mathrm{row}(\mu) \le \mathrm{row}(q) \lt g`$, let $`q^+`$ be the node directly above $`q`$, and place nodes in rows $`\mathrm{row}(q) + \omega^i`$ for $`i = \mathrm{jump}(\mathrm{row}(q), \mathrm{row}(q^+)) - 1, \ldots, 0`$. The left leg of each is $`q`$. The nodes placed by the fill are called **gap nodes**.
+- **Contour** (`contour`): first fix the reference row $`g`$. In the current last column (the copy of column $`x`$ in block $`b-1`$; for $`b = 1`$, column $`x`$ of $`M(s')`$), take for each boundary row the highest node strictly below it (`below`). $`g`$ is the row of the last of these whose row is at least $`\mathrm{row}(\mu)`$ (`referenceAt`). Then copy the source edges upward from $`\mu`$ in order. Stop before an edge whose upper node is another marker. Stop at the top of the column. A source edge of degree $`d`$ becomes an edge from the current row $`h`$ to the row $`h + \omega^d`$; the first $`h`$ is $`g`$. The left leg is the image of the parent of the source edge, by the same rule as for translation.
+- **Fill** (`fill`, the weak magma): let $`p`$ be the parent of the source edge from $`\mu`$ upward. For every node $`q`$ of column $`\mathrm{col}(p) + b w`$ with $`\mathrm{row}(\mu) \le \mathrm{row}(q) \lt g`$, let $`q^+`$ be the node directly above $`q`$, and place nodes in rows $`\mathrm{row}(q) + \omega^i`$ for $`i = \mathrm{jump}(\mathrm{row}(q), \mathrm{row}(q^+)) - 1, \ldots, 0`$. The left leg of each is $`q`$. The nodes placed by the fill are called **gap nodes**.
 
 Finally the nodes are sorted by row (`finish`). The top node gets value 1, and the values are set from top to bottom by $`\mathrm{value}(u) = \mathrm{value}(u^+) + \mathrm{value}(\pi)`$, where $`\pi`$ is the left leg of $`u^+`$ (`backfill`).
 
@@ -168,7 +168,7 @@ Block 1 copies column 1 to column 3.
 | Node | Kind | Reason |
 |---|---|---|
 | row 1 | translation | marker $`(1, 1)`$; the left leg is the phantom of column 2 |
-| row 2, left leg $`(2, 1)`$ | fill | the father of the source edge $`(1,1) \to (1,2)`$ is $`(0, 1)`$; in column $`0 + 2 = 2`$, $`q = (2, 1)`$ has $`1 \le 1 \lt g = 2`$; $`\mathrm{jump}(1, 2) = 1`$, so row $`1 + \omega^0 = 2`$ |
+| row 2, left leg $`(2, 1)`$ | fill | the parent of the source edge $`(1,1) \to (1,2)`$ is $`(0, 1)`$; in column $`0 + 2 = 2`$, $`q = (2, 1)`$ has $`1 \le 1 \lt g = 2`$; $`\mathrm{jump}(1, 2) = 1`$, so row $`1 + \omega^0 = 2`$ |
 | row 3, left leg $`(2, 2)`$ | contour | the source edge $`(1,1) \to (1,2)`$ has degree 0; $`g + \omega^0 = 3`$ |
 | row $`\omega`$, left leg $`(2, 2)`$ | contour | the source edge $`(1,2) \to (1,\omega)`$ has degree 1; $`3 + \omega = \omega`$ |
 
@@ -184,7 +184,7 @@ Columns 3–5 of `expandDiagram [1,3,3] 2`:
 | $`2`$ | $`3 \leftarrow (2, 1)`$ | $`2 \leftarrow (2, 1)`$ | $`5 \leftarrow (4, 1)`$ |
 | $`1`$ | $`5`$ | $`4`$ | $`9`$ |
 
-Column 5 is the copy of column 1 in block 2. The source father $`(0, 1)`$ is copied to column $`0 + 2 \cdot 2 = 4`$. Block 2 takes its references from column 4. The highest node of column 4 below the boundary row $`\omega`$ is in row 3. So $`g = 3`$, and the contour of column 5 starts at row $`3 + 1 = 4`$. The fill uses the nodes of column 4 in rows 1 and 2 as fathers and places nodes in rows 2 and 3. Column 5 has one more node than column 3.
+Column 5 is the copy of column 1 in block 2. The source parent $`(0, 1)`$ is copied to column $`0 + 2 \cdot 2 = 4`$. Block 2 takes its references from column 4. The highest node of column 4 below the boundary row $`\omega`$ is in row 3. So $`g = 3`$, and the contour of column 5 starts at row $`3 + 1 = 4`$. The fill uses the nodes of column 4 in rows 1 and 2 as parents and places nodes in rows 2 and 3. Column 5 has one more node than column 3.
 
 ## 5. Weak magma and the official ω-Y
 
@@ -192,7 +192,7 @@ The official ω-Y is defined by `expand` in Naruyoko's program ([notes/00-survey
 
 According to [notes/02-feasibility.md](../../notes/02-feasibility.md) §2, only the fill rule differs.
 
-- weak: the left legs of the gap nodes all lie in one column $`\mathrm{col}(p) + b w`$, where $`p`$ is the father of the source edge from $`\mu`$ upward.
+- weak: the left legs of the gap nodes all lie in one column $`\mathrm{col}(p) + b w`$, where $`p`$ is the parent of the source edge from $`\mu`$ upward.
 - official: for each gap row, choose one node of the root column (how it is chosen is in notes/02-feasibility.md §2.2). Let $`z`$ be the node of column $`y`$ of $`M(s')`$ in the row of the chosen node. Let $`y'`$ be the column of the left leg of $`z`$ ($`y' = y - 1`$ if $`z`$ is in the bottom row). The left legs of the gap nodes lie in the copy of column $`y'`$ ($`y' + b w`$ if $`y' \ge c_r`$, and $`y'`$ if $`y' \lt c_r`$).
 
 **Example.** In $`(1, 3, 3)[2]`$, the left leg of the node in row 2 of column 4 (a gap node) is $`(2, 1)`$ (value 2) in weak and $`(3, 1)`$ (value 5) in the official version. The bottom value of column 4 is $`2 + 2 = 4`$ in weak and $`2 + 5 = 7`$ in the official version. In total, weak gives $`(1, 3, 2, 5, 4, 9)`$ and the official version $`(1, 3, 2, 5, 7, 12)`$ (the official values are from notes/02-feasibility.md §2.3 and were not computed in Lean).
@@ -260,7 +260,7 @@ The final theorems ([OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/W
 | seeds, lexicographic order | `Dynamics.seed`, `Dynamics.Lex` | [OmegaY/Expansion/LegalDynamics.lean](../../OmegaY/Expansion/LegalDynamics.lean) |
 | rows, jump, adding a power, next row | `Row`, `Row.jump`, `Row.bump`, `Row.B` | [OmegaY/Rows.lean](../../OmegaY/Rows.lean) |
 | nodes, mountains | `Canonical.Cell`, `Canonical.Ref`, `Canonical.Mountain`, `Canonical.phantom` | [OmegaY/Canonical/Build.lean](../../OmegaY/Canonical/Build.lean) |
-| finding the father | `climb`, `nextCandidate`, `findParent` | same |
+| finding the parent | `climb`, `nextCandidate`, `findParent` | same |
 | building the mountain | `growColumn`, `buildColumn`, `build` | same |
 | expansion | `expandDiagram`, `expand`, `valuesOf` | [OmegaY/Expansion/Build.lean](../../OmegaY/Expansion/Build.lean) |
 | markers | `weakParent`, `weakReaches`, `markers` | same |
