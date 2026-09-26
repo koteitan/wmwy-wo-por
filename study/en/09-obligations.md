@@ -7,8 +7,8 @@ Prerequisites
 | Note | Terms used here |
 |---|---|
 | [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | combinatorial layer, vertex, graph, internal atoms, top atoms, demand, cut, `finite_reflection`, `initial_finite_graph`, control relation, `control` |
-| [07 The relation R](07-relation-r.md) | $`R`$, $`\mathfrak A^c_\theta`$, `R_iff`, `key_weaken`, partial top predicates |
-| [08 Closure below ω₁ and the sequence of Good points](08-closure-chain.md) | $`\mathfrak B`$, Good, `points` |
+| [07 The relation R](07-relation-r.md) | $`R`$, $`\mathfrak A^c_\theta`$, the defining equation (§6), key weakening (§7), partial top predicates |
+| [08 Closure below ω₁ and the chain](08-closure-chain.md) | $`\mathfrak B`$, Good, the chain (§7) |
 
 This note explains how the relation $`R`$ satisfies the three theorems of the combinatorial layer. The core is finite reflection (§2) and the first representation (§3).
 
@@ -36,11 +36,11 @@ The names the combinatorial layer calls are given in the following files, with P
 \bigwedge_{i, j \lt n} \bigl( (v_i \lt v_j) \iff (i \lt j) \bigr) \ \land\ \bigwedge_{e \in G} \mathrm{Rel}_{e}(\vec v) \ \land\ \bigwedge_{d \in N} \mathrm{Top}_{d}(\vec v)
 ```
 
-$`\mathrm{Rel}_e(\vec v)`$ is the internal relation $`\mathrm{Rel}_{t_e, p_e, q_e}(\vec v)`$, that is, $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$. $`\mathrm{Top}_d(\vec v)`$ is the top predicate $`\mathrm{Top}_{t_d, p_d}(\vec v)`$, that is, $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, c)`$, where $`c`$ is the height of the structure in which the formula is read ([07](07-relation-r.md) §2). `reflLits_holds` rewrites "all these literals hold" into three statements: "the order of $`v`$ is the order of the indices", "$`G`$ holds", and "the keys of $`N`$ are defined and $`N`$ holds".
+$`\mathrm{Rel}_e(\vec v)`$ is the internal relation $`\mathrm{Rel}_{t_e, p_e, q_e}(\vec v)`$, that is, $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$. $`\mathrm{Top}_d(\vec v)`$ is the top predicate $`\mathrm{Top}_{t_d, p_d}(\vec v)`$, that is, $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, c)`$, where $`c`$ is the height of the structure in which the formula is read ([07](07-relation-r.md) §3). `reflLits_holds` rewrites "all these literals hold" into three statements: "the order of $`v`$ is the order of the indices", "$`G`$ holds", and "the keys of $`N`$ are defined and $`N`$ holds".
 
 **Proof.**
 
-1. From `R_iff`, get the elementarity $`E`$ at key $`\theta`$ between the structures of heights $`f(\mathrm{cut})`$ and $`b`$.
+1. From the defining equation of [07](07-relation-r.md) §6, get the elementarity $`E`$ at key $`\theta`$ between the structures of heights $`f(\mathrm{cut})`$ and $`b`$.
 2. The parameters $`f(i)`$ ($`i \lt \mathrm{cut}`$) are below $`f(\mathrm{cut})`$, since $`f`$ is strictly increasing.
 3. At height $`b`$, $`v = f`$ satisfies the formula. The order follows from $`f`$ being strictly increasing, $`\mathrm{Rel}`$ from the assumption on $`G`$, and $`\mathrm{Top}`$ from "the keys are below $`\theta`$" (`KeysBelow`) and "$`N`$ holds for the top $`b`$".
 4. By $`E`$ the formula is true at height $`f(\mathrm{cut})`$ as well. Call its witness $`g`$.
@@ -74,16 +74,16 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 **Proof.** Well-founded induction on $`\kappa`$ (`WellFoundedLT.induction`, [02](02-well-founded.md) §2).
 
-1. Unfold both sides with `R_iff`. Both $`x \lt \alpha`$ and $`x \lt \omega_1`$ are true. What remains is that a formula $`\varphi`$ at key $`\kappa`$ (parameters $`\lt x`$) has the same truth value in the structure $`\mathfrak A^\alpha_\kappa`$ of height $`\alpha`$ and the structure $`\mathfrak A^{\omega_1}_\kappa`$ of height $`\omega_1`$ (`absA`).
+1. Unfold both sides with the defining equation of [07](07-relation-r.md) §6. Both $`x \lt \alpha`$ and $`x \lt \omega_1`$ are true. What remains is that a formula $`\varphi`$ at key $`\kappa`$ (parameters $`\lt x`$) has the same truth value in the structure $`\mathfrak A^\alpha_\kappa`$ of height $`\alpha`$ and the structure $`\mathfrak A^{\omega_1}_\kappa`$ of height $`\omega_1`$ (`absA`).
 2. $`\varphi`$ reads only top predicates of keys $`\kappa' \lt \kappa`$. By the induction hypothesis, on points below $`\alpha`$ they have the same truth value at height $`\alpha`$ and at height $`\omega_1`$ (`lit_abs`).
 3. From height $`\alpha`$ to height $`\omega_1`$: the witnesses are below $`\alpha \lt \omega_1`$, and by 2 the literals have the same truth values.
 4. From height $`\omega_1`$ to height $`\alpha`$: take a witness $`v \lt \omega_1`$.
-   - Enlarge `allow` to "always true" (`lit_true`). This gives a formula in $`\mathfrak B`$.
+   - Enlarge `allow` to "always true" (`lit_true`, Lemma 2 of [03](03-sigma1-elementary.md) §8). This gives a formula in $`\mathfrak B`$.
    - By $`\mathrm{Good}(\alpha)`$, lower the witness, with the positions where $`v_i \lt \alpha`$ as parameters (`lower`). The new witness $`w`$ is below $`\alpha`$, equals $`v_i`$ where $`v_i \lt \alpha`$, and $`w \le v`$ pointwise.
    - By $`w \le v`$ and monotonicity of `eval`, the keys of the top literals stay below $`\kappa`$ (`lit_lower`).
    - By 2, return to the top predicates of height $`\alpha`$. $`\square`$
 
-The third item of step 4 uses "lowering pointwise keeps the key condition" of [03](03-sigma1-elementary.md) §8.
+The third item of step 4 uses Lemma 3 (lowering pointwise keeps the key condition) of [03](03-sigma1-elementary.md) §8.
 
 ### 3.2 Good points are in the relation R
 
@@ -103,9 +103,9 @@ The key $`\kappa`$ is arbitrary: Good points are related at every key.
 
 **Theorem (`initial_finite_graph`).** For every graph $`(G, N)`$ there are $`\beta \lt \omega_1`$ and a strictly increasing $`f \lt \beta`$ such that $`G`$ holds at $`f`$ and $`N`$ holds for the top $`\beta`$.
 
-**Proof.** Let $`n`$ be the number of vertices of the graph. Put $`\beta := c_n`$ and $`f(i) := c_i`$ (the sequence of Good points of [08](08-closure-chain.md) §7).
+**Proof.** Let $`n`$ be the number of vertices of the graph. Put $`\beta := c_n`$ and $`f(i) := c_i`$ (the chain of [08](08-closure-chain.md) §7).
 
-- $`f`$ is strictly increasing and $`c_i \lt c_n`$ (`points_strictMono`), and $`c_n \lt \omega_1`$ (`points_lt`).
+- $`f`$ is strictly increasing and $`c_i \lt c_n`$ (Property 10 of [08](08-closure-chain.md) §7), and $`c_n \lt \omega_1`$ (Property 9). Every $`c_i`$ is Good (Property 11).
 - An internal atom $`e`$ has parent $`\lt`$ child, so `good_R` gives $`R(\mathrm{eval}\ t_e\ f, c_{p_e}, c_{q_e})`$.
 - A top atom $`d`$ has parent $`\lt n`$, so `good_R` gives $`R(\mathrm{eval}\ t_d\ f, c_{p_d}, c_n)`$. $`\square`$
 
@@ -126,7 +126,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 
 - `actual_representation_descent` is the descent of [06](06-combinatorial-layer.md) §8. Finite reflection and key weakening are used in the splicing inside it.
 - The first representation comes from `keyRepresentation_exists`, which uses `initial_finite_graph`.
-- The other three final theorems follow from `omegaY_step_wellFounded` by combinatorial arguments only ([05](05-omegay-mountain.md) §7).
+- The other three final theorems (Theorems 2–4 of [05](05-omegay-mountain.md) §7) follow from `omegaY_step_wellFounded` (Theorem 1) by combinatorial arguments only.
 
 **Axioms.** [OmegaY/Audit.lean](../../OmegaY/Audit.lean) checks the axioms of every theorem whose name starts with `OmegaY.` or `Por.`. All depend only on `propext`, `Classical.choice` and `Quot.sound` ([README](../../README-en.md) "Axiom audit").
 

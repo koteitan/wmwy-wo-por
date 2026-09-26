@@ -4,7 +4,7 @@
 
 前提: なし
 
-このノートは、ラベル（§6）に使う順序数と、ラベルの上限に使う $`\omega_1`$ を説明する。使う事実は §5 の正則性、§6 のラベルの型、§7 のパラメータの数え方である。
+このノートは、順序数と $`\omega_1`$ を説明する。あとのノートでは、展開の停止性の証明で、式の列に $`\omega_1`$ 以下の順序数（§6 のラベル）を付けて使う（[06](06-combinatorial-layer.md) §4、§8）。使う事実は §5 の正則性、§6 のラベル、§7 のパラメータの列の数え方である。
 
 ## 1. 整列順序と順序数
 
@@ -29,10 +29,9 @@
 ```
 
 - $`\omega`$ は自然数全体の型である。$`\omega = \{0, 1, 2, \ldots\}`$。
-- 順序数の全体は $`\lt`$ で整列する。どの順序数の集まりにも最小元がある。
-- $`\omega^\omega`$ より小さい順序数は、$`\omega^{d} c_d + \cdots + \omega c_1 + c_0`$（$`c_i \in \mathbb N`$）の形にただ 1 通りに書ける（Cantor の標準形）。[05](05-omegay-mountain.md) の山の行はこの形の順序数である。
-
-Lean では、順序数の型は `Ordinal.{0}` である。$`\{\beta \mid \beta \lt \gamma\}`$ は `Set.Iio γ` である。
+- 順序数の全体は $`\lt`$ で整列する。空でない順序数の集まりには、どれも最小元がある。
+- 順序数の全体を $`\mathrm{Ord}`$ と書く。
+- $`\omega^\omega`$ より小さい順序数は、$`\omega^{d} c_d + \cdots + \omega c_1 + c_0`$（$`d, c_0, \ldots, c_d \in \mathbb N`$）の形にただ 1 通りに書ける（Cantor の標準形）。ただし $`d \gt 0`$ なら $`c_d \ne 0`$ とする。[05](05-omegay-mountain.md) の山の行はこの形の順序数である。
 
 ## 2. 後者と極限
 
@@ -48,8 +47,7 @@ Lean では、順序数の型は `Ordinal.{0}` である。$`\{\beta \mid \beta 
 
 **性質.** $`\alpha`$ が極限順序数で $`\beta \lt \alpha`$ なら、$`\beta + 1 \lt \alpha`$ である。したがって $`\beta`$ より上に、$`\alpha`$ より下の元が無限個ある。
 
-- この性質は [03](03-sigma1-elementary.md) の例で使う。
-- Lean では、$`\omega_1`$（§4）について `(isSuccLimit_omega 1).add_one_lt` の形で使う。[08](08-closure-chain.md) の `wh_lt` と `nextO_lt` である。
+この性質は [03 構造と Σ₁ 初等部分構造](03-sigma1-elementary.md) の例で使う。
 
 ## 3. 上限
 
@@ -64,13 +62,11 @@ Lean では、順序数の型は `Ordinal.{0}` である。$`\{\beta \mid \beta 
 | $`\{0, 1, 2, \ldots\}`$ | $`\omega`$ |
 | $`\{\omega, \omega+1, \omega+2, \ldots\}`$ | $`\omega \cdot 2`$ |
 
-「すべての元より真に大きい」数が欲しいときは、$`\sup_{i} (y_i + 1)`$ を使う。$`y_i \lt y_i + 1 \le \sup_i (y_i + 1)`$ だからである。Lean では `Ordinal.lt_iSup_add_one` である。[08](08-closure-chain.md) の証人の高さ `wh` はこの形である。
-
-Lean では、添字つきの上限は `⨆ i, f i`（`iSup`）である。
+「すべての元より真に大きい」数が欲しいときは、$`\sup_{i} (y_i + 1)`$ を使う。$`y_i \lt y_i + 1 \le \sup_i (y_i + 1)`$ だからである。[08 閉包と鎖](08-closure-chain.md) §3 で定義する「証人の高さ」はこの形である。
 
 ## 4. 可算と ω₁
 
-**定義（可算）.** 集合 $`X`$ が **可算** であるとは、$`X`$ が空であるか、全射 $`\mathbb N \to X`$ があることをいう。Lean では型のクラス `Countable` である。
+**定義（可算）.** 集合 $`X`$ が **可算** であるとは、$`X`$ が空であるか、全射 $`\mathbb N \to X`$ があることをいう。
 
 **定義（可算順序数）.** 順序数 $`\alpha`$ が **可算** であるとは、$`\{\beta \mid \beta \lt \alpha\}`$ が可算であることをいう。
 
@@ -82,111 +78,108 @@ $`0, 1, \omega, \omega+1, \omega \cdot 2, \omega^2, \omega^\omega, \varepsilon_0
 \alpha \lt \omega_1 \iff \alpha \text{ は可算}
 ```
 
-Lean では `ω₁` と書く。このリポジトリは次の事実を使う。
+次の 3 つを使う。
 
-| 名前 | 内容 |
-|---|---|
-| `Ordinal.omega_pos 1` | $`0 \lt \omega_1`$ |
-| `(isSuccLimit_omega 1).add_one_lt` | $`\alpha \lt \omega_1 \implies \alpha + 1 \lt \omega_1`$ |
-| `Por.Supply.countable_iio_ordinal` | $`a \lt \omega_1 \implies \{\beta \mid \beta \lt a\}`$ は可算 |
+- $`0 \lt \omega_1`$。
+- $`\alpha \lt \omega_1 \implies \alpha + 1 \lt \omega_1`$。
+- $`\gamma \lt \omega_1 \implies \{\beta \mid \beta \lt \gamma\}`$ は可算。
 
-`countable_iio_ordinal` は、$`\{\beta \mid \beta \lt a\}`$ の濃度が $`a`$ の濃度に等しいこと（`Cardinal.mk_Iio_ordinal`）と、$`a \lt \omega_1`$ なら $`a`$ の濃度が $`\aleph_0`$ 以下であることから出す。
+2 つめの理由：$`\{\beta \mid \beta \lt \alpha + 1\} = \{\beta \mid \beta \lt \alpha\} \cup \{\alpha\}`$ で、可算集合に 1 点を足しても可算である。言いかえると、$`\omega_1`$ は極限順序数である。
 
 ## 5. ω₁ の正則性
 
-**定理（ω₁ の正則性）.** 可算な添字の集合 $`I`$ と、各 $`i \in I`$ について $`\alpha_i \lt \omega_1`$ があるとする。このとき次が成り立つ。
+**定理（ω₁ の正則性）.** 各 $`n \in \mathbb N`$ について $`\alpha_n \lt \omega_1`$ なら、次が成り立つ。
 
 ```math
-\sup_{i \in I} \alpha_i \lt \omega_1
+\sup_{n \in \mathbb N} \alpha_n \lt \omega_1
 ```
 
-**証明.** $`\sigma := \sup_i \alpha_i`$ と置く。$`\beta \lt \sigma`$ なら、ある $`i`$ で $`\beta \lt \alpha_i`$ である。よって
+添字の集合は $`\mathbb N`$ でなくても、可算ならよい。
+
+**証明.** $`\sigma := \sup_n \alpha_n`$ と置く。$`\beta \lt \sigma`$ なら、ある $`n`$ で $`\beta \lt \alpha_n`$ である。よって
 
 ```math
-\{\beta \mid \beta \lt \sigma\} = \bigcup_{i \in I} \{\beta \mid \beta \lt \alpha_i\}
+\{\beta \mid \beta \lt \sigma\} = \bigcup_{n} \{\beta \mid \beta \lt \alpha_n\}
 ```
 
-である。右辺は可算集合の可算個の和である。$`\alpha_i = 0`$ の項は和に何も足さないので除く。残りの各 $`i`$ で全射 $`e_i : \mathbb N \to \alpha_i`$ を 1 つずつ選ぶ。$`I`$ を $`\mathbb N`$ で数え上げ、$`n`$ 番目の添字を $`i_n`$ と書く。すると $`(n, t) \mapsto e_{i_n}(t)`$ は $`\mathbb N \times \mathbb N`$ から和の上への全射になる。$`\mathbb N \times \mathbb N`$ は可算なので、和も可算である。よって $`\sigma`$ は可算で、$`\sigma \lt \omega_1`$ である。$`\square`$
+である。右辺は可算集合の可算個の和である。$`\alpha_n = 0`$ の項は和に何も足さないので除く。残りの各 $`n`$ で全射 $`e_n : \mathbb N \to \alpha_n`$ を 1 つずつ選ぶと、$`(n, t) \mapsto e_n(t)`$ は $`\mathbb N \times \mathbb N`$ から和の上への全射になる。$`\mathbb N \times \mathbb N`$ は可算なので、和も可算である。よって $`\sigma`$ は可算で、$`\sigma \lt \omega_1`$ である。$`\square`$
 
-- 全射 $`e_i`$ を可算個同時に選ぶところで、選択公理（可算選択）を使う。
+- 全射 $`e_n`$ を可算個同時に選ぶところで、選択公理（可算選択）を使う。
 - 添字が非可算なら成り立たない。例えば $`\sup_{\alpha \lt \omega_1} \alpha = \omega_1`$ である。
 
-Lean では `Ordinal.iSup_lt_omega_one` である。添字の型は `Countable` のインスタンスを持つ必要がある。このリポジトリでは 3 か所で使う（どれも [Por/Supply.lean](../Por/Supply.lean)）。
+## 6. ラベル
 
-$`\mathrm{Fin}\ n`$ は集合 $`\{0, 1, \ldots, n-1\}`$ である。表の残りの言葉は後のノートで定義する。`φ.n` は論理式 $`\varphi`$ の変数の数である（[03](03-sigma1-elementary.md) §7）。
-
-| 使う場所 | 添字の型 | 上限を取るもの |
-|---|---|---|
-| `wh_lt` | `Fin φ.n` | 1 組の証人の高さ（[08](08-closure-chain.md) §3） |
-| `nextO_lt` | `Input S γ`（§7） | 証人の高さ |
-| `lam_lt` | `ℕ` | `next` のくり返し（[08](08-closure-chain.md) §5） |
-
-## 6. ラベルの型
-
-**定義（ラベル）.** ラベルは $`\omega_1`$ 以下の順序数である。
+**定義（ラベル）.** $`\omega_1`$ 以下の順序数を **ラベル** と呼ぶ。ラベルの集合を $`\mathrm{Label}`$ と書く。
 
 ```math
-\mathrm{Label} = \{\, o \mid o \le \omega_1 \,\}, \qquad \mathrm{top} = \omega_1
+\mathrm{Label} := \{\, o \in \mathrm{Ord} \mid o \le \omega_1 \,\}
 ```
 
-Lean では `Por.Supply.Label := {o : Ordinal.{0} // o ≤ ω₁}` と `Por.Supply.top` である。`OmegaY.Reflection.OrdinalSupply.Label` と `OmegaY.Model.Label` は同じ型の別名である。順序は順序数の順序を制限したもので、整列している。
+ラベルの順序は順序数の $`\lt`$ である。$`\mathrm{Label}`$ は順序数の集合なので、§1 から整列している。最小のラベルは $`0`$、最大のラベルは $`\omega_1`$ である。
 
-| 名前 | 内容 |
-|---|---|
-| `Por.Supply.zeroL` | ラベル $`0`$ |
-| `Por.Supply.zeroL_lt_top` | $`0 \lt \omega_1`$ |
-| `Por.Supply.le_topL` | どのラベル $`x`$ も $`x \le \omega_1`$ |
-| `Por.Supply.countable_iio` | ラベル $`a \lt \omega_1`$ について、$`a`$ より下のラベルの集合は可算 |
-| `OrdinalSupply.bot_lt_top` | 最小のラベル $`\bot = 0`$ について $`\bot \lt \omega_1`$ |
+次の 3 つを使う。どれも §4 から出る。
 
-**なぜ ω₁ 自身をラベルに入れるか.** 停止性の証明は、ω-Y の山（[05](05-omegay-mountain.md) §3）の各列に、$`\omega_1`$ より下のラベルを付ける（[06](06-combinatorial-layer.md) §4 の `KeyRepresentation.bounded`）。一方、[07](07-relation-r.md) で定義する関係 $`R(\kappa, x, b)`$（$`\kappa`$ は鍵（[02](02-well-founded.md) §3）、$`x`$ と $`b`$ はラベル）は、$`b = \omega_1`$ の場合も使う（[08](08-closure-chain.md) の Good、[09](09-obligations.md) の `top_abs`）。そのために $`\omega_1`$ も同じ型の元にしてある。
+- $`0 \lt \omega_1`$。
+- $`\forall x \in \mathrm{Label}\ \ x \le \omega_1`$。
+- $`a \in \mathrm{Label}`$、$`a \lt \omega_1`$ なら、$`\{x \in \mathrm{Label} \mid x \lt a\} = \{\beta \mid \beta \lt a\}`$ は可算。
 
-## 7. パラメータの数え方
+**なぜ ω₁ 自身をラベルに入れるか.** 式の列に付けるラベルは、どれも $`\omega_1`$ より小さい（[06](06-combinatorial-layer.md) §4）。一方、[07](07-relation-r.md) で定義する関係 $`R`$ は、3 つめの引数に $`\omega_1`$ も取る（[08](08-closure-chain.md) §1、[09](09-obligations.md) §3）。そのために $`\omega_1`$ もラベルに入れる。
 
-[08](08-closure-chain.md) では、「$`\gamma`$ より下のパラメータを持つすべての論理式」について上限を取る。添字の型を次のように決める。
+## 7. パラメータの列の数え方
 
-記号は次のとおりである。論理式とパラメータは [03](03-sigma1-elementary.md) §2、§7 で定義する。
+**記法.** $`n \in \mathbb N`$ について $`\mathrm{Fin}\ n := \{0, 1, \ldots, n-1\}`$ とする。集合 $`X`$ について、$`\mathrm{Fin}\ n \to X`$ は $`X`$ の元を $`n`$ 個並べた列 $`(x_0, \ldots, x_{n-1})`$ の集合である。
 
-- $`\mathrm{Form}`$（Lean では `Form S`）は論理式の型である。$`S`$ は鍵の構文である（[03](03-sigma1-elementary.md) §7）。
-- 論理式 $`\varphi`$ の変数の数を $`n_\varphi`$ と書く。変数には $`0, 1, \ldots, n_\varphi - 1`$ の番号がある。この番号を **位置** と呼ぶ。
-- 集合 $`X`$ について、$`\mathrm{Option}\,X`$ は $`X`$ の元 $`x`$ を包んだ $`\mathrm{some}\ x`$ と、1 つの余分な元 $`\mathrm{none}`$ からなる集合である。
-- $`\sum_{\varphi} X_\varphi`$ は依存和で、その元は組 $`(\varphi, q)`$（$`q \in X_\varphi`$）である。
+**記法（Option）.** 集合 $`X`$ について、$`\mathrm{Option}\,X := \{\mathrm{some}\ x \mid x \in X\} \cup \{\mathrm{none}\}`$ とする。$`\mathrm{none}`$ は、$`\mathrm{some}\ x`$ のどれとも違う新しい元である。
 
-**定義（`Input`）.** Lean では `Input S γ` と書く。
+あとで、論理式（[03](03-sigma1-elementary.md) §2 で定義する）の $`n`$ 個の変数のうち一部に、ラベルを入れる。このラベルは論理式のパラメータ（[03](03-sigma1-elementary.md) §2）として使うので、ここでもパラメータと呼ぶ。どの番号にパラメータを入れるかと、その値を、1 つの列で表す。
+
+**定義（部分的なパラメータの列）.** ラベル $`\gamma`$ と $`n \in \mathbb N`$ について、次の集合を定める。
 
 ```math
-\mathrm{Input}(\gamma) = \sum_{\varphi \in \mathrm{Form}} \bigl(\mathrm{Fin}\ n_\varphi \to \mathrm{Option}\{\, x \mid x \lt \gamma \,\}\bigr)
+\mathrm{Par}_n(\gamma) := \mathrm{Fin}\ n \to \mathrm{Option}\,\{\, x \in \mathrm{Label} \mid x \lt \gamma \,\}
 ```
 
-入力 $`(\varphi, q)`$ は、$`\varphi`$ の各位置に、$`\gamma`$ より下のラベルを置くか、何も置かない（`none`）。`toP` は、$`q`$ の `none` を $`0`$ に、$`\mathrm{some}\ x`$ を $`x`$ に置き換えてラベルの列にする関数である。
+$`q \in \mathrm{Par}_n(\gamma)`$ の $`q_i = \mathrm{some}\ x`$ は「番号 $`i`$ にパラメータ $`x`$ を置く」ことを、$`q_i = \mathrm{none}`$ は「番号 $`i`$ にパラメータを置かない」ことを表す。$`q`$ からラベルの列 $`\mathrm{toP}(q) \in (\mathrm{Fin}\ n \to \mathrm{Label})`$ を次で作る。
 
-**定理（`input_countable`）.** $`\gamma \lt \omega_1`$ なら、`Input S γ` は可算である。
+```math
+\mathrm{toP}(q)_i := \begin{cases} x & (q_i = \mathrm{some}\ x) \cr 0 & (q_i = \mathrm{none}) \end{cases}
+```
 
-**証明.** 論理式の型 `Form S` は可算である（[08](08-closure-chain.md) §2）。$`\gamma`$ より下のラベルの集合は可算である（`countable_iio`）。可算な型の上の有限の関数の型、`Option`、依存和は、どれも可算である。$`\square`$
+**定理（可算）.** $`\gamma \lt \omega_1`$ なら、各 $`n \in \mathbb N`$ で $`\mathrm{Par}_n(\gamma)`$ は可算である。
 
-**例.** $`\gamma = \omega + 1`$ とする。3 変数の論理式 $`\varphi`$ で、位置 0 と 2 をパラメータにするとき、パラメータ $`(3, \cdot, \omega)`$（位置 1 はパラメータでないので $`\cdot`$ と書く）は入力 $`(\varphi, (\mathrm{some}\ 3, \mathrm{none}, \mathrm{some}\ \omega))`$ で表される。
+**証明.** $`\{x \in \mathrm{Label} \mid x \lt \gamma\}`$ は可算である（§6）。$`\mathrm{Option}`$ は 1 点を足すだけなので、可算のままである。可算集合の有限個の直積は可算である。$`\square`$
 
-**1-Y 版** は、姉妹プロジェクト [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por) の study/ である。1-Y 数列について、このリポジトリと同じ形の証明を説明している。1-Y 版は、$`\gamma`$ より下のラベル（点）を自然数の列で数え上げて、添字の型を $`\gamma`$ に依らないものにした。このリポジトリは点をそのまま添字にする。添字の型は $`\gamma`$ に依るが、可算なので §5 の定理をそのまま使える。
+**定理（どのパラメータも表せる）.** $`n \in \mathbb N`$、$`F \subseteq \mathrm{Fin}\ n`$、$`p \in (\mathrm{Fin}\ n \to \mathrm{Label})`$ で、すべての $`i \in F`$ について $`p_i \lt \gamma`$ とする。このとき、ある $`q \in \mathrm{Par}_n(\gamma)`$ で、すべての $`i \in F`$ について $`\mathrm{toP}(q)_i = p_i`$ である。
+
+**証明.** $`i \in F`$ なら $`q_i := \mathrm{some}\ p_i`$、$`i \notin F`$ なら $`q_i := \mathrm{none}`$ と置く。$`\square`$
+
+**例.** $`\gamma = \omega + 1`$、$`n = 3`$、$`F = \{0, 2\}`$、$`p = (3, 5, \omega)`$ とする。$`q = (\mathrm{some}\ 3, \mathrm{none}, \mathrm{some}\ \omega) \in \mathrm{Par}_3(\omega + 1)`$ で、$`\mathrm{toP}(q) = (3, 0, \omega)`$ である。番号 $`1 \notin F`$ の値 $`5`$ は $`q`$ に残らない。
+
+**なぜ要るか.** [08 閉包と鎖](08-closure-chain.md) では、$`\gamma`$ より下のパラメータを持つすべての論理式について上限を取る。添字の集合は、論理式 $`\varphi`$ と、$`\varphi`$ の変数の数 $`n`$ の $`\mathrm{Par}_n(\gamma)`$ の元の組の全体になる。論理式は可算個なので（[08](08-closure-chain.md) §2）、この集合も可算である。よって §5 の定理をそのまま使える。
+
+**1-Y 版との違い.** **1-Y 版** は、姉妹プロジェクト [koteitan/1y-wo-por](https://github.com/koteitan/1y-wo-por) の [study/](https://github.com/koteitan/1y-wo-por/tree/main/study) である。1-Y 数列について、このリポジトリと同じ形の証明を説明している。1-Y 版の 01 §6 は、$`\gamma`$ より下の順序数を全射 $`e_\gamma : \mathbb N \to \gamma`$ で数え、パラメータを自然数の列で表した。添字の集合は $`\gamma`$ に依らない。このリポジトリは、パラメータの順序数をそのまま添字に入れる。添字の集合は $`\gamma`$ に依るが、可算なので §5 の定理を使える。
 
 ## 8. このリポジトリでの使われ方
 
 | 場所 | 使い方 |
 |---|---|
-| [README](../README.md)「関係 R」「3 つの定理の証明」 | ラベルは $`\omega_1`$ 以下の順序数、Good な点は $`\omega_1`$ の中で共終 |
-| [notes/01-design.md](../notes/01-design.md) §3.3 | Good な点、可算個の論理式、$`\omega`$ 回のくり返し |
-| [Por/Supply.lean](../Por/Supply.lean) | §4〜§7 のすべて |
-| [OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean) | `Label`、`top`、`OrderBot`、`bot_lt_top` |
+| [README](../README.md)「証明の形」 | 各列に $`\omega_1`$ 以下の順序数のラベルを付ける（§6） |
+| [README](../README.md)「関係 R」 | ラベルの順序は $`\lt`$ で、整列している（§1、§6） |
+| [README](../README.md)「3 つの定理の証明」 | $`\omega_1`$ の正則性（§5）から、Good な点が $`\omega_1`$ の中で共終になる |
+| [notes/01-design.md](../notes/01-design.md) §3.3 | Good な点、可算個の論理式、$`\omega`$ 回のくり返し（§5、§7） |
 
 ## 9. Lean での対応
 
 | 概念 | Lean | ファイル |
 |---|---|---|
-| 順序数の型 | `Ordinal.{0}` | Mathlib |
+| 順序数の型、$`\{\beta \mid \beta \lt \gamma\}`$ | `Ordinal.{0}`、`Set.Iio γ` | Mathlib |
 | $`\lt`$ が整礎 | `wellFounded_lt` | Mathlib |
-| 上限 | `iSup`（`⨆`）、`Ordinal.lt_iSup_add_one` | Mathlib |
-| $`\omega_1`$ | `ω₁`、`Ordinal.omega_pos 1`、`isSuccLimit_omega 1` | Mathlib |
-| 正則性 | `Ordinal.iSup_lt_omega_one` | Mathlib |
-| 可算順序数の下は可算 | `countable_iio_ordinal`、`countable_iio` | [Por/Supply.lean](../Por/Supply.lean) |
-| ラベルと上端 | `Label`、`top`、`zeroL`、`zeroL_lt_top`、`le_topL` | 同上 |
+| 上限、$`y_i \lt \sup_i (y_i + 1)`$ | `iSup`（`⨆`）、`Ordinal.lt_iSup_add_one` | Mathlib |
+| 可算 | `Countable` | Mathlib |
+| $`\omega_1`$ と §4 の 3 つの事実 | `ω₁`、`Ordinal.omega_pos 1`、`(isSuccLimit_omega 1).add_one_lt`、`countable_iio_ordinal`（`Cardinal.mk_Iio_ordinal` から） | Mathlib、[Por/Supply.lean](../Por/Supply.lean) |
+| 正則性（§5） | `Ordinal.iSup_lt_omega_one`（使う場所は `wh_lt`、`nextO_lt`、`lam_lt`） | Mathlib、[Por/Supply.lean](../Por/Supply.lean) |
+| ラベル、$`0`$、$`\omega_1`$ | `Label := {o : Ordinal.{0} // o ≤ ω₁}`、`zeroL`、`top`、`zeroL_lt_top`、`le_topL`、`countable_iio` | [Por/Supply.lean](../Por/Supply.lean) |
 | ラベルの別名 | `OrdinalSupply.Label`、`OrdinalSupply.top`、`bot_lt_top`、`Model.Label` | [OmegaY/Reflection/OrdinalSupply.lean](../OmegaY/Reflection/OrdinalSupply.lean)、[OmegaY/Model.lean](../OmegaY/Model.lean) |
-| パラメータの入力 | `Input`、`toP`、`input_countable` | [Por/Supply.lean](../Por/Supply.lean) |
+| $`\mathrm{Fin}\ n`$、$`\mathrm{Option}`$ | `Fin n`、`Option` | Lean のコア |
+| $`\mathrm{Par}_n(\gamma)`$、$`\mathrm{toP}`$ | `Fin n → Option (Set.Iio γ)`、`toP` | [Por/Supply.lean](../Por/Supply.lean) |
+| $`\mathrm{Par}_n(\gamma)`$ が可算 | `input_countable` の中の `infer_instance` | 同上 |

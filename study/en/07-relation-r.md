@@ -6,56 +6,68 @@ Prerequisites
 
 | Note | Terms used here |
 |---|---|
-| [02 Well-founded relations and recursion](02-well-founded.md) | lexicographic order, well-founded recursion, guarded recursion, keys, stage, top |
-| [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | height of a structure, witness, position, `Lit`, `Form`, `Sat`, `ElemL`, internal relation, top predicate, partial top predicates, `Lit.holds_of_le` |
+| [01 Ordinals and ω₁](01-ordinals.md) | labels $`\mathrm{Label}`$ (§6) |
+| [02 Well-founded relations and well-founded recursion](02-well-founded.md) | keys $`\mathrm{Key}_m`$ and their order, stage, top, the order $`\lhd`$ of stages (§3), well-founded recursion, guarded recursion |
+| [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | height, point, witness, key syntax, template, $`\mathrm{eval}`$, position, normal form $`(n, F, L)`$, structures $`(c; \lt, \mathrm{rel}, \mathrm{top}, \mathrm{allow})`$, top predicate (§7), the way two structures are compared and Lemmas 1–3 (§8) |
 | [04 Patterns of resemblance](04-patterns-of-resemblance.md) | the idea of making top predicates atomic symbols |
-| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | key syntax, templates, combinatorial layer, the role of `key_weaken` |
+| [06 Phyrion's combinatorial layer for ω-Y](06-combinatorial-layer.md) | combinatorial layer, the role of $`R(\theta, a, b)`$, key weakening among the three theorems |
 
-This note explains the definition of the label relation $`R`$ of this repository and the properties that follow directly from it. The Lean file is [Por/Relation.lean](../../Por/Relation.lean).
+This note explains the definition of the label relation $`R`$ of this repository and the properties that follow directly from it.
 
 ## 1. Notation
 
-- $`\mathrm{Label}`$: the type of labels. Any well-ordered linear order works (the Lean assumptions are `LinearOrder` and `WellFoundedLT`). In the final theorems $`\mathrm{Label} = \{o \le \omega_1\}`$ ([01](01-ordinals.md) §6).
-- $`\mathrm{Key}`$: the type of keys, also any well-ordered linear order. In the final theorems it is $`\mathrm{Key}_m`$ ([02](02-well-founded.md) §3; $`m`$ is the key length).
-- $`S`$: the key syntax `KeySyntax Label Key` ([06](06-combinatorial-layer.md) §1).
-- $`R(\theta, a, b)`$: key $`\theta`$, lower point $`a`$ (a label), upper point $`b`$ (a label). $`b`$ is the top ([02](02-well-founded.md) §3). In Lean, `Por.R S θ a b`.
+- $`\mathrm{Label}`$: the labels ([01](01-ordinals.md) §6).
+- $`\mathrm{Key}_m`$: the keys of length $`m`$ and their lexicographic order $`\lt`$ ([02](02-well-founded.md) §3).
+- Stages $`(b, \theta) \in \mathrm{Label} \times \mathrm{Key}_m`$ and their lexicographic order $`\lhd`$ ([02](02-well-founded.md) §3): $`(b', \kappa') \lhd (b, \theta) \iff b' \lt b \lor (b' = b \land \kappa' \lt \theta)`$.
+- Key syntax: the key syntax of ω-Y in [03](03-sigma1-elementary.md) §7. The definitions and proofs below use only its monotonicity and the fact that $`\mathrm{Label}`$ and $`\mathrm{Key}_m`$ are well-ordered linear orders.
+- $`R(\theta, a, b)`$: key $`\theta \in \mathrm{Key}_m`$, lower point $`a \in \mathrm{Label}`$, upper point $`b \in \mathrm{Label}`$ (the top). $`R`$ is defined in §4. §2 and §3 use $`R`$ in the interpretations of symbols. As §5 explains, this use is not circular.
 
 ## 2. The language
 
-Here the symbols of the language of [03](03-sigma1-elementary.md) §7 get their meaning. There are three kinds of symbols. For each template $`t`$ over $`n`$ variables and positions $`i, j \lt n`$ there are the following.
+There are three kinds of symbols. $`n`$ is the number of variables, $`t \in \mathcal T_n`$ a template and $`i, j \lt n`$ positions ([03](03-sigma1-elementary.md) §7).
 
-| Symbol | Number of arguments | Meaning (in the structure of height $`c`$) |
+| Symbol | Arity | Meaning (in the structure of height $`c`$) |
 |---|---|---|
-| $`\lt`$ | 2 | the order of labels |
+| $`\lt`$ | 2 | order of labels |
 | $`\mathrm{Rel}_{t,i,j}`$ | $`n`$ | $`\mathrm{Rel}_{t,i,j}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ v_j)`$ |
 | $`\mathrm{Top}_{t,i}`$ | $`n`$ | $`\mathrm{Top}_{t,i}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ c)`$ |
 
-$`\vec v = (v_0, \ldots, v_{n-1})`$ is the tuple of values of the variables. $`\mathrm{Rel}`$ is a relation between points, and $`\mathrm{Top}`$ a relation from a point to the top $`c`$ (the height of the structure). $`c`$ itself is not in the domain. Both symbols compute their key from the $`n`$ points by the template.
+$`\mathrm{Rel}_{t,i,j}`$ relates points to points, and $`\mathrm{Top}_{t,i}`$ relates a point to the top $`c`$ (a top predicate) ([03](03-sigma1-elementary.md) §7). $`c`$ itself is not in the domain. Both symbols compute their key from the $`n`$ points by the template.
 
-In Lean the literals `Lit.rel t i j pos` and `Lit.top t i pos` read these symbols ([03](03-sigma1-elementary.md) §7). The true interpretations are:
+In the form of [03](03-sigma1-elementary.md) §7, the interpretations are the following $`\mathrm{relR}`$ and $`\mathrm{topR}_c`$.
 
-```lean
-def relR : Key → Label → Label → Prop := fun κ x y => R S κ x y
-def topR (c : Label) : Key → Label → Prop := fun κ x => R S κ x c
+```math
+\mathrm{relR}(\kappa, x, y) :\iff R(\kappa, x, y), \qquad \mathrm{topR}_c(\kappa, x) :\iff R(\kappa, x, c)
 ```
+
+We call the interpretations of the table the **true interpretations**, to distinguish them from the stage interpretations of §5. The true interpretation of the top predicates depends on the height $`c`$.
 
 ## 3. The structure 𝔄^c_θ
 
-**Definition.** For a key $`\theta`$ and a height $`c`$, the structure $`\mathfrak A^c_\theta`$ is:
+**Definition (the structure 𝔄^c_θ).** For a key $`\theta`$ and a label $`c`$, the structure $`\mathfrak A^c_\theta`$ of height $`c`$ is the following (notation of [03](03-sigma1-elementary.md) §7).
 
-- domain $`\{x \mid x \lt c\}`$, order $`\lt`$;
-- $`\mathrm{Rel}_{t,i,j}`$ for every template;
-- $`\mathrm{Top}_{t,i}(\vec v)`$, defined only when $`\mathrm{eval}\ t\ \vec v \lt \theta`$. Where it is not defined, top literals are false.
+```math
+\mathfrak A^c_\theta = \bigl(c;\ \lt,\ \mathrm{relR},\ \mathrm{topR}_c,\ \mathrm{allow}_\theta\bigr), \qquad \mathrm{allow}_\theta(\kappa) :\iff \kappa \lt \theta
+```
 
-In Lean, truth in $`\mathfrak A^c_\theta`$ is `Sat (relR S) (topR S c) (· < θ) c φ p`.
+- The domain is $`\{x \mid x \lt c\}`$.
+- $`\mathrm{Rel}_{t,i,j}`$ is present for every template.
+- $`\mathrm{Top}_{t,i}(\vec v)`$ is defined only when $`\mathrm{eval}\ t\ \vec v \lt \theta`$. Where it is not defined, both $`\mathrm{Top}_{t,i}`$ and $`\neg\mathrm{Top}_{t,i}`$ are false ([03](03-sigma1-elementary.md) §8).
 
-**Example.** Let the key length be $`m = 1`$ and $`\theta = (\omega)`$. The templates are ω-Y templates ([06](06-combinatorial-layer.md) §1): $`\mathrm{some}\ 0`$ puts $`v_0`$ at the coordinate, and $`\mathrm{none}`$ puts $`\top`$.
+**Example.** Let the key length be $`m = 1`$ and $`\theta = (\omega)`$. The templates are those of the key syntax of ω-Y ([03](03-sigma1-elementary.md) §7): $`t = (\mathrm{some}\ 0)`$ gives the key $`(v_0)`$ and $`t_\top = (\mathrm{none})`$ gives the key $`(\top)`$.
 
-- The top predicate of the template $`(\mathrm{some}\ 0)`$ is defined when $`v_0 \lt \omega`$, that is, when $`v_0`$ is a natural number.
-- The top predicate of the template $`(\mathrm{none})`$ has key $`(\top)`$, so it is defined nowhere.
-- If $`\theta = (\top)`$, the top predicate of the template $`(\mathrm{some}\ 0)`$ is defined everywhere.
+- $`\mathrm{Top}_{t,i}`$ is defined when $`v_0 \lt \omega`$, that is, when $`v_0`$ is a natural number.
+- $`\mathrm{Top}_{t_\top,i}`$ is defined nowhere, because the key $`(\top)`$ is $`\ge \theta`$.
+- If $`\theta = (\top)`$, $`\mathrm{Top}_{t,i}`$ is defined everywhere. $`\mathrm{Top}_{t_\top,i}`$ is still defined nowhere, because $`(\top) \lt (\top)`$ is false.
+- The formula $`\varphi = (2, \{0\}, [v_0 \lt v_1,\ \mathrm{Top}_{t,1}])`$ means the following in $`\mathfrak A^c_{(\omega)}`$ (the entry $`p_1`$ of $`\vec p = (p_0, p_1)`$ is not read).
 
-## 4. Definition
+```math
+\mathfrak A^c_{(\omega)} \models \varphi(\vec p) \iff p_0 \lt \omega\ \land\ \exists v_1 \lt c\ \bigl(p_0 \lt v_1 \land R((p_0), v_1, c)\bigr)
+```
+
+Whether a top predicate is defined was checked with the order of keys written in Python, for $`v_0 \in \{0, 7, \omega, \omega + 3\}`$.
+
+## 4. The definition
 
 **Definition (R).**
 
@@ -63,121 +75,134 @@ In Lean, truth in $`\mathfrak A^c_\theta`$ is `Sat (relR S) (topR S c) (· < θ)
 R(\theta, a, b) \iff a \lt b \ \land\ \mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}
 ```
 
-Here $`\mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}`$ means that for every formula $`\varphi`$ and all parameters $`\vec p`$ below $`a`$ the following holds. We write $`\vec p \lt a`$ when every entry of the tuple $`\vec p`$ is below $`a`$.
+Here $`\mathfrak A^{a}_{\theta} \preccurlyeq_{\Sigma_1} \mathfrak A^{b}_{\theta}`$ is the comparison of [03](03-sigma1-elementary.md) §8. That is, for every formula $`\varphi = (n, F, L)`$ and every $`\vec p`$ with $`p_i \lt a`$ at the positions in $`F`$,
 
 ```math
 \mathfrak A^{a}_{\theta} \models \varphi(\vec p) \iff \mathfrak A^{b}_{\theta} \models \varphi(\vec p)
 ```
 
-In Lean this is `ElemL (relR S) (topR S a) (topR S b) θ a b` ([03](03-sigma1-elementary.md) §8). The two structures have different top predicates ($`R`$ to $`a`$ and $`R`$ to $`b`$).
+We write $`\mathrm{Elem}(\theta, a, b)`$ for this comparison (with the true interpretations). The top predicates of the two structures are different ($`R`$ to $`a`$ and $`R`$ to $`b`$) (Difference 1 of [03](03-sigma1-elementary.md) §8).
 
-## 5. Recursion
+The condition "root label $`\le a`$" of the $`R`$ of the 1-Y version ([01](01-ordinals.md) §7) is not present here.
 
-The right side reads $`R`$ itself. The definition uses well-founded recursion on the lexicographic order $`\lhd`$ of the stages $`(b, \theta)`$ (pairs of a top and a key, [02](02-well-founded.md) §3), for all $`a`$ at once.
+## 5. The recursion
+
+The right side reads $`R`$ itself. We use well-founded recursion on the lexicographic order $`\lhd`$ of stages $`(b, \theta)`$ ([02](02-well-founded.md) §3), defining all $`a`$ at once.
 
 **What the right side reads.** Only three kinds, all at smaller stages.
 
-| Read | Stage | Why smaller |
+| What is read | Stage | Why smaller |
 |---|---|---|
-| $`\mathrm{Rel}(\vec v)`$, that is $`R(\kappa, x, y)`$ | $`(y, \kappa)`$ | the points are below the height ($`a`$ or $`b`$), so $`y \lt b`$ |
-| a top predicate of $`\mathfrak A^{a}_\theta`$, $`R(\kappa, x, a)`$ | $`(a, \kappa)`$ | $`a \lt b`$ |
-| a top predicate of $`\mathfrak A^{b}_\theta`$, $`R(\kappa, x, b)`$ | $`(b, \kappa)`$ | it is defined only when $`\kappa \lt \theta`$ |
+| $`\mathrm{Rel}_{t,i,j}(\vec v)`$, that is $`R(\kappa, x, y)`$ | $`(y, \kappa)`$ | the points are below the height ($`a`$ or $`b`$), so $`y \lt b`$ |
+| a top predicate $`R(\kappa, x, a)`$ of $`\mathfrak A^{a}_\theta`$ | $`(a, \kappa)`$ | $`a \lt b`$ |
+| a defined top predicate $`R(\kappa, x, b)`$ of $`\mathfrak A^{b}_\theta`$ | $`(b, \kappa)`$ | it is defined only when $`\kappa \lt \theta`$ |
 
-The third row is the main point. Because the top predicates of $`\mathfrak A^{b}_\theta`$ are defined only below the key $`\theta`$, the right side does not read the stage $`(b, \theta)`$ itself.
+The third row is the main point. Since the top predicates of $`\mathfrak A^{b}_\theta`$ are defined only below the key $`\theta`$, the right side does not read the stage $`(b, \theta)`$ itself.
 
-**The recursion in Lean (`stepF`).** At stage $`s = (b, \theta)`$ it returns the set of $`a`$ with $`R(\theta, \cdot, b)`$. Each of the three interpretations carries a proof that the stage is smaller, as a guard ([02](02-well-founded.md) §5).
+**Guarded recursion.** The value at the stage $`(b, \theta)`$ is the set of $`a`$ with $`R(\theta, a, b)`$. It is defined with the following **stage interpretations**. The superscript $`\mathrm{st}`$ marks a stage interpretation. Each of the three contains, as a guard, the condition that the stage is smaller ([02](02-well-founded.md) §5).
 
-| Interpretation at the stage | Expression |
+| Stage interpretation | Formula |
 |---|---|
-| internal relation | $`\mathrm{rel}(\kappa, x, y) :\iff \exists h : y \lt b,\ R(\kappa, x, y)`$ |
-| top at height $`a`$ | $`\mathrm{top}_A(\kappa, x) :\iff R(\kappa, x, a)`$ (the guard is $`a \lt b`$, required at the start of `stepF`) |
-| top at height $`b`$ | $`\mathrm{top}_B(\kappa, x) :\iff \exists h : \kappa \lt \theta,\ R(\kappa, x, b)`$ |
+| $`\mathrm{relR}^{\mathrm{st}}(\kappa, x, y)`$ | $`y \lt b \land R(\kappa, x, y)`$ |
+| $`\mathrm{topR}^{\mathrm{st},a}(\kappa, x)`$ | $`a \lt b \land R(\kappa, x, a)`$ |
+| $`\mathrm{topR}^{\mathrm{st},b}(\kappa, x)`$ | $`\kappa \lt \theta \land R(\kappa, x, b)`$ |
 
-```lean
-noncomputable def stepF (s : Label × Key) (IH : ∀ t, StageLT t s → Label → Prop) :
-    Label → Prop :=
-  fun a => ∃ hab : a < s.1,
-    ElemL (S := S)
-      (fun κ x y => ∃ h : y < s.1, IH (y, κ) (Prod.Lex.left _ _ h) x)
-      (fun κ x => IH (a, κ) (Prod.Lex.left _ _ hab) x)
-      (fun κ x => ∃ h : κ < s.2, IH (s.1, κ) (Prod.Lex.right _ h) x)
-      s.2 a s.1
-
-noncomputable def R (θ : Key) (a b : Label) : Prop :=
-  stage_wf.fix (stepF S) (b, θ) a
-```
-
-## 6. Removing the guards: R_iff
-
-**Theorem (`R_iff`).**
+Write $`\mathrm{Elem}^{\mathrm{st}}(\theta, a, b)`$ for $`\Sigma_1`$-elementarity with the stage interpretations.
 
 ```math
-R(\theta, a, b) \iff a \lt b \land \mathrm{ElemL}(\mathrm{relR}, \mathrm{topR}(a), \mathrm{topR}(b), \theta, a, b)
+\mathrm{Elem}^{\mathrm{st}}(\theta, a, b) :\iff \bigl(a;\ \lt,\ \mathrm{relR}^{\mathrm{st}},\ \mathrm{topR}^{\mathrm{st},a},\ \mathrm{allow}_\theta\bigr) \preccurlyeq_{\Sigma_1} \bigl(b;\ \lt,\ \mathrm{relR}^{\mathrm{st}},\ \mathrm{topR}^{\mathrm{st},b},\ \mathrm{allow}_\theta\bigr)
 ```
 
-**Proof.** Unfolding one step with `WellFounded.fix_eq`, the left side becomes "$`a \lt b`$ and `ElemL` with the stage interpretations". Under $`a \lt b`$, show that the stage interpretations agree with the true ones wherever a formula reads (`sat_congr`, [03](03-sigma1-elementary.md) §8).
+The stage interpretations read $`R`$ only at smaller stages, so the well-founded recursion of [02](02-well-founded.md) §4 determines $`R`$. The defining equation is the following guarded equation.
 
-1. Internal relation: only places where the second point is below the height are read. The height is $`a`$ or $`b`$, both at most $`b`$, so the guard $`y \lt b`$ is true.
-2. Top at height $`a`$: the guard is $`a \lt b`$, which is the assumption.
-3. Top at height $`b`$: only the defined keys $`\kappa \lt \theta`$ are read, and the guard $`\kappa \lt \theta`$ is exactly this.
+```math
+R(\theta, a, b) \iff a \lt b \land \mathrm{Elem}^{\mathrm{st}}(\theta, a, b)
+```
 
-So the truth values agree, and the equation without guards follows. $`\square`$
+## 6. Removing the guards
+
+**Lemma (removing the guards).** If $`a \lt b`$, then $`\mathrm{Elem}^{\mathrm{st}}(\theta, a, b) \iff \mathrm{Elem}(\theta, a, b)`$. That is, $`\Sigma_1`$-elementarity for the stage interpretations is equivalent to $`\Sigma_1`$-elementarity for the true interpretations.
+
+**Proof.** Show that the guards are true wherever a formula reads, on both sides. Then apply Lemma 1 of [03](03-sigma1-elementary.md) §8 at height $`a`$ and at height $`b`$.
+
+1. $`\mathrm{Rel}`$: Lemma 1 needs agreement only where the second point is below the height ($`a`$ or $`b`$). Both heights are $`\le b`$, so the guard $`y \lt b`$ is true.
+2. Top predicates at height $`a`$: the guard is $`a \lt b`$, which is the assumption.
+3. Top predicates at height $`b`$: Lemma 1 needs agreement only where $`\mathrm{allow}_\theta(\kappa)`$, that is $`\kappa \lt \theta`$. The guard $`\kappa \lt \theta`$ is then true.
+
+So for each $`\varphi, \vec p`$, at height $`a`$ and at height $`b`$, the two interpretations give the same truth value. $`\square`$
+
+**Theorem (defining equation).**
+
+```math
+R(\theta, a, b) \iff a \lt b \land \mathrm{Elem}(\theta, a, b)
+```
+
+**Proof.** Apply the lemma (removing the guards) under $`a \lt b`$ to the guarded equation of §5. $`\square`$
 
 ## 7. Properties that follow directly
 
-**Theorem (`R_lt`).** If $`R(\theta, a, b)`$ then $`a \lt b`$. This is the first component of `R_iff`.
+**Theorem (strictness).** $`R(\theta, a, b)`$ implies $`a \lt b`$. This is the first condition on the right side of the defining equation.
 
-**Theorem (`key_weaken`, key weakening).** If $`\theta \le \Theta`$ and $`R(\Theta, a, b)`$, then $`R(\theta, a, b)`$.
+**Theorem (key weakening).** If $`\theta \le \Theta`$ and $`R(\Theta, a, b)`$, then $`R(\theta, a, b)`$. This is the key weakening of [06](06-combinatorial-layer.md) §5.
 
-**Proof.** `R_iff` gives $`a \lt b`$ and the elementarity $`E`$ at key $`\Theta`$. For a formula $`\varphi`$ and parameters $`\vec p \lt a`$, show both directions at key $`\theta`$.
+**Proof.** The defining equation gives $`a \lt b`$ and $`\mathrm{Elem}(\Theta, a, b)`$. Since $`\theta \le \Theta`$, $`\kappa \lt \theta \implies \kappa \lt \Theta`$. Take $`\varphi = (n, F, L)`$ and $`\vec p`$ with $`p_i \lt a`$ at the positions in $`F`$, and show both directions.
 
-- From height $`a`$ to height $`b`$: take a witness $`w`$ at height $`a`$. Make the formula $`\varphi'`$ in which every position is a parameter (the parameters are $`w`$, all below $`a`$). Since $`\theta \le \Theta`$, $`w`$ satisfies $`\varphi'`$ at key $`\Theta`$ too (`Lit.holds_allow_mono`). By $`E`$, $`\varphi'`$ is true at height $`b`$ at key $`\Theta`$. All variables are fixed, so the witness is $`w`$ itself. The key of a top literal depends only on $`w`$, and it was below $`\theta`$ at height $`a`$. So the literal holds at height $`b`$ at key $`\theta`$ (`Lit.holds_of_le` with $`w \le w`$).
-- From height $`b`$ to height $`a`$: take a witness $`v`$ at height $`b`$. Make the formula $`\varphi'`$ whose parameters are the positions with $`v_i \lt a`$. Since $`\theta \le \Theta`$, $`v`$ satisfies $`\varphi'`$ at key $`\Theta`$. By $`E`$ there is a witness $`w`$ at height $`a`$ with $`w_i = v_i`$ at the positions where $`v_i \lt a`$. At the other positions $`w_i \lt a \le v_i`$. So $`w \le v`$ pointwise. The key of a top literal satisfies $`\mathrm{eval}\ t\ w \le \mathrm{eval}\ t\ v \lt \theta`$, so $`w`$ also works at key $`\theta`$ (`Lit.holds_of_le`). The original parameter positions have $`p_i \lt a`$, so $`w`$ agrees with $`p`$ there. $`\square`$
+**Direction 1: $`\mathfrak A^a_\theta \models \varphi(\vec p) \implies \mathfrak A^b_\theta \models \varphi(\vec p)`$.** Take a witness $`\vec w`$ at height $`a`$ ($`w_i \lt a`$). Form the formula $`\varphi' := (n, \mathrm{Fin}\ n, L)`$ in which every position is a parameter. By Lemma 2 of [03](03-sigma1-elementary.md) §8, $`\mathfrak A^a_\Theta \models \varphi'(\vec w)`$. By $`\mathrm{Elem}(\Theta, a, b)`$, $`\mathfrak A^b_\Theta \models \varphi'(\vec w)`$. All variables of $`\varphi'`$ are fixed, so its witness is $`\vec w`$ itself. Lemma 3 with $`\vec v := \vec w`$ shows that $`\vec w`$ satisfies all literals of $`L`$ in $`\mathfrak A^b_\theta`$ too. So $`\mathfrak A^b_\theta \models \varphi(\vec p)`$.
 
-The second direction needs lowering the witnesses pointwise. That is why the monotonicity of `eval` (`monotone_eval` in [06](06-combinatorial-layer.md) §1) is used.
+**Direction 2: $`\mathfrak A^b_\theta \models \varphi(\vec p) \implies \mathfrak A^a_\theta \models \varphi(\vec p)`$.** Take a witness $`\vec v`$ at height $`b`$ ($`v_i \lt b`$). Let $`F' := \{i \mid v_i \lt a\}`$ and $`\varphi' := (n, F', L)`$. Then $`F \subseteq F'`$. By Lemma 2, $`\mathfrak A^b_\Theta \models \varphi'(\vec v)`$. At the positions in $`F'`$ we have $`v_i \lt a`$, so $`\mathrm{Elem}(\Theta, a, b)`$ gives $`\mathfrak A^a_\Theta \models \varphi'(\vec v)`$, with a witness $`\vec w`$ ($`w_i \lt a`$) satisfying
 
-**Property (defined top predicates agree).** Let $`R(\theta, a, b)`$ and $`\vec v \lt a`$. If $`\mathrm{eval}\ t\ \vec v \lt \theta`$, then:
+```math
+\forall i \in F'\ \ w_i = v_i, \qquad \forall i \notin F'\ \ w_i \lt a \le v_i, \qquad \text{hence}\ \ \forall i \lt n\ \ w_i \le v_i
+```
+
+By Lemma 3, $`\vec w`$ satisfies all literals of $`L`$ in $`\mathfrak A^a_\theta`$ too. At the positions in $`F`$, $`w_i = v_i = p_i`$. So $`\mathfrak A^a_\theta \models \varphi(\vec p)`$. $`\square`$
+
+The second direction needs to lower the witnesses pointwise. That is why the monotonicity of the key syntax ([03](03-sigma1-elementary.md) §7) is used, through Lemma 3.
+
+**Property (defined top predicates agree).** Let $`R(\theta, a, b)`$ and let every entry of $`\vec v`$ be below $`a`$. If $`\mathrm{eval}\ t\ \vec v \lt \theta`$, then
 
 ```math
 R(\mathrm{eval}\ t\ \vec v,\ v_i,\ a) \iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ b)
 ```
 
-**Reason.** Use the formula $`\mathrm{Top}_{t,i}(\vec v)`$ in which every variable is a parameter. At height $`a`$ it means the left side, at height $`b`$ the right side. This property is not stated as a Lean theorem. The proofs use the similar `top_abs` (agreement of top predicates between a Good point and $`\omega_1`$, [09](09-obligations.md) §3). Good is defined in [08](08-closure-chain.md) §1.
+**Reason.** Use the quantifier-free formula $`(n, \mathrm{Fin}\ n, [\mathrm{Top}_{t,i}])`$ with parameters $`\vec v`$. At height $`a`$ it means the left side, at height $`b`$ the right side. The proof does not use this property. It uses the theorem (absoluteness of the top predicates) of [09](09-obligations.md) §3.1, which has a similar form: the top predicates agree between a Good point ([08](08-closure-chain.md) §1) and $`\omega_1`$.
 
-**Property (the lower point is a limit ordinal).** If the labels are ordinals and $`R(\theta, a, b)`$, then $`a`$ is a nonzero limit ordinal.
+**Property (the lower point is a limit ordinal).** $`R(\theta, a, b)`$ implies that $`a`$ is a nonzero limit ordinal.
 
-**Reason.** The same as the example of [03](03-sigma1-elementary.md) §5.
+**Reason.** As in the example of [03](03-sigma1-elementary.md) §5.
 
-- If $`a = 0`$: the formula $`\exists v_0\ (\text{true})`$ with one variable, no parameters and no literals is true at height $`b`$ and false at height 0.
-- If $`a = \gamma + 1`$: with parameter $`\gamma \lt a`$, $`\exists v_1\ (\gamma \lt v_1)`$ is true at height $`b`$ ($`v_1 = \gamma + 1 \lt b`$) and false at height $`a`$.
+- If $`a = 0`$: $`\varphi = (1, \emptyset, [\,])`$, that is $`\exists v_0\ (\text{true})`$, is true at height $`b`$ ($`v_0 = 0 \lt b`$) and false at height 0.
+- If $`a = \gamma + 1`$: use $`\varphi = (2, \{0\}, [v_0 \lt v_1])`$ with the parameter $`p_0 = \gamma \lt a`$. It is true at height $`b`$ ($`v_1 = \gamma + 1 \lt b`$) and false at height $`a`$.
 
-Both contradict elementarity. This property is not proved in Lean, and the combinatorial layer does not use it.
+Both contradict $`\mathrm{Elem}`$. The combinatorial layer does not use this property.
 
-## 8. Properties not used
+## 8. Properties that are not used
 
-**Transitivity.** $`R(\theta, a, b) \land R(\theta, b, c) \implies R(\theta, a, c)`$. The middle structure $`\mathfrak A^b_\theta`$ is the same in both relations, so for formulas with parameters $`\vec p \lt a`$ the two equivalences can be chained. This property is not proved in Lean, and the combinatorial layer does not use it.
+**Transitivity.** $`R(\theta, a, b) \land R(\theta, b, c) \implies R(\theta, a, c)`$.
+
+**Proof.** $`a \lt b \lt c`$. The structure $`\mathfrak A^b_\theta`$ is the same in both comparisons. If $`p_i \lt a`$ at the positions in $`F`$, then also $`p_i \lt b`$, so $`\mathfrak A^a_\theta \models \varphi(\vec p) \iff \mathfrak A^b_\theta \models \varphi(\vec p) \iff \mathfrak A^c_\theta \models \varphi(\vec p)`$. $`\square`$
+
+The combinatorial layer does not use this property.
 
 ## 9. Where this repository uses it
 
 | Place | Use |
 |---|---|
-| [README](../../README-en.md) "The relation R" | the defining formula and the stages |
-| [README](../../README-en.md) "Proofs of the three theorems" | summary of the proof of key weakening |
-| [notes/01-design.md](../../notes/01-design.md) §2, §3.1 | definition, recursion, key weakening |
-| [Por/Relation.lean](../../Por/Relation.lean) | everything in this note |
-| [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean) | gives `Reflection.R` by `Por.R` and `Reflection.key_weaken` by `Por.key_weaken` |
+| [README](../../README-en.md) "The relation R" | the defining equation and the three kinds of reads in the recursion on stages |
+| [README](../../README-en.md) "Proofs of the three theorems" | summary of the proof of key weakening (§7) |
+| [notes/01-design.md](../../notes/01-design.md) §2, §3.1 (Japanese) | definition, recursion, key weakening |
 
 ## 10. Lean correspondence
 
 | Concept | Lean | File |
 |---|---|---|
-| stages and their order | `StageLT`, `stage_wf` | [Por/Relation.lean](../../Por/Relation.lean) |
-| one step of the recursion | `stepF` | same |
-| the relation | `R` | same |
-| true interpretations | `relR`, `topR` | same |
-| defining equation | `R_iff` | same |
-| strictly smaller | `R_lt` | same |
-| key weakening | `key_weaken` | same |
-| elementarity, truth | `ElemL`, `Sat` | [Por/Formula.lean](../../Por/Formula.lean) |
-| only what is read matters | `sat_congr` | same |
-| parts of key weakening | `Lit.holds_allow_mono`, `Lit.holds_of_le` | same |
+| stages and $`\lhd`$ | `StageLT`, `stage_wf` | [Por/Relation.lean](../../Por/Relation.lean) |
+| stage interpretations and the guarded step | `stepF` (the guard $`a \lt b`$ is written once, as the leading `∃ hab : a < s.1`) | same |
+| $`R`$ | `Por.R S θ a b := stage_wf.fix (stepF S) (b, θ) a` | same |
+| true interpretations | `relR`, `topR c` | same |
+| $`\mathrm{Elem}(\theta, a, b)`$ | `ElemL (relR S) (topR S a) (topR S b) θ a b` | [Por/Formula.lean](../../Por/Formula.lean) |
+| lemma (removing the guards) and the defining equation | `R_iff` (uses `WellFounded.fix_eq` and `sat_congr`) | [Por/Relation.lean](../../Por/Relation.lean) |
+| strictness | `R_lt` | same |
+| key weakening | `key_weaken` (uses `Lit.holds_allow_mono` and `Lit.holds_of_le`) | same |
+| names read by the combinatorial layer | `Reflection.R`, `Reflection.key_weaken`, `Model.key_weaken` | [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean), [OmegaY/Model.lean](../../OmegaY/Model.lean) |
+| defined top predicates agree, the lower point is a limit, transitivity | none (not proved in Lean) | |

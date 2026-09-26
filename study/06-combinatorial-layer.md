@@ -191,7 +191,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 反映には $`G`$ と $`F`$ をまとめて渡す。要求の鍵が `control` の鍵より小さいことが、有限反映の `KeysBelow` になる。
 
-**定義（ブロックの番号）.** 元の式の最後の列の番号を $`x`$ とする。最後の列を除くと、列は $`x`$ 個である。根の列を $`y`$（[05](05-omegay-mountain.md) §4 の $`c_r`$）とする。$`b`$ はブロックの番号、$`i \in \mathrm{Fin}\ x`$ は元の列である。
+**定義（ブロックの番号）.** 元の式の最後の列の番号を $`x`$ とする。最後の列を除くと、列は $`x`$ 個である。根の列を $`y`$（[05](05-omegay-mountain.md) §4 の根の列 $`z`$）とする。$`x - y`$ は [05](05-omegay-mountain.md) §4 の $`L`$ である。$`b`$ はブロックの番号、$`i \in \mathrm{Fin}\ x`$ は元の列である。
 
 | Lean | 値 |
 |---|---|
@@ -205,9 +205,9 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 **定理（`ActualRepresentationDescent`、`actual_representation_descent`）.** $`s = (s_0, \ldots, s_x)`$ を空でない式、$`D`$ をその山の次元、$`f`$ をその山の表現とする。$`f(x)`$ は最後の列のラベルである。このとき、どの自然数 $`N`$ についても、$`s[N]`$ の山の表現 $`f'`$（次元 $`D`$）で、すべてのラベルが $`f(x)`$ より小さいものがある。
 
-**場合 1（最後の列を消すとき）.** $`f`$ を接頭辞に制限する（`expandDiagram_trivial_representation_descent`）。ラベルはどれも $`f(x)`$ より小さい（`restrict_below_last`）。
+**場合 1（最後の列を消すとき。[05](05-omegay-mountain.md) §4 の、根が無いときと $`N = 0`$ のとき）.** $`f`$ を接頭辞に制限する（`expandDiagram_trivial_representation_descent`）。ラベルはどれも $`f(x)`$ より小さい（`restrict_below_last`）。
 
-**場合 2（ブロックを写すとき）.** 記号を次のとおりとする（`RootGeometry`、[OmegaY/Expansion/InitialControlKeys.lean](../OmegaY/Expansion/InitialControlKeys.lean)）。
+**場合 2（ブロックを写すとき。根があり $`N \ge 1`$ のとき）.** 記号を次のとおりとする（`RootGeometry`、[OmegaY/Expansion/InitialControlKeys.lean](../OmegaY/Expansion/InitialControlKeys.lean)）。
 
 - **制御の辺**：列 $`x`$ の一番上の辺（`controlEdge`）。親は根 $`r`$ である。
 - **下の辺**：列 $`x`$ の、制御の辺より下の辺（`LowerEdge`）。鍵は制御の辺の鍵より真に小さい（`lower_key_strict`、§3 の `key_strict_in_column` から）。
@@ -226,7 +226,7 @@ R((f_0, f_0), f_0, f_1), \quad R((f_0, \top), f_0, f_1), \quad R((f_0, f_0), f_1
 
 次に、ブロック $`b`$ から $`b + 1`$ へ §7 の `splice_reservoirs` を使う（`iterated_actual_reservoirs`）。そのとき要るのは、ブロック $`b+1`$ の山のすべての辺が `ReservoirClassified` であることである（`actual_splice_edge_classified`）。これは展開のプログラムの形についての有限の事実で、weak magma の充填の規則（[05](05-omegay-mountain.md) §5）を使う。中心は次の 2 つである（[notes/02-feasibility.md](../notes/02-feasibility.md) §3.1、§4.2）。
 
-- **複写の辺の鍵の上界**（`ActualCopiedKeyBound`）：新しいブロックの辺 $`e`$ には、$`M(s')`$ の源の辺 $`e'`$（[05](05-omegay-mountain.md) §4）がある。$`e`$ の親の列と子の列は、$`e'`$ の親の列と子の列を写したものである。$`e`$ の鍵は、$`e'`$ の鍵を写したもの以下である。
+- **複写の辺の鍵の上界**（`ActualCopiedKeyBound`）：新しいブロックの辺 $`e`$ で、上の節点がすき間の節点でないもの（[05](05-omegay-mountain.md) §4 の (T)、(C) で置いた節点）には、$`M(s')`$ の源の辺 $`e'`$（[05](05-omegay-mountain.md) §4）がある。$`e`$ の親の列と子の列は、$`e'`$ の親の列と子の列を写したものである。$`e`$ の鍵は、$`e'`$ の鍵を写したもの以下である。
 - **充填の辺の分類**（`ActualFillCopiedKey`）：すき間の節点（[05](05-omegay-mountain.md) §4）への辺の鍵は、同じ列を端点に持つ写した辺の鍵より小さい。そのため、その写した辺の上界から `key_weaken` で扱える。
 
 ブロック $`N`$ の状態のラベルは、$`s[N]`$ の山の表現である（`representationOfSpliceGraph`）。どれも $`\beta = f(x)`$ より小さい（`represent_actual_expansion`）。

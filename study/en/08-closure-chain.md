@@ -1,148 +1,166 @@
 [← Back](README.md) | [English](08-closure-chain.md) | [Japanese](../08-closure-chain.md)
 
-# Closure below ω₁ and the sequence of Good points
+# Closure below ω₁ and the chain
 
 Prerequisites
 
 | Note | Terms used here |
 |---|---|
-| [01 Ordinals and ω₁](01-ordinals.md) | $`\omega_1`$, regularity, the label type, `Input`, `toP` |
-| [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | witness, parameter, the Tarski–Vaught test, the key syntax $`S`$, template, `Form`, `Sat` |
-| [07 The relation R](07-relation-r.md) | $`R`$, $`\mathrm{Rel}_{t,i,j}`$, $`\mathrm{Top}_{t,i}`$, `relR`, `topR`, $`\vec p \lt a`$ |
+| [01 Ordinals and ω₁](01-ordinals.md) | $`\omega_1`$, regularity (§5), labels (§6), $`\mathrm{Fin}\ n`$, partial parameter lists $`\mathrm{Par}_n(\gamma)`$, $`\mathrm{toP}`$ (§7) |
+| [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | witness, substructure, Tarski–Vaught test, template, normal form $`(n, F, L)`$, literal, structures $`(c; \lt, \mathrm{rel}, \mathrm{top}, \mathrm{allow})`$ (§7) |
+| [07 The relation R](07-relation-r.md) | $`R`$, the symbols $`\mathrm{Rel}_{t,i,j}`$, $`\mathrm{Top}_{t,i}`$ and their true interpretations $`\mathrm{relR}`$, $`\mathrm{topR}_c`$ |
 
-This note explains how to build, below $`\omega_1`$, points that are closed under $`\Sigma_1`$ witnesses (the Good points of §1). The idea is the same as in the Löwenheim–Skolem theorem: add witnesses and take the supremum. The sequence of such points gives the first labels in [09](09-obligations.md). The Lean file is [Por/Supply.lean](../../Por/Supply.lean). This note assumes that the template types of the key syntax $`S`$ ([03](03-sigma1-elementary.md) §7) are countable (`[∀ n, Countable (S.Template n)]`). The template types of ω-Y are finite (`Keys.template_countable`).
+This note explains how to build points below $`\omega_1`$ that are closed under $`\Sigma_1`$ witnesses. The idea is the one of the Löwenheim–Skolem theorem: add witnesses and take the supremum. The chain of these points gives the first labels in [09](09-obligations.md).
 
 ## 1. The ambient structure and Good
 
-**Definition (ambient structure).** Let $`\mathfrak B`$ be the structure of height $`\omega_1`$ in which the top predicates are defined for every key. The symbols $`\mathrm{Rel}_{t,i,j}`$ and $`\mathrm{Top}_{t,i}`$ are those of [07](07-relation-r.md) §2.
+**Definition (ambient structure).** Let $`\mathfrak B`$ be the structure of height $`\omega_1`$ in which the top predicates are defined at every key (notation of [03](03-sigma1-elementary.md) §7).
 
 ```math
-\mathfrak B = \bigl(\omega_1;\ \lt,\ (\mathrm{Rel}_{t,i,j}),\ (\mathrm{Top}^{\omega_1}_{t,i})\bigr), \qquad \mathrm{Top}^{\omega_1}_{t,i}(\vec v) :\iff R(\mathrm{eval}\ t\ \vec v,\ v_i,\ \omega_1)
+\mathfrak B = \bigl(\omega_1;\ \lt,\ \mathrm{relR},\ \mathrm{topR}_{\omega_1},\ \mathrm{allow}_{\mathrm{all}}\bigr), \qquad \mathrm{topR}_{\omega_1}(\kappa, x) :\iff R(\kappa, x, \omega_1), \qquad \mathrm{allow}_{\mathrm{all}}(\kappa) :\iff \text{true}
 ```
 
-In Lean, truth in $`\mathfrak B`$ is `Sat (relR S) (topR S top) (fun _ => True) top φ p`. `top` is the label $`\omega_1`$ ([01](01-ordinals.md) §6). Since `allow` is always true, every top literal is defined.
+The top predicates are defined at every key ([03](03-sigma1-elementary.md) §8).
 
-**Definition (Good).** Let $`\alpha`$ be a label. Let $`\mathfrak B{\restriction}\alpha`$ be $`\mathfrak B`$ with its domain restricted to $`\{x \mid x \lt \alpha\}`$. The top predicates stay those toward $`\omega_1`$. A label $`\alpha`$ is **Good** if the following holds, where $`\varphi`$ ranges over formulas and $`\vec p \lt \alpha`$ over parameters.
+**Definition (Good).** For a label $`\gamma`$, let $`\mathfrak B{\restriction}\gamma`$ be $`\mathfrak B`$ with its domain restricted to $`\{x \mid x \lt \gamma\}`$. The top predicates remain those toward $`\omega_1`$.
 
 ```math
-\mathrm{Good}(\alpha) :\iff \forall \varphi\ \forall \vec p \lt \alpha\ \bigl(\mathfrak B \models \varphi(\vec p) \implies \mathfrak B{\restriction}\alpha \models \varphi(\vec p)\bigr)
+\mathfrak B{\restriction}\gamma = \bigl(\gamma;\ \lt,\ \mathrm{relR},\ \mathrm{topR}_{\omega_1},\ \mathrm{allow}_{\mathrm{all}}\bigr), \qquad \mathrm{Good}(\gamma) :\iff \mathfrak B{\restriction}\gamma \preccurlyeq_{\Sigma_1} \mathfrak B
 ```
 
-`Good α` in Lean has this form. $`\mathfrak B{\restriction}\alpha`$ is a genuine substructure of $`\mathfrak B`$ (same interpretations, smaller domain). The converse implication always holds (witnesses $`\lt \alpha`$ are $`\lt \omega_1`$). So by the Tarski–Vaught test of [03](03-sigma1-elementary.md) §6, $`\mathrm{Good}(\alpha)`$ is the same as $`\mathfrak B{\restriction}\alpha \preccurlyeq_{\Sigma_1} \mathfrak B`$. A Good point has, below itself, witnesses for the $`\Sigma_1`$ claims true in $`\mathfrak B`$.
+That is, $`\mathfrak B{\restriction}\gamma \models \varphi(\vec p) \iff \mathfrak B \models \varphi(\vec p)`$ for every formula $`\varphi = (n, F, L)`$ and every $`\vec p`$ with $`p_i \lt \gamma`$ at the positions in $`F`$.
+
+$`\mathfrak B{\restriction}\gamma`$ is a genuine substructure of $`\mathfrak B`$ (same interpretations, smaller domain). So the Tarski–Vaught test of [03](03-sigma1-elementary.md) §6 applies directly. The upward direction $`\mathfrak B{\restriction}\gamma \models \varphi(\vec p) \implies \mathfrak B \models \varphi(\vec p)`$ always holds (Property 2 of [03](03-sigma1-elementary.md) §4). So $`\mathrm{Good}(\gamma)`$ is equivalent to the following downward condition alone.
+
+```math
+\forall \varphi\ \forall \vec p\ \Bigl(\bigl(\forall i \in F\ \ p_i \lt \gamma\bigr) \land \mathfrak B \models \varphi(\vec p) \implies \mathfrak B{\restriction}\gamma \models \varphi(\vec p)\Bigr)
+```
 
 ## 2. There are countably many formulas
 
-**Theorem (`form_countable`).** The type of formulas `Form S` is countable.
+**Definition (the set of formulas).** Let $`\mathcal F`$ be the set of all normal forms $`(n, F, L)`$ of [03](03-sigma1-elementary.md) §7: $`n \in \mathbb N`$, $`F \subseteq \mathrm{Fin}\ n`$, and $`L`$ a finite list of literals over $`n`$ variables.
 
-**Proof.** Encode literals by an injection into a sum of tuple types (`litCode`, `litCode_inj`).
+**Why it is countable.** Once $`n`$ is fixed, a literal is given by the following tuple.
 
-| Literal | Code |
+| Literal | Tuple |
 |---|---|
-| `lt i j pos` | $`(i, j, \mathit{pos})`$ |
-| `rel t i j pos` | $`(t, i, j, \mathit{pos})`$ |
-| `top t i pos` | $`(t, i, \mathit{pos})`$ |
+| $`v_i \lt v_j`$, $`\neg(v_i \lt v_j)`$ | $`(i, j, \pm)`$ |
+| $`\mathrm{Rel}_{t,i,j}`$, $`\neg\mathrm{Rel}_{t,i,j}`$ | $`(t, i, j, \pm)`$ |
+| $`\mathrm{Top}_{t,i}`$, $`\neg\mathrm{Top}_{t,i}`$ | $`(t, i, \pm)`$ |
 
-The component types (`Fin n`, `Bool`, `S.Template n`) are countable, so the type of literals is countable (`lit_countable`). Encode formulas by an injection into the dependent sum $`(n, \mathit{fixed}, \mathit{lits})`$ (`formCode`, `formCode_inj`). Natural numbers, functions on a finite type, and lists over a countable type are countable. $`\square`$
+$`\pm`$ is one of two values, positive or negated. There are finitely many $`i, j \in \mathrm{Fin}\ n`$, and the set $`\mathcal T_n`$ of templates is countable (for the key syntax of ω-Y it has $`(n+1)^m`$ elements; [03](03-sigma1-elementary.md) §7). So there are countably many literals over $`n`$ variables, and countably many finite lists of them. There are $`2^n`$ choices of $`F`$. $`n`$ is a natural number. So $`\mathcal F`$ is countable.
 
-The template types must be countable. One formula uses only finitely many templates, but for the set of all formulas to be countable, the set of all templates must be countable.
+The sets $`\mathcal T_n`$ of templates must be countable. One formula uses only finitely many templates, but for the set of all formulas to be countable, the set of all templates must be countable. About the key syntax, the definitions and proofs of this note use only that each $`\mathcal T_n`$ is countable.
 
-## 3. Heights of witnesses
+## 3. Height of witnesses
 
-**Definition (`wh`).** For a formula $`\varphi`$ and parameters $`\vec p`$, the **witness height** $`\mathrm{wh}(\varphi, \vec p)`$ is defined as follows. $`n`$ is the number of variables of $`\varphi`$.
+**Definition (height of witnesses).** For a formula $`\varphi = (n, F, L) \in \mathcal F`$ and a list of labels $`\vec p \in (\mathrm{Fin}\ n \to \mathrm{Label})`$:
 
-- if $`\mathfrak B \models \varphi(\vec p)`$, choose one tuple of witnesses $`v`$ (`Classical.choose`) and put $`\mathrm{wh}(\varphi, \vec p) := \sup_{i \lt n} (v_i + 1)`$;
-- otherwise put $`\mathrm{wh}(\varphi, \vec p) := 0`$.
+- if $`\mathfrak B \models \varphi(\vec p)`$, choose with the axiom of choice one list $`\vec v`$ ($`v_i \lt \omega_1`$) as in the definition of satisfaction of [03](03-sigma1-elementary.md) §7, and let $`h(\varphi, \vec p) := \sup_{i \lt n} (v_i + 1)`$;
+- otherwise let $`h(\varphi, \vec p) := 0`$.
 
-| Theorem | Content | Reason |
-|---|---|---|
-| `wh_lt` | $`\mathrm{wh}(\varphi, \vec p) \lt \omega_1`$ | a supremum of finitely many $`v_i + 1 \lt \omega_1`$ ([01](01-ordinals.md) §5) |
-| `wit_lt_wh` | every chosen witness is below $`\mathrm{wh}(\varphi, \vec p)`$ | `Ordinal.lt_iSup_add_one` |
+**Theorem (the height of witnesses is below ω₁).** $`h(\varphi, \vec p) \lt \omega_1`$.
 
-## 4. One step of the closure
+**Proof.** It is the maximum of finitely many $`v_i + 1`$, each below $`\omega_1`$ ([01](01-ordinals.md) §4). $`\square`$
 
-**Definition (`next`).** Let $`\gamma`$ be a label. $`\mathrm{nextO}(\gamma)`$ is an ordinal and $`\mathrm{next}(\gamma)`$ a label.
+All entries of the chosen $`\vec v`$ lie below $`h(\varphi, \vec p)`$ ([01](01-ordinals.md) §3).
+
+## 4. One closure step
+
+**Definition (inputs).** For a label $`\gamma`$, define the set of pairs of a formula and a partial parameter list ([01](01-ordinals.md) §7):
 
 ```math
-\mathrm{nextO}(\gamma) := \max\Bigl(\gamma + 1,\ \sup_{q \in \mathrm{Input}(\gamma)} \mathrm{wh}\bigl(q_\varphi, \mathrm{toP}(q)\bigr)\Bigr), \qquad \mathrm{next}(\gamma) := \min\bigl(\mathrm{nextO}(\gamma), \omega_1\bigr)
+\mathrm{Input}(\gamma) := \bigl\{\, (\varphi, q) \ \bigm|\ \varphi = (n, F, L) \in \mathcal F,\ \ q \in \mathrm{Par}_n(\gamma) \,\bigr\}
 ```
 
-The supremum ranges over all formulas with parameters below $`\gamma`$, $`q \in \mathrm{Input}(\gamma)`$ ([01](01-ordinals.md) §7). For an input $`q = (\varphi, q')`$, $`q_\varphi := \varphi`$ is its formula and $`\mathrm{toP}(q) := \mathrm{toP}(q')`$ its tuple of parameters. The $`\min`$ only puts the value into the label type; if $`\gamma \lt \omega_1`$ then $`\mathrm{next}(\gamma) = \mathrm{nextO}(\gamma)`$ (`next_val`).
+If $`\gamma \lt \omega_1`$, $`\mathrm{Input}(\gamma)`$ is countable, because $`\mathcal F`$ is countable (§2) and each $`\mathrm{Par}_n(\gamma)`$ is countable ([01](01-ordinals.md) §7).
 
-| Theorem | Content | Reason |
-|---|---|---|
-| `lt_next` | $`\gamma \lt \omega_1 \implies \gamma \lt \mathrm{next}(\gamma)`$ | the term $`\gamma + 1`$ |
-| `next_lt` | $`\gamma \lt \omega_1 \implies \mathrm{next}(\gamma) \lt \omega_1`$ | `Input` is countable; a countable supremum (`nextO_lt`) |
-| `wit_below` | if $`\gamma \lt \omega_1`$, $`\vec p \lt \gamma`$ and $`\mathfrak B \models \varphi(\vec p)`$, then $`\mathfrak B{\restriction}\mathrm{next}(\gamma) \models \varphi(\vec p)`$ | proof below |
-
-**Proof of `wit_below`.** Make the input $`q`$ with $`p_i`$ at the parameter positions and `none` elsewhere. `toP` turns `none` into 0, but truth in $`\mathfrak B`$ reads only the parameter positions, so $`\mathfrak B \models \varphi(\mathrm{toP}(q))`$. The witnesses chosen for $`q`$ are below $`\mathrm{wh}(q_\varphi, \mathrm{toP}(q))`$ (`wit_lt_wh`). This is one of the terms of the supremum, so they are below $`\mathrm{next}(\gamma)`$ (`wh_le_nextO`). $`\square`$
-
-## 5. The tower and λ
-
-**Definition (`tower`, `lam`).** Let $`\gamma`$ be a label and $`k`$ a natural number. Write $`\mathrm{next}^k(\gamma)`$ for `tower S γ k` in Lean.
+**Definition (one closure step).** For a label $`\gamma`$ define
 
 ```math
-\mathrm{next}^0(\gamma) := \gamma, \quad \mathrm{next}^{k+1}(\gamma) := \mathrm{next}\bigl(\mathrm{next}^k(\gamma)\bigr), \qquad \lambda(\gamma) := \sup_{k \in \mathbb N} \mathrm{next}^k(\gamma)
+\mathrm{next}(\gamma) := \min\Bigl(\max\Bigl(\gamma + 1,\ \sup_{(\varphi, q) \in \mathrm{Input}(\gamma)} h\bigl(\varphi, \mathrm{toP}(q)\bigr)\Bigr),\ \omega_1\Bigr)
 ```
 
-| Theorem | Content |
-|---|---|
-| `tower_lt` | $`\gamma \lt \omega_1 \implies \mathrm{next}^k(\gamma) \lt \omega_1`$ |
-| `tower_succ_lt` | $`\mathrm{next}^k(\gamma) \lt \mathrm{next}^{k+1}(\gamma)`$ |
-| `tower_mono` | $`k \le k' \implies \mathrm{next}^k(\gamma) \le \mathrm{next}^{k'}(\gamma)`$ |
-| `tower_le_lam` | $`\mathrm{next}^k(\gamma) \le \lambda(\gamma)`$ |
-| `lam_lt` | $`\gamma \lt \omega_1 \implies \lambda(\gamma) \lt \omega_1`$ (a countable supremum) |
-| `lt_lam` | $`\gamma \lt \omega_1 \implies \gamma \lt \lambda(\gamma)`$ |
-| `exists_tower` | if finitely many $`p_i \lt \lambda(\gamma)`$, then all are $`\lt \mathrm{next}^k(\gamma)`$ for some $`k`$ |
+The $`\min(\cdot, \omega_1)`$ only makes the value a label ($`\le \omega_1`$). If $`\gamma \lt \omega_1`$, by Property 2 the $`\min`$ changes nothing.
 
-Proof of `exists_tower`: each $`p_i`$ is below the supremum, so $`p_i \lt \mathrm{next}^{k_i}(\gamma)`$ for some $`k_i`$. Take $`k := \max_i k_i`$ and use `tower_mono`.
+| Property | Statement | Reason |
+|---|---|---|
+| Property 1 | $`\gamma \lt \omega_1 \implies \gamma \lt \mathrm{next}(\gamma)`$ | the term $`\gamma + 1`$ |
+| Property 2 | $`\gamma \lt \omega_1 \implies \mathrm{next}(\gamma) \lt \omega_1`$ | $`\gamma + 1 \lt \omega_1`$ and a supremum of countably many ([01](01-ordinals.md) §4, §5) |
+| Property 3 | if $`\gamma \lt \omega_1`$, $`p_i \lt \gamma`$ at the positions in $`F`$ and $`\mathfrak B \models \varphi(\vec p)`$, then $`\mathfrak B{\restriction}\mathrm{next}(\gamma) \models \varphi(\vec p)`$ | proof below |
+
+**Proof of Property 3.** By the theorem (every parameter tuple can be written) of [01](01-ordinals.md) §7, there is $`q \in \mathrm{Par}_n(\gamma)`$ with $`\mathrm{toP}(q)_i = p_i`$ at the positions in $`F`$. Truth in $`\mathfrak B`$ reads only the parameters at the positions in $`F`$, so $`\mathfrak B \models \varphi(\mathrm{toP}(q))`$. The $`\vec v`$ chosen for $`(\varphi, \mathrm{toP}(q))`$ has $`v_i = p_i`$ at the positions in $`F`$, and all its entries lie below $`h(\varphi, \mathrm{toP}(q))`$ (§3). This is one of the terms of the supremum, so they lie below $`\mathrm{next}(\gamma)`$. So $`\vec v`$ is a witness in $`\mathfrak B{\restriction}\mathrm{next}(\gamma)`$. $`\square`$
+
+## 5. λ
+
+**Definition (λ).**
+
+```math
+\mathrm{next}^0(\gamma) := \gamma, \quad \mathrm{next}^{t+1}(\gamma) := \mathrm{next}\bigl(\mathrm{next}^t(\gamma)\bigr), \qquad \lambda(\gamma) := \sup_{t \in \mathbb N} \mathrm{next}^t(\gamma)
+```
+
+Here $`t \in \mathbb N`$. An ordinal of the form $`\lambda(\gamma)`$ is called a **closure point**. Since $`\lambda(\gamma) \le \omega_1`$, a closure point is a label.
+
+| Property | Statement |
+|---|---|
+| Property 4 | $`\gamma \lt \omega_1 \implies \mathrm{next}^t(\gamma) \lt \omega_1`$ |
+| Property 5 | $`\gamma \lt \omega_1`$, $`t \le t' \implies \mathrm{next}^t(\gamma) \le \mathrm{next}^{t'}(\gamma)`$ |
+| Property 6 | $`\gamma \lt \omega_1 \implies \lambda(\gamma) \lt \omega_1`$ (supremum of countably many) |
+| Property 7 | $`\gamma \lt \omega_1 \implies \gamma \lt \lambda(\gamma)`$ |
+| Property 8 | if $`\gamma \lt \omega_1`$, $`k \in \mathbb N`$ and $`p_0, \ldots, p_{k-1} \lt \lambda(\gamma)`$, then all are $`\lt \mathrm{next}^t(\gamma)`$ for some $`t`$ |
+
+Property 4 follows from Property 2 by induction on $`t`$. Property 5 follows from Properties 1 and 4. Property 7 is $`\gamma \lt \mathrm{next}^1(\gamma) \le \lambda(\gamma)`$. Property 8 is shown as follows. Each $`p_i`$ is below the supremum, so $`p_i \lt \mathrm{next}^{t_i}(\gamma)`$ for some $`t_i`$. Take $`t := \max_i t_i`$ and use Property 5.
 
 ## 6. λ(γ) is Good
 
-**Theorem (`lam_good`).** If $`\gamma \lt \omega_1`$ then $`\mathrm{Good}(\lambda(\gamma))`$.
+**Theorem (λ(γ) is Good).** If $`\gamma \lt \omega_1`$, then $`\mathrm{Good}(\lambda(\gamma))`$.
 
-**Proof.** In the form of the Tarski–Vaught test ([03](03-sigma1-elementary.md) §6). Let $`\vec p \lt \lambda(\gamma)`$ and $`\mathfrak B \models \varphi(\vec p)`$. By `exists_tower`, $`\vec p \lt \mathrm{next}^k(\gamma)`$ for some $`k`$. Using `wit_below` at $`\mathrm{next}^k(\gamma)`$, the witnesses can be taken below $`\mathrm{next}^{k+1}(\gamma) \le \lambda(\gamma)`$. $`\square`$
+**Proof.** We show the downward condition of §1, in the form of the Tarski–Vaught test ([03](03-sigma1-elementary.md) §6). Let $`p_i \lt \lambda(\gamma)`$ at the positions in $`F`$ and $`\mathfrak B \models \varphi(\vec p)`$. By Property 8, for some $`t`$, $`p_i \lt \mathrm{next}^t(\gamma)`$ at the positions in $`F`$. Applying Property 3 at $`\mathrm{next}^t(\gamma)`$ (below $`\omega_1`$ by Property 4), the witnesses can be taken below $`\mathrm{next}^{t+1}(\gamma) \le \lambda(\gamma)`$. $`\square`$
 
-**Theorem (`good_cofinal`).** If $`\sigma \lt \omega_1`$, there is $`\alpha`$ with $`\sigma \lt \alpha \lt \omega_1`$ and $`\mathrm{Good}(\alpha)`$. $`\alpha = \lambda(\sigma)`$ works.
+**Corollary (the Good points are unbounded in ω₁).** If $`\sigma \lt \omega_1`$, there is $`\alpha`$ with $`\sigma \lt \alpha \lt \omega_1`$ and $`\mathrm{Good}(\alpha)`$. $`\alpha = \lambda(\sigma)`$ works (Properties 6, 7 and the theorem above).
 
-**Example (shape only).** $`\lambda(0)`$ contains witnesses for every $`\Sigma_1`$ claim true in $`\mathfrak B`$ with parameters below $`\lambda(0)`$. The concrete value of $`\lambda(0)`$ is unknown. The proof does not use the value; it uses only $`\lambda(0) \lt \omega_1`$ and $`\mathrm{Good}(\lambda(0))`$.
+**Example (only the shape).** Let $`\gamma = 0`$. $`\lambda(0)`$ contains witnesses of every true $`\Sigma_1`$ statement of $`\mathfrak B`$ whose parameters lie below $`\lambda(0)`$. The actual value of $`\lambda(0)`$ is not known. The proof never uses the value, only $`\lambda(0) \lt \omega_1`$ and $`\mathrm{Good}(\lambda(0))`$.
 
-**On the set of Good points.** It is neither shown nor used that the set of Good points is closed in $`\omega_1`$ (that the supremum of an increasing sequence of Good points is Good). So we do not call it a club (closed unbounded set).
+**About the set of Good points.** We neither show nor use that the set of Good points is closed in $`\omega_1`$ (that the supremum of an increasing sequence of Good points is Good). That is why it is not called a club (closed unbounded set).
 
-## 7. The sequence of Good points
+## 7. The chain
 
-**Definition (`points`).**
+**Definition (the chain).**
 
 ```math
-c_0 := \lambda(0), \qquad c_{k+1} := \lambda(c_k)
+c_0 := \lambda(0), \qquad c_{t+1} := \lambda(c_t)
 ```
 
-| Theorem | Content |
+| Property | Statement |
 |---|---|
-| `points_lt` | $`c_k \lt \omega_1`$ |
-| `points_strictMono` | $`c_0 \lt c_1 \lt c_2 \lt \cdots`$ |
-| `points_good` | $`\mathrm{Good}(c_k)`$ |
+| Property 9 | $`c_t \lt \omega_1`$ |
+| Property 10 | $`c_0 \lt c_1 \lt c_2 \lt \cdots`$ |
+| Property 11 | $`\mathrm{Good}(c_t)`$ |
 
-All follow from §5 and §6 by induction on $`k`$.
+All follow from §5 and §6 by induction on $`t`$.
 
-Any two points of this sequence are in the relation $`R`$ at every key (`good_R`). The proof needs that at a Good point the top predicates agree with those of $`\omega_1`$ (`top_abs`). Both are explained in [09](09-obligations.md) §3.
+Any two points of this chain are related by $`R`$ at every key. The proof needs that at a Good point the top predicates agree with the top predicates of $`\omega_1`$. Both are explained in [09](09-obligations.md) §3.
 
 ## 8. Where this repository uses it
 
 | Place | Use |
 |---|---|
-| [README](../../README-en.md) "Proofs of the three theorems" | "there are countably many formulas, so Good points are cofinal in $`\omega_1`$" |
-| [notes/01-design.md](../../notes/01-design.md) §3.3 | Good points, $`\omega`$ iterations, the sequence of Good points |
-| [Por/Supply.lean](../../Por/Supply.lean) | everything in this note |
+| [README](../../README-en.md) "Proofs of the three theorems" | "there are countably many formulas, so the Good points are cofinal in $`\omega_1`$" (§2, §6); the sequence of Good points (§7) |
+| [notes/01-design.md](../../notes/01-design.md) §3.3 (Japanese) | ambient structure, Good, $`\omega`$ iterations, the sequence of Good points |
 
 ## 9. Lean correspondence
 
 | Concept | Lean | File |
 |---|---|---|
-| Good | `Good` | [Por/Supply.lean](../../Por/Supply.lean) |
-| formulas are countable | `litCode`, `litCode_inj`, `lit_countable`, `formCode`, `formCode_inj`, `form_countable` | same |
-| templates are finite | `Keys.template_countable`, `Model.keySyntax_countable` | [OmegaY/Keys.lean](../../OmegaY/Keys.lean), [OmegaY/Model.lean](../../OmegaY/Model.lean) |
-| heights of witnesses | `wh`, `wh_lt`, `wit_lt_wh` | [Por/Supply.lean](../../Por/Supply.lean) |
-| one step of the closure | `nextO`, `next`, `next_val`, `nextO_lt`, `next_lt`, `lt_next`, `wh_le_nextO`, `wit_below` | same |
-| tower and λ | `tower`, `tower_lt`, `tower_succ_lt`, `tower_mono`, `lamO`, `lam`, `tower_le_lam`, `lam_lt`, `lt_lam`, `exists_tower` | same |
-| λ is Good | `lam_good`, `good_cofinal` | same |
-| the sequence of Good points | `points`, `points_lt`, `points_good`, `points_strictMono` | same |
+| truth in $`\mathfrak B`$ | `Sat (relR S) (topR S top) (fun _ => True) top φ p` | [Por/Supply.lean](../../Por/Supply.lean) |
+| Good (the downward form of §1) | `Good` | same |
+| formulas are countable (§2) | `litCode`, `litCode_inj`, `lit_countable`, `formCode`, `formCode_inj`, `form_countable` | same |
+| templates are countable | the assumption `[∀ n, Countable (S.Template n)]`, `Keys.template_countable`, `Model.keySyntax_countable` | same, [OmegaY/Keys.lean](../../OmegaY/Keys.lean), [OmegaY/Model.lean](../../OmegaY/Model.lean) |
+| height of witnesses $`h`$ | `wh`, `wh_lt`, `wit_lt_wh` | [Por/Supply.lean](../../Por/Supply.lean) |
+| $`\mathrm{Input}(\gamma)`$ | `Input S γ := Σ φ : Form S, Fin φ.n → Option (Set.Iio γ)`, `input_countable` | same |
+| $`\mathrm{next}`$ (the value before the $`\min`$ is `nextO`) | `nextO`, `next`, `next_val`, `nextO_lt`, `wh_le_nextO` | same |
+| Properties 1–3 | `lt_next`, `next_lt`, `wit_below` | same |
+| $`\mathrm{next}^t`$, $`\lambda`$ | `tower`, `lamO`, `lam` | same |
+| Properties 4–8 | `tower_lt`, `tower_succ_lt`, `tower_mono`, `tower_le_lam`, `lam_lt`, `lt_lam`, `exists_tower` | same |
+| λ(γ) is Good, corollary | `lam_good`, `good_cofinal` | same |
+| the chain and Properties 9–11 | `points`, `points_lt`, `points_strictMono`, `points_good` | same |

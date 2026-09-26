@@ -1,47 +1,43 @@
 [← Back](README.md) | [English](02-well-founded.md) | [Japanese](../02-well-founded.md)
 
-# Well-founded relations and recursion
+# Well-founded relations and well-founded recursion
 
 Prerequisites
 
 | Note | Terms used here |
 |---|---|
-| [01 Ordinals and ω₁](01-ordinals.md) | ordinal, infinite descending sequence, labels $`\{o \le \omega_1\}`$ |
+| [01 Ordinals and ω₁](01-ordinals.md) | ordinal, $`\mathrm{Ord}`$, infinite descending sequence, $`\lt`$ is well-founded, labels $`\mathrm{Label}`$ (§6), $`\mathrm{Fin}\ m`$ (§7) |
 
-This note explains three things: well-founded relations, well-founded recursion, and termination by decreasing labels. The definition of the relation $`R`$ ([07](07-relation-r.md)) has the form of §4 and §5. The overall proof ([06](06-combinatorial-layer.md)) has the form of §6.
+This note explains well-founded relations and well-founded recursion. The definition of the relation $`R`$ ([07](07-relation-r.md)) has the form of §4 and §5. The proof that expansion terminates ([06](06-combinatorial-layer.md) §8) has the form of §6.
 
 ## 1. Well-founded relations
 
-**Definition (well-founded).** A relation $`\prec`$ on a set $`X`$ is **well-founded** if every nonempty subset $`S`$ of $`X`$ has a $`\prec`$-minimal element, that is, an $`x \in S`$ with no $`y \in S`$ such that $`y \prec x`$.
+**Definition (well-founded).** A relation $`\prec`$ on a set $`X`$ is **well-founded** if every nonempty subset $`S`$ of $`X`$ has a $`\prec`$-minimal element, that is, some $`x \in S`$ such that no $`y \in S`$ has $`y \prec x`$.
 
-A relation is well-founded if and only if there is no infinite descending sequence $`x_0 \succ x_1 \succ x_2 \succ \cdots`$. The direction "no infinite descending sequence implies well-founded" uses a weak form of the axiom of choice (dependent choice).
+Being well-founded is equivalent to having no infinite descending sequence $`x_0 \succ x_1 \succ x_2 \succ \cdots`$. The direction "no infinite descending sequence implies well-founded" uses a weak form of the axiom of choice (dependent choice).
 
-**Definition in Lean.** Lean uses `Acc` (accessibility). `r` is the relation $`\prec`$, and `r y x` means $`y \prec x`$.
+**Definition (accessible).** $`x`$ is **accessible** if every $`y`$ with $`y \prec x`$ is accessible. This is an inductive definition: the set of accessible elements is the least set closed under this condition.
 
-- `Acc r x` holds when `Acc r y` holds for every $`y`$ with $`r\,y\,x`$. It is defined inductively.
-- `WellFounded r` means `Acc r x` for every $`x`$.
+That $`x`$ is accessible means "every sequence that follows $`\prec`$ backwards from $`x`$ stops". $`\prec`$ is well-founded if and only if every $`x`$ is accessible.
 
-`Acc r x` means "every sequence that follows $`r`$ backwards from $`x`$ stops".
+| Relation | Well-founded? |
+|---|---|
+| $`\lt`$ on $`\mathbb N`$ | yes |
+| $`\lt`$ on ordinals (also $`\lt`$ on labels) | yes |
+| $`\lt`$ on $`\mathbb Z`$ | no |
+| lexicographic order on ω-Y expressions | no |
 
-| Relation | Well-founded? | Lean |
-|---|---|---|
-| $`\lt`$ on $`\mathbb N`$ | yes | `wellFounded_lt` |
-| $`\lt`$ on ordinals, on labels | yes | `wellFounded_lt` |
-| $`\lt`$ on keys (§3) | yes | `OmegaY.Keys.key_wellFounded` |
-| $`\lt`$ on $`\mathbb Z`$ | no | |
-| lexicographic order on all expressions | no | `OmegaY.Expansion.Dynamics.not_wellFounded_lex_all_legal` |
-
-Example for the last row. An expression ([05](05-omegay-mountain.md) §1) is a finite sequence of positive integers that is empty or has first entry 1. In the **lexicographic order** on expressions, the first differing entry decides. If one is a proper prefix of the other, the shorter one is smaller. This gives the infinite descending sequence below (the sequence `onesThenTwo` inside the Lean proof).
+The last row. An ω-Y expression is a finite sequence of positive integers, defined in [05](05-omegay-mountain.md) §1. In the lexicographic order of expressions a proper prefix is smaller, and otherwise the first differing entry decides. So there is an infinite descending sequence.
 
 ```math
 (1,2) \gt (1,1,2) \gt (1,1,1,2) \gt (1,1,1,1,2) \gt \cdots
 ```
 
-Expansion in ω-Y (an operation that makes a new expression from an expression, defined in [05](05-omegay-mountain.md) §4) decreases the lexicographic order (`Dynamics.next_lex`, [05](05-omegay-mountain.md) §7). Still, the lexicographic order alone does not give termination. So labels are used (§6).
+An ω-Y expansion lowers the lexicographic order ([05](05-omegay-mountain.md) §7). Still, the lexicographic order alone does not give termination. So labels ([01](01-ordinals.md) §6) are attached to the columns of expressions, and it is shown that expansion lowers them (§6, [06](06-combinatorial-layer.md) §8).
 
 ## 2. Well-founded induction
 
-**Theorem (well-founded induction).** Let $`\prec`$ be well-founded, and let a property $`P`$ satisfy:
+**Theorem (well-founded induction).** Let $`\prec`$ be well-founded and let a property $`P`$ satisfy
 
 ```math
 \forall x\ \Bigl(\bigl(\forall y \prec x\ \ P(y)\bigr) \implies P(x)\Bigr)
@@ -51,11 +47,11 @@ Then $`P(x)`$ holds for every $`x`$.
 
 **Proof.** Suppose the set of $`x`$ where $`P`$ fails is nonempty. Take a minimal element $`x`$. For $`y \prec x`$, $`P(y)`$ holds. By the assumption $`P(x)`$ holds, a contradiction. $`\square`$
 
-In Lean this is `WellFounded.induction` and `WellFoundedLT.induction`. The proof of `top_abs` in [09 Proofs of the three theorems](09-obligations.md) uses it on the order of keys (§3).
+The theorem (absoluteness of the top predicates) of [09 Proofs of the three theorems](09-obligations.md) §3.1 uses it with the order of keys (§3).
 
-## 3. Lexicographic products and the order of keys
+## 3. Lexicographic products
 
-**Definition (lexicographic product).** For $`(A, \lt_A)`$ and $`(B, \lt_B)`$, the **lexicographic order** on $`A \times B`$ is:
+**Definition (lexicographic product).** For $`(A, \lt_A)`$ and $`(B, \lt_B)`$, the **lexicographic order** on $`A \times B`$ is
 
 ```math
 (a, b) \prec (a', b') \iff a \lt_A a' \ \lor\ (a = a' \land b \lt_B b')
@@ -65,47 +61,51 @@ In Lean this is `WellFounded.induction` and `WellFoundedLT.induction`. The proof
 
 **Proof.** Do well-founded induction on $`b`$ inside well-founded induction on $`a`$. A pair below $`(a, b)`$ either has $`a' \lt_A a`$ (accessible by the outer induction hypothesis) or has the same $`a`$ and $`b' \lt_B b`$ (accessible by the inner induction hypothesis). $`\square`$
 
-**Example.** In $`\mathbb N \times \mathbb N`$ there are infinitely many pairs below $`(1, 0)`$: $`(0, 0), (0, 1), (0, 2), \ldots`$. Still every descending sequence is finite. For example $`(1,0) \succ (0, 100) \succ (0, 99) \succ \cdots \succ (0, 0)`$ stops after 102 terms.
+**Example.** In $`\mathbb N \times \mathbb N`$, the pairs below $`(1, 0)`$ are $`(0, 0), (0, 1), (0, 2), \ldots`$, infinitely many. Still every descending sequence is finite. For example $`(1,0) \succ (0, 100) \succ (0, 99) \succ \cdots \succ (0, 0)`$ stops after 102 terms.
 
-In Lean this is `Prod.Lex` and `WellFounded.prod_lex`.
-
-**Definition (key).** Let $`m`$ be a natural number. A **key** of length $`m`$ is a sequence of $`m`$ entries, each a label ([01](01-ordinals.md) §6) or $`\top`$. $`\top`$ is a new element that is not a label, and it is greater than every label. The label $`\mathrm{top} = \omega_1`$ of [01](01-ordinals.md) §6 is a label, so $`\omega_1 \lt \top`$.
+**Definition (key).** Let $`\top`$ be a new element that is not a label and is larger than every label. Write $`\mathrm{Label}_\top := \mathrm{Label} \cup \{\top\}`$. Since $`\omega_1`$ is a label, $`\omega_1 \lt \top`$. Let $`m \in \mathbb N`$. A **key** of length $`m`$ is a list $`\kappa = (\kappa_0, \ldots, \kappa_{m-1})`$ of $`m`$ elements of $`\mathrm{Label}_\top`$. $`\kappa_i`$ is called **coordinate** $`i`$ of $`\kappa`$. The set of keys is written $`\mathrm{Key}_m`$.
 
 ```math
-\mathrm{Key}_m = \mathrm{Lex}\bigl(\mathrm{Fin}\ m \to \mathrm{Label} \cup \{\top\}\bigr)
+\mathrm{Key}_m := \mathrm{Fin}\ m \to \mathrm{Label}_\top
 ```
 
-$`\mathrm{Fin}\ m = \{0, \ldots, m-1\}`$ ([01](01-ordinals.md) §5), and $`\mathrm{Fin}\ m \to X`$ is a sequence of $`m`$ elements of $`X`$. The $`i`$-th element of the sequence is called **coordinate** $`i`$. $`\mathrm{Lex}(\ldots)`$ is this set of sequences with the lexicographic order: compare at the **first coordinate where they differ**. In Lean this is `OmegaY.Keys.Key m Label := Lex (Fin m → WithTop Label)`.
+Keys are ordered lexicographically: the first coordinate where they differ decides.
+
+```math
+\kappa \lt \kappa' \iff \exists i \lt m\ \Bigl(\bigl(\forall j \lt i\ \ \kappa_j = \kappa'_j\bigr) \land \kappa_i \lt \kappa'_i\Bigr)
+```
 
 | Two keys ($`m = 2`$) | Result | Reason |
 |---|---|---|
-| $`(3, 5)`$ and $`(3, \top)`$ | $`(3, 5) \lt (3, \top)`$ | equal at coordinate 0, $`5 \lt \top`$ at coordinate 1 |
-| $`(2, \top)`$ and $`(3, 0)`$ | $`(2, \top) \lt (3, 0)`$ | $`2 \lt 3`$ at coordinate 0 |
-| $`(\omega, 0)`$ and $`(5, \top)`$ | $`(5, \top) \lt (\omega, 0)`$ | $`5 \lt \omega`$ at coordinate 0 |
+| $`(3, 5)`$ and $`(3, \top)`$ | $`(3, 5) \lt (3, \top)`$ | coordinate 0 is equal, coordinate 1 has $`5 \lt \top`$ |
+| $`(2, \top)`$ and $`(3, 0)`$ | $`(2, \top) \lt (3, 0)`$ | coordinate 0 has $`2 \lt 3`$ |
+| $`(\omega, 0)`$ and $`(5, \top)`$ | $`(5, \top) \lt (\omega, 0)`$ | coordinate 0 has $`5 \lt \omega`$ |
 
-**Theorem (`key_wellFounded`).** The order on $`\mathrm{Key}_m`$ is well-founded.
+The comparisons of the table were checked with this definition written in Python.
 
-**Proof.** $`\mathrm{Label} \cup \{\top\}`$ is well-founded: a descending sequence contains $`\top`$ at most once, as its first term, and the rest is a descending sequence of labels. The lexicographic order on sequences of length $`m`$ is the same order as the lexicographic product above iterated $`m - 1`$ times. So it is well-founded. $`\square`$
+**Theorem.** The order of $`\mathrm{Key}_m`$ is well-founded.
 
-In Lean it is obtained as `wellFounded_lt` from a Mathlib instance (the lexicographic order over a finite index type is well-founded).
+**Proof.** $`\mathrm{Label}_\top`$ is well-founded: a descending sequence contains $`\top`$ at most once, as its first term, and the rest is a descending sequence of labels. The lexicographic order on lists of length $`m`$ is the same order as the lexicographic product above taken $`m - 1`$ times. So it is well-founded by the theorem above. $`\square`$
 
-**Definition (stage and top).** The relation $`R(\theta, a, b)`$ defined in [07](07-relation-r.md) ($`\theta`$ a key, $`a`$ and $`b`$ labels) is defined by well-founded recursion on the pair $`(b, \theta)`$ (§4). This pair is called a **stage**. The third argument $`b`$ is called the **top**. The order $`\lhd`$ of stages is the lexicographic product of the order of labels and the order of keys ([Por/Relation.lean](../../Por/Relation.lean)).
+**Definition (stage and top).** The third argument $`b`$ of the relation $`R(\theta, a, b)`$ (defined in [07](07-relation-r.md); $`\theta \in \mathrm{Key}_m`$, $`a, b \in \mathrm{Label}`$) is called the **top**. The well-founded recursion (§4) for $`R`$ takes the pair $`(b, \theta) \in \mathrm{Label} \times \mathrm{Key}_m`$ as its argument. This pair is called a **stage**. The order $`\lhd`$ of stages is the lexicographic product of the order of labels and the order of keys.
 
 ```math
 (b', \kappa') \lhd (b, \theta) \iff b' \lt b\ \lor\ (b' = b \land \kappa' \lt \theta)
 ```
 
-$`b', b`$ are labels and $`\kappa', \theta`$ are keys. By the two theorems above, $`\lhd`$ is well-founded. In Lean these are `StageLT := Prod.Lex (· < ·) (· < ·)` and `stage_wf`.
+By the two theorems above, $`\lhd`$ is well-founded. A stage is unrelated to the "step" of a one-step expansion ([05](05-omegay-mountain.md) §7).
 
 ## 4. Well-founded recursion
 
-**Theorem (well-founded recursion).** Let $`\prec`$ be a well-founded relation on $`T`$. Let $`V`$ be a set of values. Suppose a rule $`G`$ takes $`t \in T`$ and "the values at arguments smaller than $`t`$" and returns the value at $`t`$. Then there is exactly one function $`F : T \to V`$ with the equation below. $`F{\restriction}X`$ is the restriction of $`F`$ to the set $`X`$.
+**Theorem (well-founded recursion).** Let $`\prec`$ be a well-founded relation on $`T`$. In well-founded recursion the elements of $`T`$ are called the **arguments** of the function. Suppose a rule $`G`$ takes $`t \in T`$ and "the values at arguments smaller than $`t`$" and returns the value at $`t`$. Then there is exactly one function $`F`$ with
 
 ```math
 F(t) = G\bigl(t,\ F{\restriction}\{t' \mid t' \prec t\}\bigr)
 ```
 
-**Example (the Ackermann function).** Give the set $`\mathbb N \times \mathbb N`$ of argument pairs $`(m, n)`$ the lexicographic order of §3.
+Here $`F{\restriction}X`$ is the function $`F`$ with its domain restricted to the set $`X`$.
+
+**Example (Ackermann function).** Take $`\mathbb N \times \mathbb N`$ as the set of arguments, compared lexicographically.
 
 ```math
 \begin{aligned}
@@ -115,79 +115,67 @@ A(m+1, n+1) &= A\bigl(m,\ A(m+1, n)\bigr).
 \end{aligned}
 ```
 
-The arguments $`(m, 1)`$, $`(m+1, n)`$, $`(m, \cdot)`$ called on the right are all lexicographically smaller than the argument on the left. So well-founded recursion defines $`A`$.
+The arguments called on the right, $`(m, 1)`$, $`(m+1, n)`$ and $`(m, \cdot)`$, are all lexicographically smaller than the argument on the left. So well-founded recursion defines $`A`$.
 
-**The form in Lean.** `WellFounded.fix` takes the rule $`G`$ with this type. `r` is the relation $`\prec`$, and `r t' t` means $`t' \prec t`$.
-
-```lean
-G : (t : T) → ((t' : T) → r t' t → V) → V
-```
-
-The second argument (called `IH` below) takes an argument `t'` together with a proof that `t'` is smaller. It cannot be called without the proof. The defining equation is `WellFounded.fix_eq`.
+The rule $`G`$ may read only the values $`F(t')`$ at arguments $`t'`$ with $`t' \prec t`$.
 
 ## 5. Guarded recursion
 
-In the definition of $`R`$ ([07](07-relation-r.md)), "which stage (§3) is read" depends on the values of variables in a formula ([03](03-sigma1-elementary.md) §2). We cannot say in advance that the stage read is smaller. So the definition takes this form:
+In the definition of $`R`$ ([07](07-relation-r.md)), which stages (§3) are read depends on the values of variables inside a formula (defined in [03](03-sigma1-elementary.md) §2). Before writing the definition we cannot say that the stages read are smaller. So we proceed as follows.
 
-1. Write the value to be read as $`\exists h : (\text{the stage is smaller}),\ \mathrm{IH}(\text{stage}, h)`$. This is a **guard**. Where the stage is not smaller, the expression is false.
-2. Obtain the defining equation `fix_eq`. At this point the right side carries guards.
-3. Show that the guards are always true where the right side actually reads. This gives the equation without guards.
+1. Wherever the value at an argument $`t'`$ is read, write "$`t' \prec t \land F(t')`$". We call the first condition $`t' \prec t`$ a **guard**. Where the argument is not smaller, this expression is false.
+2. By the theorem of §4, get the defining equation $`F(t) = G(t, F{\restriction}\{t' \mid t' \prec t\})`$. At this stage the right side still contains the guards.
+3. Show that the guard is always true wherever the right side actually reads a value. Then the equation without guards follows.
 
-In [07 The relation R](07-relation-r.md), step 1 is `stepF`, and steps 2 and 3 are the proof of `R_iff`.
+In [07 The relation R](07-relation-r.md), step 1 is the stage interpretations of §5, step 2 is the guarded equation of §5, and step 3 is the lemma and the theorem of §6.
 
-**Small example.** On $`\mathbb N`$ consider a definition $`F(n) := 1 + \sum_{i \in S_n} F(i)`$, where $`S_n`$ is a given finite set for each $`n`$ that may contain numbers $`\ge n`$. As written this is not a well-founded recursion. With a guard, $`F(n) := 1 + \sum_{i \in S_n,\ i \lt n} F(i)`$ is defined by well-founded recursion. If $`S_n \subseteq \{0, \ldots, n-1\}`$ is shown separately, the unguarded equation $`F(n) = 1 + \sum_{i \in S_n} F(i)`$ holds.
+**A small example.** On $`\mathbb N`$ consider a definition of the form $`F(n) := 1 + \sum_{i \in S_n} F(i)`$, where $`S_n`$ is a given finite set for each $`n`$ that may contain numbers $`\ge n`$. So as it stands, this is not a well-founded recursion. Written with the guard, $`F(n) := 1 + \sum_{i \in S_n,\ i \lt n} F(i)`$, it is defined by well-founded recursion. If $`S_n \subseteq \{0, \ldots, n-1\}`$ is shown separately, the equation without the guard, $`F(n) = 1 + \sum_{i \in S_n} F(i)`$, holds.
 
-## 6. Termination by a bound on labels
+## 6. Termination by upper bounds of labels
 
-We show that a one-step relation $`\to`$ on a set of states $`X`$ is well-founded, using labels in a well-founded order $`(L, \lt)`$.
+**Theorem (termination by upper bounds of labels).** Let $`(L, \lt)`$ be a well-founded order, $`X`$ a set and $`\prec`$ a relation on $`X`$. Suppose a relation $`V \subseteq X \times L`$ between $`X`$ and $`L`$ satisfies the following two conditions.
 
-**Theorem.** Suppose a relation $`\mathrm{valid}(s, \alpha)`$ between states $`s \in X`$ and labels $`\alpha \in L`$ satisfies:
+```math
+\begin{aligned}
+&\exists \alpha_0 \in L\ \ \forall s \in X\ \ V(s, \alpha_0), \cr
+&\forall s, t \in X\ \ \forall \alpha \in L\ \ \Bigl(V(s, \alpha) \land t \prec s \implies \exists \alpha' \lt \alpha\ \ V(t, \alpha')\Bigr).
+\end{aligned}
+```
 
-- There is $`\alpha_0`$ with $`\mathrm{valid}(s, \alpha_0)`$ for every state $`s`$.
-- If $`\mathrm{valid}(s, \alpha)`$ and $`s \to t`$, then $`\mathrm{valid}(t, \alpha')`$ for some $`\alpha' \lt \alpha`$.
+Then $`\prec`$ is well-founded.
 
-Then $`\to`$ is well-founded: there is no infinite sequence $`s_0 \to s_1 \to s_2 \to \cdots`$.
+**Proof.** By well-founded induction on $`\alpha`$ (§2) we show
 
-**Proof.** By well-founded induction on $`\alpha`$, show "if $`\mathrm{valid}(s, \alpha)`$ then $`s`$ is accessible". If $`s \to t`$, then $`t`$ has some $`\alpha' \lt \alpha`$, so $`t`$ is accessible by the induction hypothesis. $`\square`$
+```math
+\forall \alpha \in L\ \ \forall s \in X\ \ \bigl(V(s, \alpha) \implies s \text{ is accessible}\bigr)
+```
 
-The point is that a state need not have a unique label. We only use "there is some labelling" and "after one step there is a labelling with a smaller bound".
+Let $`V(s, \alpha)`$. If $`t \prec s`$, the second condition gives $`\alpha' \lt \alpha`$ with $`V(t, \alpha')`$. By the induction hypothesis $`t`$ is accessible. So $`s`$ is accessible (§1). By the first condition every $`s`$ satisfies $`V(s, \alpha_0)`$, so every $`s`$ is accessible. $`\square`$
 
-The ω-Y proof applies it as follows ([06](06-combinatorial-layer.md) §8). The terms of the table are defined in later notes. The expansion $`s[N]`$ of an expression $`s`$ ($`N`$ the number of copies) is in [05](05-omegay-mountain.md) §4, the mountain in [05](05-omegay-mountain.md) §3, the dimension $`D`$ of a mountain in [05](05-omegay-mountain.md) §7, and a representation of a mountain in [06](06-combinatorial-layer.md) §4. $`()`$ is the empty expression.
-
-| General form | ω-Y |
-|---|---|
-| state | expression $`s`$ (`Dynamics.Expr`) |
-| $`s \to t`$ | one expansion step `Dynamics.Step t s` ($`s \ne ()`$ and $`t = s[N]`$) |
-| label | `Model.Label` (ordinals at most $`\omega_1`$) |
-| $`\mathrm{valid}(s, \alpha)`$ | the mountain of $`s`$ has a representation of dimension $`D`$ whose labels are all below $`\alpha`$ ($`D`$ is fixed by the starting expression) |
-| $`\alpha_0`$ | $`\omega_1`$ (`keyRepresentation_exists` and `KeyRepresentation.bounded`) |
-| $`\alpha'`$ | the last label of the old representation (the label of the last column) |
-
-The Lean proof is `Dynamics.accessible_of_representation_below`, which writes the same induction directly ([OmegaY/Expansion/DynamicsRepresentationRank.lean](../../OmegaY/Expansion/DynamicsRepresentationRank.lean)). The 1-Y version did induction on the last label itself. The ω-Y version does induction on a bound $`\alpha`$ of all labels. So when the result of expansion is the empty expression, no last label is needed. There is no expansion step from the empty expression (the definition of `Step` requires $`s \ne ()`$; `Dynamics.empty_accessible`).
+- $`V`$ need not be a function. One $`s`$ may have many $`\alpha`$ with $`V(s, \alpha)`$.
+- [06](06-combinatorial-layer.md) §8 uses this theorem with $`X`$ the set of expressions, $`t \prec s`$ the one-step expansion ([05](05-omegay-mountain.md) §7) and $`L = \mathrm{Label}`$. What $`V(s, \alpha)`$ is, is said in [06](06-combinatorial-layer.md) §8.
+- The 1-Y version ([01](01-ordinals.md) §7), in its note 06 §6, did induction on the last label of a representation itself. Here the induction is on an upper bound $`\alpha`$ of the labels.
 
 ## 7. Where this repository uses it
 
 | Place | Use |
 |---|---|
-| [README](../../README-en.md) "The relation R" | well-founded recursion on the lexicographic order of (top, key) |
-| [notes/01-design.md](../../notes/01-design.md) §2.3 | the order of stages and the stages read on the right side |
-| [Por/Relation.lean](../../Por/Relation.lean) | §3–§5 (`StageLT`, `stage_wf`, `stepF`, `R`, `R_iff`) |
-| [Por/Supply.lean](../../Por/Supply.lean) | §2 (the induction on keys in `top_abs`) |
-| [OmegaY/Keys.lean](../../OmegaY/Keys.lean) | §3 (the order of keys and `key_wellFounded`) |
-| [OmegaY/Expansion/DynamicsRepresentationRank.lean](../../OmegaY/Expansion/DynamicsRepresentationRank.lean) | §6 (induction on a bound of labels) |
+| [README](../../README-en.md) "Structure of the proof" | the keys $`\mathrm{Key}_m`$ and their order (§3) |
+| [README](../../README-en.md) "The relation R" | well-founded recursion on the lexicographic order of stages (top, key) (§3–§5) |
+| [notes/01-design.md](../../notes/01-design.md) §2.3 (Japanese) | the order of stages and the stages read on the right side |
 
 ## 8. Lean correspondence
 
 | Concept | Lean | File |
 |---|---|---|
-| accessibility | `Acc` | Lean core |
-| well-founded | `WellFounded` | Lean core |
+| accessible, well-founded | `Acc`, `WellFounded` | Lean core |
 | well-founded induction | `WellFounded.induction`, `WellFoundedLT.induction` | Lean core, Mathlib |
 | lexicographic product | `Prod.Lex`, `WellFounded.prod_lex` | same |
 | well-founded recursion and its equation | `WellFounded.fix`, `WellFounded.fix_eq` | Lean core |
-| stages and their order | `StageLT`, `stage_wf` | [Por/Relation.lean](../../Por/Relation.lean) |
-| one guarded step | `stepF` | same |
-| removing the guards | `R_iff` | same |
-| keys and their order | `Keys.Key`, `Keys.key_wellFounded` | [OmegaY/Keys.lean](../../OmegaY/Keys.lean) |
-| lexicographic order on expressions is not well-founded | `Dynamics.not_wellFounded_lex_all_legal` | [OmegaY/Expansion/LegalDomainBoundary.lean](../../OmegaY/Expansion/LegalDomainBoundary.lean) |
-| termination by a bound on labels | `Dynamics.accessible_of_representation_below`, `Dynamics.empty_accessible` | [OmegaY/Expansion/DynamicsRepresentationRank.lean](../../OmegaY/Expansion/DynamicsRepresentationRank.lean) |
+| $`\mathrm{Label}_\top`$ | `WithTop Label` | Mathlib |
+| keys and their order | `Keys.Key m Label := Lex (Fin m → WithTop Label)`, `Keys.key_wellFounded` | [OmegaY/Keys.lean](../../OmegaY/Keys.lean) |
+| stages and their order | `StageLT := Prod.Lex (· < ·) (· < ·)`, `stage_wf` | [Por/Relation.lean](../../Por/Relation.lean) |
+| guarded step, removing the guards (§5) | `stepF`, `R_iff` | same |
+| the lexicographic order of expressions is not well-founded (§1) | `Dynamics.not_wellFounded_lex_all_legal` (the sequence `onesThenTwo` in its proof) | [OmegaY/Expansion/LegalDomainBoundary.lean](../../OmegaY/Expansion/LegalDomainBoundary.lean) |
+| expansion lowers the lexicographic order | `Dynamics.next_lex` | [OmegaY/Expansion/LegalDynamics.lean](../../OmegaY/Expansion/LegalDynamics.lean) |
+| termination by upper bounds of labels (§6) | `Dynamics.accessible_of_representation_below`, `Dynamics.empty_accessible` | [OmegaY/Expansion/DynamicsRepresentationRank.lean](../../OmegaY/Expansion/DynamicsRepresentationRank.lean) |

@@ -7,7 +7,7 @@ Prerequisites
 | Note | Terms used here |
 |---|---|
 | [01 Ordinals and ω₁](01-ordinals.md) | label, $`\omega_1`$, $`\mathrm{Fin}\ n`$, $`\mathrm{Option}`$ |
-| [02 Well-founded relations and recursion](02-well-founded.md) | keys $`\mathrm{Key}_m`$, coordinate, top, termination by a bound on labels (§6) |
+| [02 Well-founded relations and well-founded recursion](02-well-founded.md) | keys $`\mathrm{Key}_m`$, coordinate, top, termination by a bound on labels (§6) |
 | [03 Structures and Σ₁-elementary substructures](03-sigma1-elementary.md) | key syntax, template |
 | [05 The ω-Y sequence and its mountain](05-omegay-mountain.md) | expression, row, jump, mountain, node, edge, parent, degree, root, block, expansion, dimension, $`\mathrm{col}`$ |
 
@@ -191,7 +191,7 @@ Expansion adds blocks $`N`$ times. For this the facts needed by the next reflect
 
 The reflection is given $`G`$ and $`F`$ together. That the demand keys are below the key of `control` gives `KeysBelow` for finite reflection.
 
-**Definition (block indices).** Let $`x`$ be the number of the last column of the original expression. Without the last column there are $`x`$ columns. Let $`y`$ be the root column ($`c_r`$ of [05](05-omegay-mountain.md) §4). $`b`$ is the number of a block, and $`i \in \mathrm{Fin}\ x`$ an original column.
+**Definition (block indices).** Let $`x`$ be the number of the last column of the original expression. Without the last column there are $`x`$ columns. Let $`y`$ be the root column (the root column $`z`$ of [05](05-omegay-mountain.md) §4). $`x - y`$ is $`L`$ of [05](05-omegay-mountain.md) §4. $`b`$ is the number of a block, and $`i \in \mathrm{Fin}\ x`$ an original column.
 
 | Lean | Value |
 |---|---|
@@ -205,9 +205,9 @@ The reflection is given $`G`$ and $`F`$ together. That the demand keys are below
 
 **Theorem (`ActualRepresentationDescent`, `actual_representation_descent`).** Let $`s = (s_0, \ldots, s_x)`$ be a nonempty expression, $`D`$ a dimension of its mountain, and $`f`$ a representation of its mountain. $`f(x)`$ is the label of the last column. Then for every natural number $`N`$ there is a representation $`f'`$ (dimension $`D`$) of the mountain of $`s[N]`$ whose labels are all below $`f(x)`$.
 
-**Case 1 (the last column is deleted).** Restrict $`f`$ to the prefix (`expandDiagram_trivial_representation_descent`). The labels are all below $`f(x)`$ (`restrict_below_last`).
+**Case 1 (the last column is deleted: in [05](05-omegay-mountain.md) §4, when there is no root and when $`N = 0`$).** Restrict $`f`$ to the prefix (`expandDiagram_trivial_representation_descent`). The labels are all below $`f(x)`$ (`restrict_below_last`).
 
-**Case 2 (blocks are copied).** Notation (`RootGeometry`, [OmegaY/Expansion/InitialControlKeys.lean](../../OmegaY/Expansion/InitialControlKeys.lean)):
+**Case 2 (blocks are copied: there is a root and $`N \ge 1`$).** Notation (`RootGeometry`, [OmegaY/Expansion/InitialControlKeys.lean](../../OmegaY/Expansion/InitialControlKeys.lean)):
 
 - **control edge**: the top edge of column $`x`$ (`controlEdge`). Its parent is the root $`r`$.
 - **lower edges**: the edges of column $`x`$ below the control edge (`LowerEdge`). Their keys are strictly below the key of the control edge (`lower_key_strict`, from `key_strict_in_column` of §3).
@@ -226,7 +226,7 @@ Each of these is an edge relation of the old representation $`f`$ itself, so it 
 
 Next, `splice_reservoirs` of §7 is applied from block $`b`$ to block $`b + 1`$ (`iterated_actual_reservoirs`). What is needed is that every edge of the mountain of block $`b+1`$ is `ReservoirClassified` (`actual_splice_edge_classified`). This is a finite fact about the shape of the expansion program, and it uses the weak-magma fill rule ([05](05-omegay-mountain.md) §5). Its core is the following two facts ([notes/02-feasibility.md](../../notes/02-feasibility.md) §3.1, §4.2).
 
-- **Key bound for copied edges** (`ActualCopiedKeyBound`): an edge $`e`$ of a new block has a source edge $`e'`$ of $`M(s')`$ ([05](05-omegay-mountain.md) §4). The parent column and child column of $`e`$ are the copies of those of $`e'`$. The key of $`e`$ is at most the copy of the key of $`e'`$.
+- **Key bound for copied edges** (`ActualCopiedKeyBound`): an edge $`e`$ of a new block whose upper node is not a gap node (a node placed by (T) or (C) in [05](05-omegay-mountain.md) §4) has a source edge $`e'`$ of $`M(s')`$ ([05](05-omegay-mountain.md) §4). The parent column and child column of $`e`$ are the copies of those of $`e'`$. The key of $`e`$ is at most the copy of the key of $`e'`$.
 - **Classification of fill edges** (`ActualFillCopiedKey`): the key of an edge to a gap node ([05](05-omegay-mountain.md) §4) is below the key of a copied edge with the same endpoint columns. So it is handled from the bound of that copied edge by `key_weaken`.
 
 The labels of the state of block $`N`$ form a representation of the mountain of $`s[N]`$ (`representationOfSpliceGraph`). They are all below $`\beta = f(x)`$ (`represent_actual_expansion`).

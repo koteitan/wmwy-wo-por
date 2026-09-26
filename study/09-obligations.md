@@ -7,8 +7,8 @@
 | ノート | ここで使う言葉 |
 |---|---|
 | [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 組合せの層、頂点、図式、内部の原子、上端の原子、要求、切れ目、`finite_reflection`、`initial_finite_graph`、制御関係、`control` |
-| [07 関係 R](07-relation-r.md) | $`R`$、$`\mathfrak A^c_\theta`$、`R_iff`、`key_weaken`、部分的な上端の述語 |
-| [08 ω₁ より下の閉包と Good な点の列](08-closure-chain.md) | $`\mathfrak B`$、Good、`points` |
+| [07 関係 R](07-relation-r.md) | $`R`$、$`\mathfrak A^c_\theta`$、定義の式（§6）、鍵の弱化（§7）、部分的な上端の述語 |
+| [08 ω₁ より下の閉包と鎖](08-closure-chain.md) | $`\mathfrak B`$、Good、鎖（§7） |
 
 このノートは、関係 $`R`$ が組合せの層の 3 つの定理をどう満たすかを説明する。中心は有限反映（§2）と、最初の表現（§3）である。
 
@@ -36,11 +36,11 @@
 \bigwedge_{i, j \lt n} \bigl( (v_i \lt v_j) \iff (i \lt j) \bigr) \ \land\ \bigwedge_{e \in G} \mathrm{Rel}_{e}(\vec v) \ \land\ \bigwedge_{d \in N} \mathrm{Top}_{d}(\vec v)
 ```
 
-$`\mathrm{Rel}_e(\vec v)`$ は内部の関係 $`\mathrm{Rel}_{t_e, p_e, q_e}(\vec v)`$、つまり $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$ である。$`\mathrm{Top}_d(\vec v)`$ は上端の述語 $`\mathrm{Top}_{t_d, p_d}(\vec v)`$、つまり $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, c)`$ である。$`c`$ は論理式を読む構造の高さである（[07](07-relation-r.md) §2）。`reflLits_holds` は、このリテラルがすべて成り立つことを、「$`v`$ の順序が添字の順序と同じ」「$`G`$ が成り立つ」「$`N`$ の鍵が定義されていて成り立つ」の 3 つに書き直す。
+$`\mathrm{Rel}_e(\vec v)`$ は内部の関係 $`\mathrm{Rel}_{t_e, p_e, q_e}(\vec v)`$、つまり $`R(\mathrm{eval}\ t_e\ \vec v, v_{p_e}, v_{q_e})`$ である。$`\mathrm{Top}_d(\vec v)`$ は上端の述語 $`\mathrm{Top}_{t_d, p_d}(\vec v)`$、つまり $`R(\mathrm{eval}\ t_d\ \vec v, v_{p_d}, c)`$ である。$`c`$ は論理式を読む構造の高さである（[07](07-relation-r.md) §3）。`reflLits_holds` は、このリテラルがすべて成り立つことを、「$`v`$ の順序が添字の順序と同じ」「$`G`$ が成り立つ」「$`N`$ の鍵が定義されていて成り立つ」の 3 つに書き直す。
 
 **証明.**
 
-1. `R_iff` から、高さ $`f(\mathrm{cut})`$ と高さ $`b`$ の構造の、鍵 $`\theta`$ での初等性 $`E`$ を得る。
+1. [07](07-relation-r.md) §6 の定義の式から、高さ $`f(\mathrm{cut})`$ と高さ $`b`$ の構造の、鍵 $`\theta`$ での初等性 $`E`$ を得る。
 2. パラメータ $`f(i)`$（$`i \lt \mathrm{cut}`$）は、$`f`$ が狭義増加なので $`f(\mathrm{cut})`$ より小さい。
 3. 高さ $`b`$ で、$`v = f`$ が論理式を満たす。順序は $`f`$ の狭義増加から、$`\mathrm{Rel}`$ は $`G`$ の仮定から、$`\mathrm{Top}`$ は「鍵が $`\theta`$ より小さい」（`KeysBelow`）と「$`N`$ が上端 $`b`$ について成り立つ」から出る。
 4. $`E`$ から、高さ $`f(\mathrm{cut})`$ でも論理式が真である。その証人を $`g`$ とする。
@@ -74,16 +74,16 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 **証明.** $`\kappa`$ についての整礎帰納法をする（`WellFoundedLT.induction`、[02](02-well-founded.md) §2）。
 
-1. `R_iff` で両辺を開く。$`x \lt \alpha`$ も $`x \lt \omega_1`$ も真である。残りは、鍵 $`\kappa`$ の論理式 $`\varphi`$（パラメータ $`\lt x`$）について、高さ $`\alpha`$ の構造 $`\mathfrak A^\alpha_\kappa`$ と高さ $`\omega_1`$ の構造 $`\mathfrak A^{\omega_1}_\kappa`$ での真偽が一致することである（`absA`）。
+1. [07](07-relation-r.md) §6 の定義の式で両辺を開く。$`x \lt \alpha`$ も $`x \lt \omega_1`$ も真である。残りは、鍵 $`\kappa`$ の論理式 $`\varphi`$（パラメータ $`\lt x`$）について、高さ $`\alpha`$ の構造 $`\mathfrak A^\alpha_\kappa`$ と高さ $`\omega_1`$ の構造 $`\mathfrak A^{\omega_1}_\kappa`$ での真偽が一致することである（`absA`）。
 2. $`\varphi`$ が読む上端の述語は、鍵 $`\kappa' \lt \kappa`$ のものだけである。帰納法の仮定から、$`\alpha`$ より下の点では、高さ $`\alpha`$ と高さ $`\omega_1`$ で真偽が同じである（`lit_abs`）。
 3. 高さ $`\alpha`$ から高さ $`\omega_1`$：証人は $`\alpha \lt \omega_1`$ より下にあり、2 からリテラルの真偽は同じである。
 4. 高さ $`\omega_1`$ から高さ $`\alpha`$：証人 $`v \lt \omega_1`$ を取る。
-   - `allow` を「いつも真」に広げる（`lit_true`）。すると $`\mathfrak B`$ での論理式になる。
+   - `allow` を「いつも真」に広げる（`lit_true`、[03](03-sigma1-elementary.md) §8 の補題 2）。すると $`\mathfrak B`$ での論理式になる。
    - $`\mathrm{Good}(\alpha)`$ で、$`v_i \lt \alpha`$ の位置をパラメータにして証人を下ろす（`lower`）。新しい証人 $`w`$ は $`\alpha`$ より下で、$`v_i \lt \alpha`$ の位置では $`v_i`$ と等しく、各点で $`w \le v`$ である。
    - $`w \le v`$ と `eval` の単調性から、上端のリテラルの鍵は $`\kappa`$ より小さいままである（`lit_lower`）。
    - 2 で高さ $`\alpha`$ の上端の述語に戻す。$`\square`$
 
-4 の 3 つめで、[03](03-sigma1-elementary.md) §8 の「各点で下げても鍵の条件が残る」を使う。
+4 の 3 つめで、[03](03-sigma1-elementary.md) §8 の補題 3（各点で下げても鍵の条件が残る）を使う。
 
 ### 3.2 Good な点どうしは R の関係にある
 
@@ -103,9 +103,9 @@ R(\kappa, x, \alpha) \iff R(\kappa, x, \omega_1)
 
 **定理（`initial_finite_graph`）.** どの図式 $`(G, N)`$ にも、$`\beta \lt \omega_1`$ と狭義増加の $`f \lt \beta`$ があって、$`G`$ が $`f`$ で成り立ち、$`N`$ が上端 $`\beta`$ について成り立つ。
 
-**証明.** $`n`$ を図式の頂点の数とする。$`\beta := c_n`$、$`f(i) := c_i`$（[08](08-closure-chain.md) §7 の Good な点の列）とする。
+**証明.** $`n`$ を図式の頂点の数とする。$`\beta := c_n`$、$`f(i) := c_i`$（[08](08-closure-chain.md) §7 の鎖）とする。
 
-- $`f`$ は狭義増加で、$`c_i \lt c_n`$ である（`points_strictMono`）。$`c_n \lt \omega_1`$ である（`points_lt`）。
+- $`f`$ は狭義増加で、$`c_i \lt c_n`$ である（[08](08-closure-chain.md) §7 の性質 10）。$`c_n \lt \omega_1`$ である（性質 9）。どの $`c_i`$ も Good である（性質 11）。
 - 内部の原子 $`e`$ は親 $`\lt`$ 子なので、`good_R` から $`R(\mathrm{eval}\ t_e\ f, c_{p_e}, c_{q_e})`$ である。
 - 上端の原子 $`d`$ は親 $`\lt n`$ なので、`good_R` から $`R(\mathrm{eval}\ t_d\ f, c_{p_d}, c_n)`$ である。$`\square`$
 
@@ -126,7 +126,7 @@ theorem omegaY_step_wellFounded : WellFounded Dynamics.Step :=
 
 - `actual_representation_descent` は [06](06-combinatorial-layer.md) §8 の降下である。有限反映と鍵の弱化は、その中の継ぎ合わせで使われる。
 - 最初の表現は `keyRepresentation_exists` から得る。これは `initial_finite_graph` を使う。
-- 残りの 3 つの最終定理は、`omegaY_step_wellFounded` から組合せの議論だけで出る（[05](05-omegay-mountain.md) §7）。
+- 残りの 3 つの最終定理（[05](05-omegay-mountain.md) §7 の定理 2〜4）は、`omegaY_step_wellFounded`（定理 1）から組合せの議論だけで出る。
 
 **公理.** [OmegaY/Audit.lean](../OmegaY/Audit.lean) は、名前が `OmegaY.` か `Por.` で始まるすべての定理の公理を調べる。どれも `propext`、`Classical.choice`、`Quot.sound` だけに依存する（[README](../README.md)「公理の監査」）。
 
