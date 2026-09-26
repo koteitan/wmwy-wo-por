@@ -4,7 +4,7 @@
 
 前提: なし
 
-このノートは、順序数と $`\omega_1`$ を説明する。あとのノートでは、展開の停止性の証明で、式の列に $`\omega_1`$ 以下の順序数（§6 のラベル）を付けて使う（[06](06-combinatorial-layer.md) §4、§8）。使う事実は §5 の正則性、§6 のラベル、§7 のパラメータの列の数え方である。
+このノートは、順序数と $`\omega_1`$ を説明する。あとのノートでは、展開の停止性の証明で、式の列に $`\omega_1`$ 以下の順序数（§6 のラベル）を付けて使う（[06](06-combinatorial-layer.md) §2、§8）。使う事実は §5 の正則性、§6 のラベル、§7 のパラメータの列の数え方である。
 
 ## 1. 整列順序と順序数
 
@@ -123,7 +123,7 @@ $`0, 1, \omega, \omega+1, \omega \cdot 2, \omega^2, \omega^\omega, \varepsilon_0
 - $`\forall x \in \mathrm{Label}\ \ x \le \omega_1`$。
 - $`a \in \mathrm{Label}`$、$`a \lt \omega_1`$ なら、$`\{x \in \mathrm{Label} \mid x \lt a\} = \{\beta \mid \beta \lt a\}`$ は可算。
 
-**なぜ ω₁ 自身をラベルに入れるか.** 式の列に付けるラベルは、どれも $`\omega_1`$ より小さい（[06](06-combinatorial-layer.md) §4）。一方、[07](07-relation-r.md) で定義する関係 $`R`$ は、3 つめの引数に $`\omega_1`$ も取る（[08](08-closure-chain.md) §1、[09](09-obligations.md) §3）。そのために $`\omega_1`$ もラベルに入れる。
+**なぜ ω₁ 自身をラベルに入れるか.** 式の列に付けるラベルは、どれも $`\omega_1`$ より小さい（[06](06-combinatorial-layer.md) §2）。一方、[07](07-relation-r.md) で定義する関係 $`R`$ は、3 つめの引数に $`\omega_1`$ も取る（[08](08-closure-chain.md) §1、[09](09-obligations.md) §3）。そのために $`\omega_1`$ もラベルに入れる。
 
 ## 7. パラメータの列の数え方
 

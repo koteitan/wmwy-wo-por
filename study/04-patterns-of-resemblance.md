@@ -62,7 +62,7 @@ $`\omega \le_1 \omega`$ は定義から成り立つ。以上から $`\{\beta \mi
 
 ## 3. 停止性の証明での使い方
 
-この節は、あとのノートで定義する言葉を先に使って、形だけを述べる。式の列、山の辺、展開は [05](05-omegay-mountain.md) で、ラベルの付け方と切れ目は [06](06-combinatorial-layer.md) §4、§5 で定義する。
+この節は、あとのノートで定義する言葉を先に使って、形だけを述べる。式の列、山の辺、展開は [05](05-omegay-mountain.md) で、ラベルの付け方と切れ目は [06](06-combinatorial-layer.md) §2、§3 で定義する。
 
 展開の停止性の証明では、列ごとにラベル（[01](01-ordinals.md) §6）を付け、展開でラベルが下がることを示す（[02](02-well-founded.md) §6、[06](06-combinatorial-layer.md) §8）。そこで要る性質は **有限反映** である。
 
@@ -82,13 +82,13 @@ $`\omega \le_1 \omega`$ は定義から成り立つ。以上から $`\{\beta \mi
 R(\theta, a, b) \quad (\theta \in \mathrm{Key}_m,\ a, b \in \mathrm{Label})
 ```
 
-「鍵 $`\theta`$ で、$`a`$ は $`b`$ へ安定している」と読む。$`\theta`$ は、山の辺ごとに型板から計算する鍵である（[06](06-combinatorial-layer.md) §3）。このため 3 つの問題が起きる。
+「鍵 $`\theta`$ で、$`a`$ は $`b`$ へ安定している」と読む。$`\theta`$ は、山の辺ごとに型板から計算する鍵である（[06](06-combinatorial-layer.md) §1）。このため 3 つの問題が起きる。
 
 **問題 1：鍵が超限である.** 鍵 $`\theta`$ は $`\mathrm{Key}_m`$ を辞書式に動く（[02](02-well-founded.md) §3）。座標はラベルなので、鍵の順序は超限である。$`\mathcal R_N`$ の関係 $`\le_1, \ldots, \le_N`$ は有限個で、自然数で数える。超限の鍵を、この番号にできない。
 
-**問題 2：上端への要求.** 上端 $`b`$ は、展開の前に古い最後の列に付いていたラベルである（[06](06-combinatorial-layer.md) §8）。有限反映は「上端 $`b`$ への関係 $`R(\kappa, x, b)`$」（$`\kappa`$ は鍵、$`x`$ は親のラベル）も新しいラベルで成り立たせる必要がある（[06](06-combinatorial-layer.md) §2 の上端の原子）。$`b`$ は構造 $`(b; \ldots)`$ の元ではない。$`R`$ の定義を展開して書くと $`\Sigma_1`$ にならない。
+**問題 2：上端への要求.** 上端 $`b`$ は、展開の前に古い最後の列に付いていたラベルである（[06](06-combinatorial-layer.md) §8）。有限反映は「上端 $`b`$ への関係 $`R(\kappa, x, b)`$」（$`\kappa`$ は鍵、$`x`$ は親のラベル）も新しいラベルで成り立たせる必要がある（[06](06-combinatorial-layer.md) §3 の上端のアトム）。$`b`$ は構造 $`(b; \ldots)`$ の元ではない。$`R`$ の定義を展開して書くと $`\Sigma_1`$ にならない。
 
-**問題 3：要求の鍵は、動く列を名指す.** 列 $`i`$ のラベルを $`f(i)`$ とする。上端への要求は $`R(\mathrm{eval}\ t\ f,\ f(p),\ b)`$ の形である。$`p`$ は列の番号、$`t`$ は ω-Y の型板（[03](03-sigma1-elementary.md) §7）である。$`t_i = \mathrm{some}\ j`$ なら、鍵の座標 $`i`$ は $`f(j)`$ である。このとき「型板 $`t`$ は列 $`j`$ を名指す」と言う。Phyrion 氏の有限反映（[06](06-combinatorial-layer.md) §5）は、名指される列 $`j`$ が切れ目 $`\mathrm{cut}`$ より前にあること（$`j \lt \mathrm{cut}`$）を要求しない。つまり鍵の中のラベル $`f(j)`$ は、反映で付け替わる証人でもよい。1-Y 版（[01](01-ordinals.md) §7）は、上端述語を読めるかどうかを変数の位置で決めた（1-Y 版の 03 §8）。その方法はここでは使えない。
+**問題 3：要求の鍵は、動く列を名指す.** 列 $`i`$ のラベルを $`f(i)`$ とする。上端への要求は $`R(\mathrm{eval}\ t\ f,\ f(p),\ b)`$ の形である。$`p`$ は列の番号、$`t`$ は ω-Y の型板（[03](03-sigma1-elementary.md) §7）である。$`t_i = \mathrm{some}\ j`$ なら、鍵の座標 $`i`$ は $`f(j)`$ である。このとき「型板 $`t`$ は列 $`j`$ を名指す」と言う。Phyrion 氏の有限反映（[06](06-combinatorial-layer.md) §4）は、名指される列 $`j`$ が切れ目 $`\mathrm{cut}`$ より前にあること（$`j \lt \mathrm{cut}`$）を要求しない。つまり鍵の中のラベル $`f(j)`$ は、反映で付け替わる証人でもよい。1-Y 版（[01](01-ordinals.md) §7）は、上端述語を読めるかどうかを変数の位置で決めた（1-Y 版の 03 §8）。その方法はここでは使えない。
 
 ## 5. このリポジトリの変更点
 
@@ -110,7 +110,7 @@ R(\theta, a, b) \quad (\theta \in \mathrm{Key}_m,\ a, b \in \mathrm{Label})
 | 上端との関係 | 連続性・共終性の補題 | 原子記号（読めるかは変数の位置で決まる） | 図式の中の要求 | 部分的な原子記号（鍵の値で決まる） |
 | 再帰の引数 | 上端 $`\beta`$ | $`(b, k, \eta)`$ の辞書式順序 | 段 $`(b, \theta)`$ | 段 $`(b, \theta)`$ |
 
-**Phyrion 氏の元の意味の層.** そこでは $`R(\theta, a, b) \iff a \lt b \land \mathrm{Reflects}(\theta, a, b)`$ で、$`\mathrm{Reflects}(\theta, a, b)`$ は次の圧縮の性質である（[notes/00-survey.md](../notes/00-survey.md) §3.2）。言葉は [06](06-combinatorial-layer.md) §2 のもので、$`n`$ は頂点の数、$`G`$ は内部の原子のリスト、$`N`$ は上端の原子のリスト、$`f, g : \mathrm{Fin}\ n \to \mathrm{Label}`$ はラベルである。「正」とは、条件に否定を含まないことである。
+**Phyrion 氏の元の意味の層.** そこでは $`R(\theta, a, b) \iff a \lt b \land \mathrm{Reflects}(\theta, a, b)`$ で、$`\mathrm{Reflects}(\theta, a, b)`$ は次の圧縮の性質である（[notes/00-survey.md](../notes/00-survey.md) §3.2）。言葉は [06](06-combinatorial-layer.md) §1〜§3 のもので、$`n`$ は列の数、$`G`$ はアトムのリスト、$`N`$ は上端のアトムのリスト、$`f, g : \mathrm{Fin}\ n \to \mathrm{Label}`$ はラベルである。「正」とは、条件に否定を含まないことである。
 
 ```math
 \begin{aligned}
@@ -142,4 +142,4 @@ $`\le_1`$ そのものは、このリポジトリの Lean には無い。対応�
 | 定義される範囲 $`\kappa \lt \theta`$ | `ElemL` の中の `(· < θ)` | [Por/Formula.lean](../Por/Formula.lean) |
 | 各点で下げても鍵の条件が残る | `Lit.holds_of_le` | 同上 |
 | 名指す列が切れ目より前でなくてよいこと | `finite_reflection` の注釈「No root used in a key is required to be retained」 | [OmegaY/Reflection.lean](../OmegaY/Reflection.lean) |
-| 上端の原子、要求の条件 | `InternalAtom`、`TopAtom`、`KeysBelow`、`FixesBelow` | [OmegaY/Reflection/Interface.lean](../OmegaY/Reflection/Interface.lean) |
+| アトム、上端のアトム、要求の条件 | `InternalAtom`、`TopAtom`、`KeysBelow`、`FixesBelow` | [OmegaY/Reflection/Interface.lean](../OmegaY/Reflection/Interface.lean) |

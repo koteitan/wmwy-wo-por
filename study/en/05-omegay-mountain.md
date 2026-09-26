@@ -9,7 +9,7 @@ Prerequisites
 | [01 Ordinals and ω₁](01-ordinals.md) | ordinals, Cantor normal form of ordinals below $`\omega^\omega`$, the 1-Y version |
 | [02 Well-founded relations and well-founded recursion](02-well-founded.md) | well-founded, the lexicographic order is not well-founded |
 
-This note explains the definitions of weak-magma ω-Y sequences and their expansion. The definitions are Phyrion's ([Phyrion1343/omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean)), and this repository uses its Lean definitions unchanged (§9). The parts that are the same as for 1-Y sequences ([1-Y version, study/05](https://github.com/koteitan/1y-wo-por/blob/main/study/en/05-1y-mountain.md)) are written with the same sentences and formulas as in the 1-Y version. The differences are that rows are ordinals (§2), the way the parent is found (§3), and the way the mountain is copied (step 1 of §4).
+This note explains the definitions of weak-magma ω-Y sequences and their expansion. The definitions are Phyrion's ([Phyrion1343/omega-Y-Well-Ordering-Lean](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean)), and this repository uses its definitions unchanged. The parts that are the same as for 1-Y sequences ([1-Y version, study/05](https://github.com/koteitan/1y-wo-por/blob/main/study/en/05-1y-mountain.md)) are written with the same sentences and formulas as in the 1-Y version. The differences are that rows are ordinals (§2), the way the parent is found (§3), and the way the mountain is copied (step 1 of §4).
 
 The values in the examples were computed by a Python program that transcribes the formulas of this note literally (2026-09-27). Its results were compared with those of Phyrion's JavaScript reference implementation ([reference/engine.js](https://github.com/Phyrion1343/omega-Y-Well-Ordering-Lean/blob/main/reference/engine.js)) ("Check of the formulas" in §4). The comparisons with 1-Y in §3 and §4 were computed with the reference implementation with added logging and a Python program that follows the definitions of the 1-Y version (2026-09-26).
 
@@ -167,7 +167,7 @@ The edges of column 1 go up to rows 2, $`\omega`$, $`\omega^2`$ from the bottom,
 
 So in this range the ω-Y mountain is the 1-Y layers joined into one column per column, and the layer of an edge stands for the 1-Y layer. The height $`h_k(c)`$ of column $`c`$ in layer $`k`$ of 1-Y is the number of edges of layer $`k`$ in column $`c`$ of $`M(s)`$.
 
-The range checked is the 40850 expressions of length at most 6 whose last entry is not 1 and that are reached from the seeds $`(1, 2)`$, $`(1, 3)`$, $`(1, 4)`$ by repeatedly taking 1-Y expansions ($`N = 1, 2, 3`$) and prefixes (2026-09-26). Among their mountains, only that of $`(1, 4)`$ has a row $`\omega^2`$ or larger. Outside this range the facts can fail. In $`(1, 4, 15)`$, reached by 1-Y from the seed $`(1, 5)`$, the values and parents agree, but the top edge of column 2 is in layer 2 in 1-Y, while in ω-Y it is the edge to row $`\omega \cdot 2`$, in layer 1. In $`(1, 4, 16)`$ the parent of the top edge of column 2 is column 1 in 1-Y and column 0 in ω-Y, so even the parents differ. Both mountains have a row $`\omega^2`$ or larger. This is not a proof, and it is not shown in Lean.
+The range checked is the 40850 expressions of length at most 6 whose last entry is not 1 and that are reached from the seeds $`(1, 2)`$, $`(1, 3)`$, $`(1, 4)`$ by repeatedly taking 1-Y expansions ($`N = 1, 2, 3`$) and prefixes (2026-09-26). Among their mountains, only that of $`(1, 4)`$ has a row $`\omega^2`$ or larger. Outside this range the facts can fail. In $`(1, 4, 15)`$, reached by 1-Y from the seed $`(1, 5)`$, the values and parents agree, but the top edge of column 2 is in layer 2 in 1-Y, while in ω-Y it is the edge to row $`\omega \cdot 2`$, in layer 1. In $`(1, 4, 16)`$ the parent of the top edge of column 2 is column 1 in 1-Y and column 0 in ω-Y, so even the parents differ. Both mountains have a row $`\omega^2`$ or larger. This is not a proof. It is not proved here.
 
 ## 4. Expansion
 
@@ -242,7 +242,7 @@ A node left of the root column is used as is. Otherwise the highest node below r
   - **(C) contour**: let the rows of column $`\sigma`$ of $`M(s')`$ from $`\mu`$ up be $`a_0 := a`$, $`a_{t+1} := a_t^{+}`$. Let $`t_\mu := \min\{\, t \ge 0 \mid a_t = \widetilde{\mathrm{top}}(\sigma) \ \vee\ (\sigma, a_{t+1}) \in \mathrm{Mk} \,\}`$. Define rows $`\gamma_0 := g_b(a)`$, $`\gamma_{t+1} := \gamma_t + \omega^{\tilde\delta_\sigma(a_t)}`$, and for $`1 \le t \le t_\mu`$ place a node in row $`\gamma_t`$ with $`\lambda'(c, \gamma_t) := \mathrm{tr}_b(\tilde\lambda(\sigma, a_t), \gamma_t)`$.
   - **(F) fill**: let $`p := \widetilde{\mathrm{par}}(\mu)`$. For each row $`e_q \in \mathrm{rows}'(m_b(\mathrm{col}(p)))`$ with $`a \le e_q \lt g_b(a)`$, let $`q := (m_b(\mathrm{col}(p)), e_q)`$, and for $`0 \le i \le \delta'(q)`$ place a node in row $`e_q + \omega^{i}`$ with $`\lambda'(c, e_q + \omega^{i}) := q`$. Here $`\delta'(q)`$ is the degree of $`q`$ in the new mountain: $`e_q^{+} = e_q + \omega^{\delta'(q)}`$.
 
-For an expression, the set in $`g_b(a)`$ is never empty, and the nodes placed in one column by step 1 all have different rows (shown in Lean; §9).
+For an expression, the set in $`g_b(a)`$ is never empty, and the nodes placed in one column by step 1 all have different rows (not proved here).
 
 **Definition (source node, gap node).** The **source node** of a node $`(c, a)`$ placed by (T) is $`(\sigma, a)`$, and that of a node $`(c, \gamma_t)`$ placed by (C) is $`(\sigma, a_t)`$. If the upper node of a new edge has a source node $`(\sigma, a_s)`$, the edge of $`M(s')`$ whose upper node is $`(\sigma, a_s)`$ is the **source edge** of that edge. A node placed by (F) is a **gap node**. The source node of a node in a column $`c \le x`$ is the node itself.
 
@@ -416,7 +416,7 @@ Branches with the same number do the same thing, as follows. The minimal example
 
 "The parent is in one column" in 1-Y branch (3-2-1-2) corresponds to the weak-magma rule "the parents of the gap nodes all lie in one column $`m_b(\mathrm{col}(p))`$" (§5). 1-Y branches (3-2-1-1) and (3-2-2) both copy with a shift and without changing the row. In ω-Y both become copies in the same row, and the only difference is whether $`F_\ell(c)`$ is empty.
 
-**Checked range (comparison with 1-Y).** The following was checked by computer (2026-09-26). It is not a proof, and it is not shown in Lean.
+**Checked range (comparison with 1-Y).** The following was checked by computer (2026-09-26). It is not a proof. It is not proved here.
 
 - For the same 40850 expressions as in §3, of the 122550 expansions with $`N = 1, 2, 3`$, the 122548 other than $`(1, 4)[2]`$ and $`(1, 4)[3]`$ give the same values in ω-Y and 1-Y. In these, the mountain of $`s[N]`$ also has, under the correspondence of §3, the same values and parents as the copied 1-Y mountain (1-Y version, §6, step 1), and the layers of the edges equal the 1-Y layers. For all edges of columns $`x`$ and beyond (about 4.33 million), the number in the branch tree equals the 1-Y branch number. Branch (4) did not occur.
 - $`(1, 4)[2]`$ and $`(1, 4)[3]`$ give different values (ω-Y: $`(1, 3, 10)`$, $`(1, 3, 10, 37)`$; 1-Y: $`(1, 3, 9)`$, $`(1, 3, 9, 27)`$). Both pass (4-1) and (4-2).
@@ -439,7 +439,7 @@ According to [notes/02-feasibility.md](../../notes/02-feasibility.md) §2, only 
 - weak: the parents $`q`$ of the gap nodes all lie in one column $`m_b(\mathrm{col}(p))`$, where $`p = \widetilde{\mathrm{par}}(\mu)`$ is the parent of the marker $`\mu`$.
 - official: for each gap row, choose one node of the root column (how it is chosen is in notes/02-feasibility.md §2.2). Let $`u`$ be the node of column $`\sigma`$ of $`M(s')`$ in the row of the chosen node. Let $`\sigma' := \mathrm{col}(\tilde\lambda(u))`$ (if $`u`$ is a bottom node, $`\tilde\lambda(u) = (\sigma - 1, 0)`$ and $`\sigma' = \sigma - 1`$). The parents of the gap nodes lie in column $`m_b(\sigma')`$.
 
-**Example.** In $`(1, 3, 3)[2]`$, the parent of the node in row 2 of column 4 (a gap node) is $`(2, 1)`$ (value 2) in weak and $`(3, 1)`$ (value 5) in the official version. The bottom value of column 4 is $`2 + 2 = 4`$ in weak and $`2 + 5 = 7`$ in the official version. In total, weak gives $`(1, 3, 2, 5, 4, 9)`$ and the official version $`(1, 3, 2, 5, 7, 12)`$ (the official values are from notes/02-feasibility.md §2.3 and were not computed in Lean).
+**Example.** In $`(1, 3, 3)[2]`$, the parent of the node in row 2 of column 4 (a gap node) is $`(2, 1)`$ (value 2) in weak and $`(3, 1)`$ (value 5) in the official version. The bottom value of column 4 is $`2 + 2 = 4`$ in weak and $`2 + 5 = 7`$ in the official version. In total, weak gives $`(1, 3, 2, 5, 4, 9)`$ and the official version $`(1, 3, 2, 5, 7, 12)`$ (the official values are from notes/02-feasibility.md §2.3).
 
 notes/02-feasibility.md counts the bottom row as 0: it writes $`\delta`$ for the row $`1 + \delta`$ of this note. In that note "$`k \leftarrow c_j@h`$" is a node in row $`k`$ whose left leg is the node of column $`j`$ in row $`h`$. For example "$`1 \leftarrow c_2@0`$" in that note is "row 2, left leg $`(2, 1)`$" in this note.
 
@@ -449,38 +449,38 @@ Termination of the official ω-Y is not a theorem of this repository. The offici
 
 ## 6. Examples of expansion
 
-The values were computed by the Python program that transcribes the formulas of §4, and checked to be equal to the values of the reference implementation (2026-09-27). The rows with ✓ in the column "Lean" gave the same values when the Lean definition was evaluated with `#eval` in Lean 4.33.1 (2026-09-23).
+The values were computed by the Python program that transcribes the formulas of §4, and checked to be equal to the values of the reference implementation (2026-09-27).
 
 "Branches used" lists the numbers of the branches of the branch tree of §4 that make an edge, and (0) when there is no root. The unchanged branches (1-1), (2-1), (3-1) are not listed. ★ marks the lexicographically smallest expression, in the checked range, that passes the branch with $`N = 2`$ (§4). The column "1-Y" is the value of the same expression expanded by the 1-Y rule (1-Y version, §6). "same" means the same value as ω-Y.
 
-| Expression $`s`$ | $`N`$ | $`s[N]`$ | Branches used | 1-Y | Lean |
-|---|---|---|---|---|---|
-| $`(1)`$ | 5 | $`()`$ | (0)★ | same | |
-| $`(1, 2)`$ | 3 | $`(1, 1, 1, 1)`$ | none | same | ✓ |
-| $`(1, 2, 2)`$ | 2 | $`(1, 2, 1, 2, 1, 2)`$ | (2-2)★ | same | ✓ |
-| $`(1, 2, 3)`$ | 0 | $`(1, 2)`$ | none | same | |
-| $`(1, 2, 3)`$ | 1 | $`(1, 2, 2)`$ | (2-3-2) | same | |
-| $`(1, 2, 3)`$ | 2 | $`(1, 2, 2, 2)`$ | (2-3-2)★ | same | ✓ |
-| $`(1, 2, 4)`$ | 2 | $`(1, 2, 3, 4)`$ | (2-3-1)★ | same | ✓ |
-| $`(1, 2, 4)`$ | 3 | $`(1, 2, 3, 4, 5)`$ | (2-3-1) | same | |
-| $`(1, 2, 4, 3)`$ | 2 | $`(1, 2, 4, 2, 4, 2, 4)`$ | (2-2), (2-3-2) | same | |
-| $`(1, 2, 4, 8, 10, 8)`$ | 2 | $`(1, 2, 4, 8, 10, 7, 12, 14, 11, 17, 19)`$ | (2-2), (2-3-1) | same | |
-| $`(1, 3)`$ | 2 | $`(1, 2, 4)`$ | (3-2-1-2)★, (3-2-1-3)★ | same | ✓ |
-| $`(1, 3)`$ | 3 | $`(1, 2, 4, 8)`$ | (3-2-1-2), (3-2-1-3) | same | ✓ |
-| $`(1, 3, 2)`$ | 2 | $`(1, 3, 1, 3, 1, 3)`$ | (1-2)★, (2-2) | same | |
-| $`(1, 3, 2, 5)`$ | 2 | $`(1, 3, 2, 4, 8)`$ | (3-2-1-1)★, (3-2-1-2), (3-2-1-3) | same | |
-| $`(1, 3, 3)`$ | 0 | $`(1, 3)`$ | none | same | ✓ |
-| $`(1, 3, 3)`$ | 1 | $`(1, 3, 2, 5)`$ | (2-2), (3-2-1-2), (3-2-1-3) | same | ✓ |
-| $`(1, 3, 3)`$ | 2 | $`(1, 3, 2, 5, 4, 9)`$ | (2-2), (3-2-1-2), (3-2-1-3) | same | ✓ |
-| $`(1, 3, 3)`$ | 3 | $`(1, 3, 2, 5, 4, 9, 8, 17)`$ | (2-2), (3-2-1-2), (3-2-1-3) | same | ✓ |
-| $`(1, 3, 4)`$ | 2 | $`(1, 3, 3, 3)`$ | (1-2), (2-3-2) | same | ✓ |
-| $`(1, 3, 4, 2, 5, 6, 5)`$ | 2 | $`(1, 3, 4, 2, 5, 6, 4, 9, 10, 8, 17, 18)`$ | (2-2), (3-2-1-1), (3-2-1-2), (3-2-1-3), (3-2-2)★ | same | |
-| $`(1, 3, 9, 23)`$ | 2 | $`(1, 3, 9, 22, 50, 110, 238)`$ | (2-2), (2-3-1), (3-2-1-1), (3-2-1-2), (3-2-1-3) | same | |
-| $`(1, 3, 10)`$ | 2 | $`(1, 3, 9, 27)`$ | (2-3-1), (3-2-1-1), (3-2-1-2), (3-2-1-3), (4-3)★ | same | |
-| $`(1, 4)`$ | 1 | $`(1, 3)`$ | none | same | ✓ |
-| $`(1, 4)`$ | 2 | $`(1, 3, 10)`$ | (3-2-1-2), (3-2-1-3), (4-1)★, (4-2)★ | $`(1, 3, 9)`$ | ✓ |
-| $`(1, 4)`$ | 3 | $`(1, 3, 10, 37)`$ | (3-2-1-2), (3-2-1-3), (4-1), (4-2) | $`(1, 3, 9, 27)`$ | ✓ |
-| $`(1, 4, 4)`$ | 2 | $`(1, 4, 3, 11, 10, 38)`$ | (2-2), (3-2-1-2), (3-2-1-3), (4-1), (4-2) | $`(1, 4, 3, 10, 9, 28)`$ | ✓ |
+| Expression $`s`$ | $`N`$ | $`s[N]`$ | Branches used | 1-Y |
+|---|---|---|---|---|
+| $`(1)`$ | 5 | $`()`$ | (0)★ | same |
+| $`(1, 2)`$ | 3 | $`(1, 1, 1, 1)`$ | none | same |
+| $`(1, 2, 2)`$ | 2 | $`(1, 2, 1, 2, 1, 2)`$ | (2-2)★ | same |
+| $`(1, 2, 3)`$ | 0 | $`(1, 2)`$ | none | same |
+| $`(1, 2, 3)`$ | 1 | $`(1, 2, 2)`$ | (2-3-2) | same |
+| $`(1, 2, 3)`$ | 2 | $`(1, 2, 2, 2)`$ | (2-3-2)★ | same |
+| $`(1, 2, 4)`$ | 2 | $`(1, 2, 3, 4)`$ | (2-3-1)★ | same |
+| $`(1, 2, 4)`$ | 3 | $`(1, 2, 3, 4, 5)`$ | (2-3-1) | same |
+| $`(1, 2, 4, 3)`$ | 2 | $`(1, 2, 4, 2, 4, 2, 4)`$ | (2-2), (2-3-2) | same |
+| $`(1, 2, 4, 8, 10, 8)`$ | 2 | $`(1, 2, 4, 8, 10, 7, 12, 14, 11, 17, 19)`$ | (2-2), (2-3-1) | same |
+| $`(1, 3)`$ | 2 | $`(1, 2, 4)`$ | (3-2-1-2)★, (3-2-1-3)★ | same |
+| $`(1, 3)`$ | 3 | $`(1, 2, 4, 8)`$ | (3-2-1-2), (3-2-1-3) | same |
+| $`(1, 3, 2)`$ | 2 | $`(1, 3, 1, 3, 1, 3)`$ | (1-2)★, (2-2) | same |
+| $`(1, 3, 2, 5)`$ | 2 | $`(1, 3, 2, 4, 8)`$ | (3-2-1-1)★, (3-2-1-2), (3-2-1-3) | same |
+| $`(1, 3, 3)`$ | 0 | $`(1, 3)`$ | none | same |
+| $`(1, 3, 3)`$ | 1 | $`(1, 3, 2, 5)`$ | (2-2), (3-2-1-2), (3-2-1-3) | same |
+| $`(1, 3, 3)`$ | 2 | $`(1, 3, 2, 5, 4, 9)`$ | (2-2), (3-2-1-2), (3-2-1-3) | same |
+| $`(1, 3, 3)`$ | 3 | $`(1, 3, 2, 5, 4, 9, 8, 17)`$ | (2-2), (3-2-1-2), (3-2-1-3) | same |
+| $`(1, 3, 4)`$ | 2 | $`(1, 3, 3, 3)`$ | (1-2), (2-3-2) | same |
+| $`(1, 3, 4, 2, 5, 6, 5)`$ | 2 | $`(1, 3, 4, 2, 5, 6, 4, 9, 10, 8, 17, 18)`$ | (2-2), (3-2-1-1), (3-2-1-2), (3-2-1-3), (3-2-2)★ | same |
+| $`(1, 3, 9, 23)`$ | 2 | $`(1, 3, 9, 22, 50, 110, 238)`$ | (2-2), (2-3-1), (3-2-1-1), (3-2-1-2), (3-2-1-3) | same |
+| $`(1, 3, 10)`$ | 2 | $`(1, 3, 9, 27)`$ | (2-3-1), (3-2-1-1), (3-2-1-2), (3-2-1-3), (4-3)★ | same |
+| $`(1, 4)`$ | 1 | $`(1, 3)`$ | none | same |
+| $`(1, 4)`$ | 2 | $`(1, 3, 10)`$ | (3-2-1-2), (3-2-1-3), (4-1)★, (4-2)★ | $`(1, 3, 9)`$ |
+| $`(1, 4)`$ | 3 | $`(1, 3, 10, 37)`$ | (3-2-1-2), (3-2-1-3), (4-1), (4-2) | $`(1, 3, 9, 27)`$ |
+| $`(1, 4, 4)`$ | 2 | $`(1, 4, 3, 11, 10, 38)`$ | (2-2), (3-2-1-2), (3-2-1-3), (4-1), (4-2) | $`(1, 4, 3, 10, 9, 28)`$ |
 
 $`(1, 3, 10)`$ is not reached from a seed in 1-Y ("Checked range" in §4). Its expansion gives the same values under the 1-Y rule, but the layers of the edges of ω-Y are shifted from the 1-Y layers, so it passes (4-3).
 
@@ -490,13 +490,13 @@ $`(1, 3, 10)`$ is not reached from a seed in 1-Y ("Checked range" in §4). Its e
 
 - The empty expression expands to itself. So the empty expression has no one-step expansion. For a nonempty expression $`s`$ we have $`s[N] \ne s`$, so $`t \prec s`$ is the same as "$`s \ne ()`$ and $`t = s[N]`$ for some $`N`$".
 - A one-step expansion lowers the lexicographic order. But the lexicographic order is not well-founded, so this alone does not give termination.
-- The expansion is defined for every expression (step 1 of §4 finishes without getting stuck). This is shown in Lean.
+- The expansion is defined for every expression (step 1 of §4 finishes without getting stuck). It is not proved here.
 
 **Definition (reachable).** If there are $`s = t_0, t_1, \ldots, t_j = t`$ ($`j \in \mathbb N`$) where each $`t_{i+1}`$ is an expansion $`t_i[N_i]`$ ($`N_i \in \mathbb N`$) of $`t_i`$, we say $`t`$ is **reachable** from $`s`$ and write $`s \to^{*} t`$. Since $`j = 0`$ is allowed, $`s`$ is reachable from $`s`$. An expression reachable from $`s`$ is a **descendant** of $`s`$.
 
 **Definition (dimension).** A natural number $`D`$ is a **dimension** of the mountain of an expression $`s`$ if every row $`a`$ of $`M(s)`$ has $`c_i(a) = 0`$ for $`i \gt D`$.
 
-- If $`D`$ is a dimension of the mountain of $`s`$, it is also a dimension of the mountain of $`s[N]`$ (shown in Lean).
+- If $`D`$ is a dimension of the mountain of $`s`$, it is also a dimension of the mountain of $`s[N]`$ (not proved here).
 - So one $`D`$ chosen for the starting expression works for all its descendants. $`D`$ fixes the key length $`D + 1`$ of [06](06-combinatorial-layer.md).
 
 The final theorems of this repository ([README](../../README-en.md) "The four final theorems") are:
@@ -534,8 +534,10 @@ Theorems 2–4 follow from Theorem 1 by combinatorial arguments only. The proof 
 | reference rows $`\beta_b`$, $`g_b`$ | `below`, `referenceAt` | same |
 | (T), (C), (F), $`\mathrm{tr}_b`$ | `copyEdge`, `contour`, `fill`, `copyColumn`, `copyBlock` | same |
 | step 2 (rebuild the values) | `finish`, `backfill` | same |
-| the expansion is defined for every expression | `expand_total` | [OmegaY/Expansion/Totality.lean](../../OmegaY/Expansion/Totality.lean) |
+| the expansion is defined for every expression (including that the set in $`g_b(a)`$ of §4 is never empty and that the nodes placed in one column all have different rows) | `expandDiagram_total`, `expand_total` | [OmegaY/Expansion/Totality.lean](../../OmegaY/Expansion/Totality.lean) |
 | layers, branch tree, correspondence with 1-Y | none (not defined in Lean; only checked by computer) | |
+| the expansion examples of §6 that gave the same values when the Lean definition was evaluated with `#eval` in Lean 4.33.1 (2026-09-23): $`(1, 2)[3]`$, $`(1, 2, 2)[2]`$, $`(1, 2, 3)[2]`$, $`(1, 2, 4)[2]`$, $`(1, 3)[2]`$, $`(1, 3)[3]`$, $`(1, 3, 3)[0]`$, $`(1, 3, 3)[1]`$, $`(1, 3, 3)[2]`$, $`(1, 3, 3)[3]`$, $`(1, 3, 4)[2]`$, $`(1, 4)[1]`$, $`(1, 4)[2]`$, $`(1, 4)[3]`$, $`(1, 4, 4)[2]`$ | `expand` | [OmegaY/Expansion/Build.lean](../../OmegaY/Expansion/Build.lean) |
+| the values of the official ω-Y (example of §5) | none (not computed in Lean) | |
 | one-step expansion, lowering the lexicographic order | `Dynamics.next`, `Dynamics.Step`, `Dynamics.next_lex` | [OmegaY/Expansion/LegalDynamics.lean](../../OmegaY/Expansion/LegalDynamics.lean) |
 | preservation of the dimension | `expandDiagram_key_dimension`, `Dynamics.next_key_dimension`, `Dynamics.fixed_dimension_for_descendants` | [OmegaY/Expansion/SupportedDimension.lean](../../OmegaY/Expansion/SupportedDimension.lean), [OmegaY/Expansion/DynamicsRowBound.lean](../../OmegaY/Expansion/DynamicsRowBound.lean) |
 | Theorems 1–4 | `omegaY_step_wellFounded`, `omegaY_generated_isWellOrder`, `omegaY_descendants_isWellOrder`, `omegaY_trajectory_terminates` | [OmegaY/Expansion/WellFounded.lean](../../OmegaY/Expansion/WellFounded.lean) |

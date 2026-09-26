@@ -17,10 +17,10 @@
 | [03 構造と Σ₁ 初等部分構造](03-sigma1-elementary.md) | 構造、$`\Sigma_1`$ 論理式、リテラルの連言、$`\preccurlyeq_{\Sigma_1}`$、Tarski–Vaught 判定法、$`\Sigma_1`$ 論理式の標準形、2 つの構造の比べ方、部分的な上端述語 | README「関係 R」、notes/01-design.md §2.1、§2.2 |
 | [04 Patterns of resemblance](04-patterns-of-resemblance.md) | Carlson の $`\le_1`$、小さい例、停止性の証明での使い方、ω-Y で足りないもの、このリポジトリの変更点 | README「証明の形」「関係 R」、notes/01-design.md §0、notes/00-survey.md §3.2〜§3.4 |
 | [05 ω-Y 数列と山](05-omegay-mountain.md) | 式、$`\omega^\omega`$ 未満の行、跳び、山、展開（1-Y と同じ分岐番号）、weak magma と公式の ω-Y、展開の例、最終定理 | README「対象」「記号」「最終定理 4 つ」、notes/00-survey.md §1.3〜§1.6、notes/02-feasibility.md §1.1、§2 |
-| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 鍵と型板、内部の原子と上端の原子、尺度の根と辺の鍵、表現、3 つの定理、継ぎ合わせ、予備、末尾のラベルによる降下 | README「証明の形」、notes/01-design.md §1、notes/00-survey.md §3.2、§3.5、notes/02-feasibility.md §3、§4 |
+| [06 Phyrion 氏の ω-Y の組合せの層](06-combinatorial-layer.md) | 図式、尺度の根と辺の型板、表現、上端への要求、有限反映、3 つの定理、1 ブロックの継ぎ合わせ、予備を持つ反映のくり返し、末尾のラベルによる降下 | README「証明の形」、notes/01-design.md §1、notes/00-survey.md §3.2、§3.5、notes/02-feasibility.md §3、§4 |
 | [07 関係 R](07-relation-r.md) | 構造 $`\mathfrak A^c_\theta`$、$`R`$ の定義、（上端、鍵）の再帰、ガードを外す、定義から直接出る性質、鍵の弱化 | README「関係 R」「3 つの定理の証明」、notes/01-design.md §2、§3.1 |
 | [08 ω₁ より下の閉包と鎖](08-closure-chain.md) | Good、論理式が可算個であること、証人の高さ、閉包の 1 ステップ、λ、λ(γ) が Good であること、鎖 | README「3 つの定理の証明」、notes/01-design.md §3.3 |
-| [09 3 つの定理の証明](09-obligations.md) | 有限反映、最初の表現、最終定理と公理 | README「3 つの定理の証明」「公理の監査」、notes/01-design.md §3、§4 |
+| [09 3 つの定理の証明](09-obligations.md) | 定理の一覧、有限反映、上端述語の絶対性、Good な点どうしの関係、すべての図式の表現、最終定理 | README「3 つの定理の証明」「公理の監査」、notes/01-design.md §3、§4 |
 
 ## 読む順
 

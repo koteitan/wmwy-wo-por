@@ -4,7 +4,7 @@
 
 Prerequisites: none
 
-This note explains ordinals and $`\omega_1`$. Later notes attach ordinals $`\le \omega_1`$ (the labels of §6) to the columns of expressions in the proof that expansion terminates ([06](06-combinatorial-layer.md) §4, §8). The facts that are used are the regularity in §5, the labels in §6 and the counting of parameter lists in §7.
+This note explains ordinals and $`\omega_1`$. Later notes attach ordinals $`\le \omega_1`$ (the labels of §6) to the columns of expressions in the proof that expansion terminates ([06](06-combinatorial-layer.md) §2, §8). The facts that are used are the regularity in §5, the labels in §6 and the counting of parameter lists in §7.
 
 ## 1. Well-orders and ordinals
 
@@ -123,7 +123,7 @@ Three facts are used. All follow from §4.
 - $`\forall x \in \mathrm{Label}\ \ x \le \omega_1`$.
 - If $`a \in \mathrm{Label}`$ and $`a \lt \omega_1`$, then $`\{x \in \mathrm{Label} \mid x \lt a\} = \{\beta \mid \beta \lt a\}`$ is countable.
 
-**Why ω₁ itself is a label.** The labels attached to the columns of expressions are all below $`\omega_1`$ ([06](06-combinatorial-layer.md) §4). On the other hand, the relation $`R`$ defined in [07](07-relation-r.md) also takes $`\omega_1`$ as its third argument ([08](08-closure-chain.md) §1, [09](09-obligations.md) §3). That is why $`\omega_1`$ is a label too.
+**Why ω₁ itself is a label.** The labels attached to the columns of expressions are all below $`\omega_1`$ ([06](06-combinatorial-layer.md) §2). On the other hand, the relation $`R`$ defined in [07](07-relation-r.md) also takes $`\omega_1`$ as its third argument ([08](08-closure-chain.md) §1, [09](09-obligations.md) §3). That is why $`\omega_1`$ is a label too.
 
 ## 7. Counting parameter lists
 

@@ -62,7 +62,7 @@ In the order-only language, $`(\omega; \le) \preccurlyeq_{\Sigma_1} (\beta; \le)
 
 ## 3. Use in termination proofs
 
-This section uses words that later notes define, and only describes the shape. Columns of an expression, edges of the mountain and expansion are defined in [05](05-omegay-mountain.md); the way labels are attached and the cut are defined in [06](06-combinatorial-layer.md) §4, §5.
+This section uses words that later notes define, and only describes the shape. Columns of an expression, edges of the mountain and expansion are defined in [05](05-omegay-mountain.md); the way labels are attached and the cut are defined in [06](06-combinatorial-layer.md) §2, §3.
 
 A termination proof for expansion attaches a label ([01](01-ordinals.md) §6) to each column and shows that expansion lowers the labels ([02](02-well-founded.md) §6, [06](06-combinatorial-layer.md) §8). The property needed is **finite reflection**.
 
@@ -82,13 +82,13 @@ The label relation required by the ω-Y combinatorial layer ([06](06-combinatori
 R(\theta, a, b) \quad (\theta \in \mathrm{Key}_m,\ a, b \in \mathrm{Label})
 ```
 
-Read it as "with key $`\theta`$, $`a`$ is stable into $`b`$". $`\theta`$ is a key computed from a template for each edge of the mountain ([06](06-combinatorial-layer.md) §3). This causes three problems.
+Read it as "with key $`\theta`$, $`a`$ is stable into $`b`$". $`\theta`$ is a key computed from a template for each edge of the mountain ([06](06-combinatorial-layer.md) §1). This causes three problems.
 
 **Problem 1: keys are transfinite.** The key $`\theta`$ runs lexicographically over $`\mathrm{Key}_m`$ ([02](02-well-founded.md) §3). The coordinates are labels, so the order of keys is transfinite. The relations $`\le_1, \ldots, \le_N`$ of $`\mathcal R_N`$ are finitely many and counted by natural numbers. A transfinite key cannot serve as such a number.
 
-**Problem 2: demands toward the top.** The top $`b`$ is the label that the old last column had before the expansion ([06](06-combinatorial-layer.md) §8). Finite reflection must also make "relations $`R(\kappa, x, b)`$ to the top $`b`$" ($`\kappa`$ a key, $`x`$ the label of the parent) hold for the new labels (the top atoms of [06](06-combinatorial-layer.md) §2). $`b`$ is not an element of the structure $`(b; \ldots)`$. Writing out the definition of $`R`$ does not give a $`\Sigma_1`$ formula.
+**Problem 2: demands toward the top.** The top $`b`$ is the label that the old last column had before the expansion ([06](06-combinatorial-layer.md) §8). Finite reflection must also make "relations $`R(\kappa, x, b)`$ to the top $`b`$" ($`\kappa`$ a key, $`x`$ the label of the parent) hold for the new labels (the top atoms of [06](06-combinatorial-layer.md) §3). $`b`$ is not an element of the structure $`(b; \ldots)`$. Writing out the definition of $`R`$ does not give a $`\Sigma_1`$ formula.
 
-**Problem 3: the key of a demand names columns that move.** Let $`f(i)`$ be the label of column $`i`$. A demand toward the top has the form $`R(\mathrm{eval}\ t\ f,\ f(p),\ b)`$, where $`p`$ is a column number and $`t`$ a template of ω-Y ([03](03-sigma1-elementary.md) §7). If $`t_i = \mathrm{some}\ j`$, coordinate $`i`$ of the key is $`f(j)`$. We then say that "the template $`t`$ names column $`j`$". Phyrion's finite reflection ([06](06-combinatorial-layer.md) §5) does not require the named column $`j`$ to lie before the cut ($`j \lt \mathrm{cut}`$). So a label $`f(j)`$ inside a key may belong to a witness that the reflection relabels. The 1-Y version ([01](01-ordinals.md) §7) decided whether a top predicate may be read from the positions of the variables (its note 03 §8). That method does not work here.
+**Problem 3: the key of a demand names columns that move.** Let $`f(i)`$ be the label of column $`i`$. A demand toward the top has the form $`R(\mathrm{eval}\ t\ f,\ f(p),\ b)`$, where $`p`$ is a column number and $`t`$ a template of ω-Y ([03](03-sigma1-elementary.md) §7). If $`t_i = \mathrm{some}\ j`$, coordinate $`i`$ of the key is $`f(j)`$. We then say that "the template $`t`$ names column $`j`$". Phyrion's finite reflection ([06](06-combinatorial-layer.md) §4) does not require the named column $`j`$ to lie before the cut ($`j \lt \mathrm{cut}`$). So a label $`f(j)`$ inside a key may belong to a witness that the reflection relabels. The 1-Y version ([01](01-ordinals.md) §7) decided whether a top predicate may be read from the positions of the variables (its note 03 §8). That method does not work here.
 
 ## 5. What this repository changes
 
@@ -110,7 +110,7 @@ The resulting relation $`R`$ is not Carlson's $`\mathcal R_N`$ itself, and we do
 | relation to the top | lemmas on continuity and cofinality | atomic symbols (readability decided by positions of variables) | demands inside the diagram | partial atomic symbols (decided by the value of the key) |
 | argument of the recursion | the top $`\beta`$ | lexicographic order on $`(b, k, \eta)`$ | stage $`(b, \theta)`$ | stage $`(b, \theta)`$ |
 
-**Phyrion's original semantic layer.** There $`R(\theta, a, b) \iff a \lt b \land \mathrm{Reflects}(\theta, a, b)`$, and $`\mathrm{Reflects}(\theta, a, b)`$ is the following compression property ([notes/00-survey.md](../../notes/00-survey.md) §3.2, Japanese). The words are those of [06](06-combinatorial-layer.md) §2: $`n`$ is the number of vertices, $`G`$ a list of internal atoms, $`N`$ a list of top atoms, and $`f, g : \mathrm{Fin}\ n \to \mathrm{Label}`$ are labellings. "Positive" means that the conditions contain no negation.
+**Phyrion's original semantic layer.** There $`R(\theta, a, b) \iff a \lt b \land \mathrm{Reflects}(\theta, a, b)`$, and $`\mathrm{Reflects}(\theta, a, b)`$ is the following compression property ([notes/00-survey.md](../../notes/00-survey.md) §3.2, Japanese). The words are those of [06](06-combinatorial-layer.md) §1–§3: $`n`$ is the number of columns, $`G`$ a list of atoms, $`N`$ a list of top atoms, and $`f, g : \mathrm{Fin}\ n \to \mathrm{Label}`$ are labellings. "Positive" means that the conditions contain no negation.
 
 ```math
 \begin{aligned}
@@ -142,4 +142,4 @@ $`\le_1`$ itself does not appear in the Lean code of this repository. The corres
 | range where top predicates are defined, $`\kappa \lt \theta`$ | the `(· < θ)` inside `ElemL` | [Por/Formula.lean](../../Por/Formula.lean) |
 | lowering pointwise keeps the key condition | `Lit.holds_of_le` | same |
 | named columns need not lie before the cut | the comment on `finite_reflection`: "No root used in a key is required to be retained" | [OmegaY/Reflection.lean](../../OmegaY/Reflection.lean) |
-| top atoms, conditions on demands | `InternalAtom`, `TopAtom`, `KeysBelow`, `FixesBelow` | [OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean) |
+| atoms, top atoms, conditions on demands | `InternalAtom`, `TopAtom`, `KeysBelow`, `FixesBelow` | [OmegaY/Reflection/Interface.lean](../../OmegaY/Reflection/Interface.lean) |
