@@ -89,22 +89,39 @@ The bottom nodes are in row 1. In row 1 the candidates are the bottom nodes of c
 
 The jump $`\mathrm{jump}(\mathrm{row}(u), \mathrm{row}(\pi))`$ is the **degree** of the edge (`RealStoredEdge.degree` in [06](06-combinatorial-layer.md)).
 
-**Example ($`(1, 3, 3)`$).** In the table, "$`v \leftarrow (j, h)`$" means that the value is $`v`$ and the left leg (the father of the edge from the node below) is the node of column $`j`$ in row $`h`$. Lean's reference `Ref` uses the index from the bottom instead of the row. The left legs of bottom nodes (the phantoms of the columns to the left) are not written.
+**Example ($`(1, 4, 20)`$).** In the table, "$`v \leftarrow (j, h)`$" means that the value is $`v`$ and the left leg (the father of the edge from the node below) is the node of column $`j`$ in row $`h`$. The Lean reference `Ref` uses the index from the bottom instead of the row. The left leg of the bottom row (the phantom of the left column) is not written. An ω-Y mountain has no layers as in 1-Y; the whole mountain is one table.
 
-| Row | Column 0 | Column 1 | Column 2 |
+| row | column 0 | column 1 | column 2 |
 |---|---|---|---|
-| $`\omega`$ | | $`1 \leftarrow (0, 1)`$ | $`1 \leftarrow (0, 1)`$ |
-| $`2`$ | | $`2 \leftarrow (0, 1)`$ | $`2 \leftarrow (0, 1)`$ |
-| $`1`$ | $`1`$ | $`3`$ | $`3`$ |
+| $`\omega^2 \cdot 2`$ | | | $`1 \leftarrow (1, \omega^2)`$ |
+| $`\omega^2 + \omega`$ | | | $`2 \leftarrow (1, \omega^2)`$ |
+| $`\omega^2 + 1`$ | | | $`3 \leftarrow (1, \omega^2)`$ |
+| $`\omega^2`$ | | $`1 \leftarrow (0, 1)`$ | $`4 \leftarrow (1, \omega)`$ |
+| $`\omega \cdot 2`$ | | | $`6 \leftarrow (1, \omega)`$ |
+| $`\omega + 1`$ | | | $`8 \leftarrow (1, \omega)`$ |
+| $`\omega`$ | | $`2 \leftarrow (0, 1)`$ | $`10 \leftarrow (1, 2)`$ |
+| $`3`$ | | | $`13 \leftarrow (1, 2)`$ |
+| $`2`$ | | $`3 \leftarrow (0, 1)`$ | $`16 \leftarrow (1, 1)`$ |
+| $`1`$ | $`1`$ | $`4`$ | $`20`$ |
 | $`0`$ | phantom | phantom | phantom |
 
-- Bottom node of column 1 (value 3): the Q step reaches the bottom node of column 0 (value 1). Since $`1 \lt 3`$, it is the father. The next node has row $`B(1, 1) = 2`$ and value $`3 - 1 = 2`$.
-- Node of column 1 in row 2 (value 2): its left leg is $`(0, 1)`$, and column 0 has no node above it. The candidate is $`(0, 1)`$, and $`1 \lt 2`$, so it is the father. The next node has row $`B(2, 1) = \omega`$ and value 1.
-- Bottom node of column 2 (value 3): the first candidate is the bottom node of column 1, whose value 3 is not smaller than $`3`$. The next candidate is the bottom node of column 0, which is the father.
+- Column 0: the bottom node has value 1, so the column ends with the phantom and the bottom node.
+- Column 1: the left leg of the bottom node (value 4) is the phantom of column 0, from which the search climbs to the node of row 1 (value 1). Since $`1 \lt 4`$, it is the father. The next node has row $`B(1, 1) = 2`$ and value 3. The left leg of the node in row 2 is $`(0, 1)`$, and column 0 has no node above it, so the father is $`(0, 1)`$ again: row $`B(2, 1) = 2 + \omega = \omega`$ (jump 1), value 2. Likewise row $`B(\omega, 1) = \omega + \omega^2 = \omega^2`$ (jump 2), value 1, and the column ends.
+- Column 2: for every node, the first candidate of step Q is already the father. The next table lists, from the bottom node up, how the father is found and the row and value of the next node.
 
-**Example ($`(1, 4)`$).** Column 1 has values $`4, 3, 2, 1`$ in rows $`1, 2, \omega, \omega^2`$, and every father is $`(0, 1)`$. Row $`\omega^2`$ is $`B(\omega, 1)`$.
+| Node (row, value) | Candidates (step Q) | Father | Row of the next node $`B`$ | Next value |
+|---|---|---|---|---|
+| $`1`$, 20 | The left leg is the phantom of column 1. Row $`1 \le 1`$, so climb to $`(1, 1)`$. Value 4 | $`(1, 1)`$ | $`B(1, 1) = 2`$ (jump 0) | $`20 - 4 = 16`$ |
+| $`2`$, 16 | From the left leg $`(1, 1)`$, row $`2 \le 2`$, so climb to $`(1, 2)`$ (not to row $`\omega`$). Value 3 | $`(1, 2)`$ | $`B(2, 2) = 3`$ (jump 0) | $`16 - 3 = 13`$ |
+| $`3`$, 13 | Left leg $`(1, 2)`$. The row $`\omega`$ above is larger than 3, so no climb. Value 3 | $`(1, 2)`$ | $`B(3, 2) = 3 + \omega = \omega`$ (jump 1) | $`13 - 3 = 10`$ |
+| $`\omega`$, 10 | From the left leg $`(1, 2)`$, row $`\omega \le \omega`$, so climb to $`(1, \omega)`$. Value 2 | $`(1, \omega)`$ | $`B(\omega, \omega) = \omega + 1`$ (jump 0) | $`10 - 2 = 8`$ |
+| $`\omega + 1`$, 8 | Left leg $`(1, \omega)`$. The row $`\omega^2`$ above is larger, so no climb. Value 2 | $`(1, \omega)`$ | $`B(\omega + 1, \omega) = \omega \cdot 2`$ (jump 1) | $`8 - 2 = 6`$ |
+| $`\omega \cdot 2`$, 6 | Left leg $`(1, \omega)`$. No climb. Value 2 | $`(1, \omega)`$ | $`B(\omega \cdot 2, \omega) = \omega \cdot 2 + \omega^2 = \omega^2`$ (jump 2) | $`6 - 2 = 4`$ |
+| $`\omega^2`$, 4 | From the left leg $`(1, \omega)`$, row $`\omega^2 \le \omega^2`$, so climb to $`(1, \omega^2)`$. Value 1 | $`(1, \omega^2)`$ | $`B(\omega^2, \omega^2) = \omega^2 + 1`$ (jump 0) | $`4 - 1 = 3`$ |
+| $`\omega^2 + 1`$, 3 | Left leg $`(1, \omega^2)`$, the top of column 1. Value 1 | $`(1, \omega^2)`$ | $`B(\omega^2 + 1, \omega^2) = \omega^2 + \omega`$ (jump 1) | $`3 - 1 = 2`$ |
+| $`\omega^2 + \omega`$, 2 | Likewise value 1 | $`(1, \omega^2)`$ | $`B(\omega^2 + \omega, \omega^2) = \omega^2 \cdot 2`$ (jump 2) | $`2 - 1 = 1`$ |
 
-**Example (column 2 of $`(1, 3, 10)`$).** It has values $`10, 7, 5, 3, 2, 1`$ in rows $`1, 2, 3, \omega, \omega + 1, \omega \cdot 2`$. The fathers are, in order, $`(1, 1), (1, 2), (1, 2), (1, \omega), (1, \omega)`$. For example the node in row $`\omega`$ is at $`B(3, 2) = 3 + \omega = \omega`$, and the node in row $`\omega \cdot 2`$ at $`B(\omega + 1, \omega) = \omega \cdot 2`$.
+The fathers of column 2 go up column 1 from the bottom. The first node after the father changes lies in the same row as the father, and its jump is 0. After that, while the father stays the same, the jump grows to 1 and 2. When the new row reaches the row of the next node of column 1 (rows $`\omega`$ and $`\omega^2`$), step Q climbs to that node and the father changes. The values go down by the values of the fathers (4, 3, 2, 1 of column 1).
 
 ## 4. Expansion
 
@@ -132,6 +149,15 @@ The length of $`s[N]`$ is $`x + N w`$.
 Finally the nodes are sorted by row (`finish`). The top node gets value 1, and the values are set from top to bottom by $`\mathrm{value}(u) = \mathrm{value}(u^+) + \mathrm{value}(\pi)`$, where $`\pi`$ is the left leg of $`u^+`$ (`backfill`).
 
 **Example ($`(1, 3, 3)[2]`$).** The result is $`(1, 3, 2, 5, 4, 9)`$.
+
+$`M(1, 3, 3)`$ is as follows (read the table as in the example of §3).
+
+| Row | Column 0 | Column 1 | Column 2 |
+|---|---|---|---|
+| $`\omega`$ | | $`1 \leftarrow (0, 1)`$ | $`1 \leftarrow (0, 1)`$ |
+| $`2`$ | | $`2 \leftarrow (0, 1)`$ | $`2 \leftarrow (0, 1)`$ |
+| $`1`$ | $`1`$ | $`3`$ | $`3`$ |
+| $`0`$ | phantom | phantom | phantom |
 
 - The root is $`(0, 1)`$, so $`c_r = 0`$ and $`w = 2`$. $`s' = (1, 3, 2)`$. Column 2 of $`M(s')`$ has value 2 in row 1 and $`1 \leftarrow (0, 1)`$ in row 2.
 - The boundary rows are $`(\omega, 1)`$. The markers are, in each of columns 1 and 2, the node in row 1 and the phantom (checked with `#eval`).
